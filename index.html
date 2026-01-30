@@ -2,98 +2,125 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Trovapp</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: sans-serif; background-color: #F2F2F7; overscroll-behavior-y: contain; }
-        .tag-pill { cursor: pointer; background: white; border: 1px solid #E5E7EB; padding: 6px 12px; border-radius: 12px; font-size: 11px; white-space: nowrap; font-weight: 600; }
+        html, body { 
+            overscroll-behavior-y: contain !important; 
+            height: 100%;
+            overflow: hidden; 
+            position: fixed;
+            width: 100%;
+            background-color: #F2F2F7;
+        }
+        
+        #mainContainer {
+            height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 120px;
+        }
+
+        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 600; padding: 6px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; margin-bottom: 4px; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .tag-row { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; }
+        
+        .cat-box { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid #E5E7EB; }
+        .cat-label { font-size: 10px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; opacity: 0.5; }
+        
         .qty-badge { background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-4">
+<body>
 
-    <div class="max-w-xl mx-auto pb-24">
-        <header class="flex justify-between items-center mb-6">
-            <div>
-                <h1 id="titolo" class="text-4xl font-black tracking-tighter uppercase">TROVAPP</h1>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Smart Search & Backup</p>
+    <div id="mainContainer" class="p-4">
+        <div class="max-w-xl mx-auto space-y-4">
+            <header class="flex justify-between items-start py-4">
+                <div>
+                    <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase">TROVAPP</h1>
+                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Smart Search & Backup</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
+                    <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase cursor-pointer text-center">
+                        📂 Carica
+                        <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
+                    </label>
+                </div>
+            </header>
+
+            <div id="homeNav">
+                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none mb-4">
+                <nav class="grid grid-cols-2 gap-3">
+                    <button onclick="apriSpazio('CANTINA')" class="p-8 rounded-[30px] bg-zinc-800 text-white font-black italic uppercase">Cantina</button>
+                    <button onclick="apriSpazio('SOFFITTA')" class="p-8 rounded-[30px] bg-amber-600 text-white font-black italic uppercase">Soffitta</button>
+                    <button onclick="apriSpazio('ARMADI')" class="p-8 rounded-[30px] bg-rose-600 text-white font-black italic uppercase">Armadi</button>
+                    <button onclick="apriSpazio('BOX')" class="p-8 rounded-[30px] bg-indigo-700 text-white font-black italic uppercase">Box</button>
+                </nav>
             </div>
-            <button onclick="esportaDati()" class="text-[10px] bg-white p-2 rounded-lg shadow-sm font-bold">💾 BACKUP</button>
-        </header>
 
-        <div id="homeNav">
-            <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nel Caveau..." class="w-full p-4 rounded-2xl shadow-sm mb-4 outline-none border-none">
-            <nav class="grid grid-cols-2 gap-3">
-                <button onclick="apriSpazio('CANTINA')" class="p-8 rounded-[30px] bg-zinc-800 text-white font-black italic uppercase shadow-lg">Cantina</button>
-                <button onclick="apriSpazio('SOFFITTA')" class="p-8 rounded-[30px] bg-amber-600 text-white font-black italic uppercase shadow-lg">Soffitta</button>
-                <button onclick="apriSpazio('ARMADI')" class="p-8 rounded-[30px] bg-rose-600 text-white font-black italic uppercase shadow-lg">Armadi</button>
-                <button onclick="apriSpazio('BOX')" class="p-8 rounded-[30px] bg-indigo-700 text-white font-black italic uppercase shadow-lg">Box</button>
-            </nav>
+            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black uppercase mb-4">← Home</button>
+            <div id="grid" class="grid grid-cols-2 gap-3"></div>
         </div>
-
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-bold mb-4 uppercase">← Torna alla Home</button>
-        <div id="grid" class="grid grid-cols-2 gap-3"></div>
     </div>
 
-    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl text-2xl z-50 flex items-center justify-center">
-        <i class="fa-solid fa-plus"></i>
-    </button>
+    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">+</button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[60] flex items-end">
-        <div class="bg-white w-full rounded-t-[40px] p-6 max-h-[92vh] overflow-y-auto no-scrollbar">
-            <div class="flex justify-between items-center mb-6 sticky top-0 bg-white z-10 pb-2">
-                <h3 class="text-2xl font-black uppercase tracking-tighter">Nuovo Oggetto</h3>
-                <button onclick="chiudiModale()" class="text-3xl font-light">&times;</button>
-            </div>
-            
-            <div class="flex gap-3 mb-4">
-                <label class="shrink-0 w-24 h-24 bg-blue-50 border-2 border-dashed border-blue-200 rounded-3xl flex items-center justify-center text-blue-600 cursor-pointer">
-                    <i class="fa-solid fa-camera text-2xl"></i>
-                    <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="gestisciFoto()">
-                </label>
-                <div id="gallery" class="flex gap-2 overflow-x-auto no-scrollbar"></div>
+        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-6 max-h-[92vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
+            <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-4">
+                <h3 class="text-2xl font-black uppercase">Nuovo Oggetto</h3>
+                <button onclick="chiudiModale()" class="text-3xl">&times;</button>
             </div>
 
-            <input id="nIn" type="text" placeholder="Cosa stai salvando?" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-bold outline-none">
-            
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <select id="cIn" class="p-4 bg-gray-100 rounded-2xl font-bold outline-none appearance-none text-sm">
-                    <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
-                    <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
-                </select>
-                <input id="pIn" type="text" placeholder="Posizione" class="p-4 bg-gray-100 rounded-2xl outline-none text-sm">
-            </div>
-
-            <div class="bg-zinc-900 text-white p-4 rounded-3xl flex items-center justify-between mb-6 shadow-xl">
-                <div class="flex flex-col"><span class="text-[10px] font-bold opacity-50 uppercase">Quantità</span><span id="qtyVal" class="text-2xl font-black italic">1</span></div>
-                <div class="flex gap-2">
-                    <button onclick="changeQty(-1)" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center font-bold text-xl">-</button>
-                    <button onclick="changeQty(1)" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-xl">+</button>
+            <div class="space-y-6 pb-24">
+                <div class="flex gap-2 overflow-x-auto py-2 no-scrollbar">
+                    <label class="shrink-0 w-24 h-24 bg-white border-2 border-dashed border-blue-200 rounded-[24px] flex items-center justify-center text-blue-600 cursor-pointer">
+                        <i class="fa-solid fa-camera text-2xl"></i>
+                        <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
+                    </label>
+                    <div id="gallery" class="flex gap-2"></div>
                 </div>
+
+                <input id="nIn" type="text" placeholder="Nome" class="w-full p-4 bg-white rounded-2xl font-bold outline-none shadow-sm">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="cIn" class="p-4 bg-white rounded-2xl font-bold outline-none shadow-sm appearance-none">
+                        <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
+                        <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
+                    </select>
+                    <input id="pIn" type="text" placeholder="Posizione" class="p-4 bg-white rounded-2xl outline-none shadow-sm">
+                </div>
+
+                <div class="bg-zinc-900 text-white p-5 rounded-[28px] flex items-center justify-between shadow-lg">
+                    <div class="flex flex-col"><span class="text-[10px] font-bold opacity-50 uppercase">Quantità</span><span id="qtyVal" class="text-3xl font-black italic">1</span></div>
+                    <div class="flex gap-3">
+                        <button onclick="changeQty(-1)" class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center font-bold text-xl">-</button>
+                        <button onclick="changeQty(1)" class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-bold text-xl">+</button>
+                    </div>
+                </div>
+
+                <div id="tagEngine" class="space-y-4"></div>
+
+                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl shadow-lg uppercase italic">Salva</button>
             </div>
-
-            <p class="text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest">Tag Suggeriti (Scorri orizzontalmente)</p>
-            <div id="tagEngine" class="space-y-4 mb-8"></div>
-
-            <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl uppercase italic shadow-lg">Aggiungi al Caveau</button>
         </div>
     </div>
 
     <script>
         const CATEGORIE = {
-            "🏠 CASA": ["Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Vasi", "Tappeti", "Cuscini"],
-            "🍳 CUCINA": ["Piatti", "Bicchieri", "Posate", "Pentole", "Padelle", "Mixer", "Bilance", "Sottovuoto"],
-            "🧥 VESTITI": ["Giacche", "Camicie", "Maglioni", "T-Shirt", "Pantaloni", "Jeans", "Intimo", "Calze"],
-            "👟 SCARPE": ["Sneakers", "Eleganti", "Stivali", "Sandali", "Ciabatte", "Sportive"],
-            "🛠 OFFICINA": ["Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Pinze", "Seghetto", "Livella"],
-            "🔌 TECH": ["Cavi", "Caricatori", "PC", "Smartphone", "Batterie", "HD Esterni", "HDMI"],
-            "⚽️ SPORT": ["Calcio", "Tennis", "Fitness", "Bici", "Caschi", "Outdoor"],
-            "🔄 ALTRO": ["Regali", "Da Vendere", "Misteriosi", "Documenti"]
+            "🏠 CASA": ["Generico Casa", "Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Vasi", "Cuscini", "Tende"],
+            "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Posate", "Pentole", "Mixer", "Bilance", "Contenitori"],
+            "🧥 VESTITI": ["Generico Vestiti", "Giacche", "Camicie", "Maglioni", "Pantaloni", "Intimo", "Calze", "Sneakers"],
+            "👟 SCARPE": ["Generico Scarpe", "Sneakers", "Eleganti", "Stivali", "Ciabatte", "Sport"],
+            "🛠 OFFICINA": ["Generico Officina", "Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Pinze", "Seghetto"],
+            "🔌 TECH": ["Generico Tech", "Cavi USB", "Alimentatori", "Powerbank", "Pile", "Monitor", "HD Esterni"],
+            "⚽️ SPORT": ["Generico Sport", "Calcio", "Fitness", "Bici", "Sci", "Outdoor"],
+            "🔄 ALTRO": ["Generico Altro", "Regali", "Da Vendere", "Documenti", "Misteriosi"]
         };
 
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -104,9 +131,10 @@
             container.innerHTML = "";
             for (const [cat, tags] of Object.entries(CATEGORIE)) {
                 container.innerHTML += `
-                    <div class="mb-1 uppercase text-[9px] font-black opacity-40">${cat}</div>
-                    <div class="tag-row no-scrollbar mb-2">${tags.map(t => `<span onclick="this.classList.toggle('active')" class="tag-pill">${t}</span>`).join('')}</div>
-                `;
+                    <div class="cat-box">
+                        <div class="cat-label">${cat}</div>
+                        <div class="flex flex-wrap gap-2">${tags.map(t => `<span onclick="this.classList.toggle('active')" class="tag-pill">${t}</span>`).join('')}</div>
+                    </div>`;
             }
         }
 
@@ -139,11 +167,24 @@
                         <h4 class="font-black text-[10px] truncate uppercase">${o.nome}</h4>
                         <p class="text-[8px] text-blue-600 font-bold truncate uppercase">${o.pos || '---'}</p>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/80 w-6 h-6 rounded-full text-red-500 text-[10px] flex items-center justify-center font-bold shadow-sm">×</button>
+                    <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/80 w-6 h-6 rounded-full text-red-500 text-[10px] flex items-center justify-center font-bold">×</button>
                 </div>`).join('');
         }
 
-        function gestisciFoto() {
+        function importaDati(event) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    db = JSON.parse(e.target.result);
+                    localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                    aggiorna();
+                    alert("Backup caricato con successo!");
+                } catch(err) { alert("File non valido!"); }
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+
+        function comprimeECarica() {
             const file = document.getElementById('fIn').files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -162,7 +203,7 @@
 
         function renderGallery() {
             const gal = document.getElementById('gallery'); gal.innerHTML = "";
-            tempPhotos.forEach(f => gal.innerHTML += `<img src="${f}" class="w-24 h-24 object-cover rounded-3xl shadow-md shrink-0">`);
+            tempPhotos.forEach(f => gal.innerHTML += `<img src="${f}" class="w-24 h-24 object-cover rounded-3xl shadow-md">`);
         }
 
         function resetModale() { 
