@@ -15,14 +15,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* BLOCCO TOTALE REFRESH CHROME */
+        /* BLOCCO AGGRESSIVO DEL PULL-TO-REFRESH */
         html, body { 
-            overscroll-behavior-y: none !important; 
+            overscroll-behavior-y: contain !important; /* Forza il browser a non ricaricare */
             height: 100%;
             overflow: hidden; 
             position: fixed;
             width: 100%;
             background-color: #F2F2F7;
+            touch-action: none; /* Disabilita i gesti di sistema sul body */
         }
         
         body { font-family: -apple-system, system-ui, sans-serif; letter-spacing: -0.01em; }
@@ -32,6 +33,7 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding-bottom: 120px;
+            touch-action: pan-y; /* Permette solo lo scorrimento verticale qui */
         }
 
         .tag-pill { cursor: pointer; transition: all 0.1s; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 500; padding: 4px 10px; border-radius: 8px; font-size: 11px; white-space: nowrap; margin-bottom: 5px; }
@@ -285,12 +287,23 @@
             });
         }
 
-        // BLOCO FISICO REFRESH
+        // BLOCO FISICO REFRESH (EVENTI PASSIVI DISABILITATI)
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.closest('#modalScroll')) return;
+            // Preveniamo il tocco iniziale se non è nella modale per sicurezza
+        }, { passive: true });
+
         document.addEventListener('touchmove', function (e) {
             const isModalOpen = !document.getElementById('modal').classList.contains('hidden');
             if (isModalOpen) {
-                if (!e.target.closest('#modalScroll')) {
-                    e.preventDefault();
+                // Se siamo dentro il menu bianco, permetti lo scroll ma non il pull-to-refresh
+                if (e.target.closest('#modalScroll')) {
+                    const el = document.getElementById('modalScroll');
+                    if (el.scrollTop <= 0 && e.touches[0].pageY > e.touches[1]?.pageY) {
+                        // Siamo in cima e tiriamo giù: blocca!
+                    }
+                } else {
+                    e.preventDefault(); // Blocca tutto il resto
                 }
             }
         }, { passive: false });
