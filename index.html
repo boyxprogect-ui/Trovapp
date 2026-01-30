@@ -15,15 +15,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* BLOCCO TOTALE REFRESH */
+        /* BLOCCO REFRESH TOTALE */
         html, body { 
             overscroll-behavior-y: none !important; 
-            touch-action: pan-x pan-y;
-            position: relative;
             height: 100%;
+            overflow: hidden; /* Blocca lo scroll della pagina esterna */
         }
         
-        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; letter-spacing: -0.01em; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; letter-spacing: -0.01em; overflow-y: auto; }
+        
         .tag-pill { cursor: pointer; transition: all 0.1s; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 500; padding: 4px 10px; border-radius: 8px; font-size: 11px; white-space: nowrap; margin-bottom: 5px; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; transform: scale(1.05); }
         .cat-box { background: #F9FAFB; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid #F3F4F6; }
@@ -87,7 +87,7 @@
     </button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[60] flex items-end">
-        <div class="bg-white w-full rounded-t-[40px] p-6 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
+        <div id="modalScroll" class="bg-white w-full rounded-t-[40px] p-6 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior-y: contain;">
             <div class="flex justify-between items-center sticky top-0 bg-white z-10 pb-4">
                 <h3 class="text-2xl font-black tracking-tighter uppercase text-gray-800">Nuovo Oggetto</h3>
                 <button onclick="chiudiModale()" class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">&times;</button>
@@ -278,16 +278,19 @@
             });
         }
 
-        // JS EXTRA PER BLOCCARE IL REFRESH
-        let lastTouchY = 0;
-        document.addEventListener('touchstart', e => { lastTouchY = e.touches[0].clientY; }, {passive: false});
-        document.addEventListener('touchmove', e => {
-            const touchY = e.touches[0].clientY;
-            const isScrollingUp = touchY > lastTouchY;
-            if (isScrollingUp && window.scrollY <= 0) {
-                e.preventDefault(); // Blocca il pull-to-refresh
+        // --- SOLUZIONE DEFINITIVA BUG SCROLL ---
+        const scrollElement = document.getElementById('modalScroll');
+        scrollElement.addEventListener('touchstart', (e) => {
+            if (scrollElement.scrollTop <= 0) {
+                scrollElement.scrollTop = 1; // Sposta di un pixel così non è mai "a zero"
+            } else if (scrollElement.scrollTop + scrollElement.offsetHeight >= scrollElement.scrollHeight) {
+                scrollElement.scrollTop = scrollElement.scrollHeight - scrollElement.offsetHeight - 1;
             }
-            lastTouchY = touchY;
+        });
+
+        // Blocca la propagazione così il body non sente il movimento
+        scrollElement.addEventListener('touchmove', (e) => {
+            e.stopPropagation();
         }, {passive: false});
 
         initTagEngine();
@@ -295,4 +298,3 @@
     </script>
 </body>
 </html>
-
