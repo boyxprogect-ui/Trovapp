@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TROVAPP</title>
+    <title>Il Caveau Pro</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/zGMyXFDL/1769689796128-(1).jpg">
+    <meta name="apple-mobile-web-app-title" content="Il Caveau">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/4080/4080030.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,12 +20,11 @@
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; transform: scale(1.05); }
         .cat-box { background: #F9FAFB; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid #F3F4F6; }
         .cat-label { font-size: 11px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; opacity: 0.8; }
-        .qty-badge { background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
+        .qty-badge { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
         .modal-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .item-card { transition: transform 0.2s; }
-        .item-card:active { transform: scale(0.98); }
+        .item-card { transition: all 0.2s; }
     </style>
 </head>
 <body class="p-4 pb-32">
@@ -32,7 +32,7 @@
     <div class="max-w-xl mx-auto space-y-4">
         <header class="flex justify-between items-start py-4">
             <div>
-                <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase">TROVAPP</h1>
+                <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase">IL CAVEAU</h1>
                 <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Smart Search & Backup</p>
             </div>
             <div class="flex flex-col gap-2">
@@ -47,10 +47,10 @@
         <div id="homeNav">
             <div class="relative mb-4">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-400"></i>
-                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca al volo..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 transition-all font-medium">
+                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 transition-all font-medium">
             </div>
 
-            <nav class="grid grid-cols-2 gap-2">
+            <nav id="catMenu" class="grid grid-cols-2 gap-2">
                 <button onclick="apriSpazio('CANTINA')" class="p-6 rounded-[30px] bg-zinc-800 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
                     <i class="fa-solid fa-box-open opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
                     <span class="font-black italic text-xl z-10 uppercase">Cantina</span>
@@ -72,10 +72,10 @@
 
         <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase tracking-widest">← Torna alla Home</button>
 
-        <div id="grid" class="grid grid-cols-2 gap-3"></div>
+        <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
     </div>
 
-    <button onclick="document.getElementById('modal').classList.remove('hidden')" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50 active:scale-90 transition-transform">
+    <button onclick="document.getElementById('modal').classList.remove('hidden')" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
         <i class="fa-solid fa-plus"></i>
     </button>
 
@@ -96,12 +96,12 @@
 
                 <div class="space-y-2">
                     <input id="nIn" type="text" placeholder="Cosa stai salvando?" class="w-full p-4 bg-gray-100 rounded-2xl outline-none font-bold text-lg">
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-2 gap-2 text-xs">
                         <select id="cIn" class="p-4 bg-gray-100 rounded-2xl font-bold appearance-none">
                             <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                             <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                         </select>
-                        <input id="pIn" type="text" placeholder="Posizione (Es: Scaffale 1)" class="p-4 bg-gray-100 rounded-2xl outline-none">
+                        <input id="pIn" type="text" placeholder="Posizione (Scaffale X)" class="p-4 bg-gray-100 rounded-2xl outline-none">
                     </div>
                 </div>
 
@@ -115,24 +115,36 @@
 
                 <div id="tagEngine" class="space-y-4"></div>
 
-                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl shadow-lg active:scale-95 transition-transform uppercase italic">Aggiungi a TROVAPP</button>
+                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl shadow-lg active:scale-95 transition-transform uppercase italic">Aggiungi al Caveau</button>
             </div>
         </div>
     </div>
 
     <script>
         const CATEGORIE = {
-            "🏠 CASA": ["Mobili", "Decorazioni", "Quadri", "Vasi", "Tende", "Tappeti"],
-            "🍳 CUCINA": ["Piatti", "Bicchieri", "Pentole", "Mixer", "Contenitori"],
-            "🧥 VESTIARIO": ["Cappotti", "Giacche", "Maglioni", "Abiti", "Cambio Stagione"],
-            "🛠 ATTREZZI": ["Trapano", "Viti", "Martello", "Vernici", "Chiavi Inglesi"],
-            "🔌 TECH": ["Cavi", "Batterie", "Lampadine", "Elettrodomestici"],
-            "⚽️ SPORT": ["Bici", "Pesi", "Camping", "Neve"],
-            "🎄 FESTE": ["Natale", "Halloween", "Compleanni"],
-            "🔄 ALTRO": ["Documenti", "Ricordi", "Scatoloni"]
+            "🏠 CASA": ["Generico Casa", "Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Cornici", "Specchi", "Vasi", "Tende", "Tappeti", "Cuscini", "Orologi", "Candele", "Soprammobili", "Cristalli", "Argenteria", "Porcellane", "Altro Arredo"],
+            "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Calici", "Posate", "Coltelli Chef", "Pentole", "Padelle", "Teglie", "Mixer", "Bilance", "Sottovuoto", "Conserve", "Spezie", "Contenitori", "Altro Cucina"],
+            "🧥 VESTIARIO": ["Generico Vestiti", "Cappotti", "Giacche", "Piumini", "Camicie", "Maglioni", "T-Shirt", "Polo", "Jeans", "Pantaloni", "Gonne", "Abiti", "Intimo", "Calze", "Costumi", "Asciugamani", "Altro Vestiario"],
+            "👟 SCARPE": ["Sneakers", "Eleganti", "Stivali", "Neve", "Sandali", "Infradito", "Ciabatte", "Tacchi", "Mocassini", "Pulizia Scarpe"],
+            "🛠 OFFICINA": ["Martello", "Cacciavite Stella", "Cacciavite Taglio", "Brugole", "Chiavi Inglesi", "Pinze", "Trapano", "Avvitatore", "Smerigliatrice", "Saldatore", "Seghetto", "Livella", "Metri", "Viti Legno", "Viti Metallo", "Bulloni", "Tasselli", "Chiodi", "Attrezzi Pesanti", "Altro Officina"],
+            "🔌 TECH/CAVI": ["Cavo USB-C", "Cavo Lightning", "Cavo HDMI", "Cavo Ethernet", "Alimentatori", "Powerbank", "Pile AA", "Pile AAA", "Batterie 9V", "Adattatori", "Multiprese", "Prolunghe", "Altro Tech"],
+            "💻 INFORMATICA": ["HD Esterni", "SSD", "Pendrive", "Mouse", "Tastiere", "Monitor", "Webcam", "Router", "Switch", "RAM", "Schede Video"],
+            "📸 FOTO/VIDEO": ["Corpi Macchina", "Obiettivi", "Flash", "Treppiedi", "Filtri", "Schede SD", "Microfoni", "Droni"],
+            "🌿 GIARDINO": ["Semi", "Bulbi", "Concime", "Vasi", "Terriccio", "Innaffiatoi", "Cesoie", "Tagliasiepi", "Rasaerba", "Mobili Esterno"],
+            "⚽️ SPORT": ["Calcio", "Tennis", "Pesi/Fitness", "Yoga", "Bici", "Caschi", "Tenda", "Sacco a Pelo", "Sci", "Scarponi", "Outdoor"],
+            "🎨 HOBBY/ARTE": ["Pennelli", "Tele", "Cucito", "Modellismo", "Puzzle", "Giochi Tavolo", "Lana", "Argilla"],
+            "💊 SALUTE": ["Termometro", "Cerotti", "Disinfettanti", "Antidolorifici", "Integratori", "Mascherine", "Farmaci Generici"],
+            "🐶 ANIMALI": ["Guinzagli", "Ciotole", "Cibo", "Trasportini", "Spazzole", "Giochi"],
+            "🎄 FESTE": ["Natale", "Luci", "Addobbi", "Halloween", "Pasqua", "Compleanno"],
+            "📑 DOCS": ["Fatture", "Contratti", "Garanzie", "Passaporti", "Foto Famiglia", "Lettere"],
+            "🏗 EDILIZIA": ["Scale", "Cemento", "Piastrelle", "Parquet", "Elettrico", "Idraulica"],
+            "🚗 AUTO/MOTO": ["Olio", "Liquido Tergi", "Gomme", "Catene", "Batteria", "Accessori"],
+            "✨ PREZIOSI": ["Orologi", "Anelli", "Collane", "Oro", "Monete", "Pietre"],
+            "🧸 INFANZIA": ["Pannolini", "Biberon", "Passeggini", "Seggiolini", "Peluche"],
+            "🔄 ALTRO": ["Misteriosi", "Cianfrusaglie", "Da Riparare", "Da Vendere", "Regali", "Scatoloni"]
         };
 
-        let db = JSON.parse(localStorage.getItem('trovapp_db')) || [];
+        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI";
 
         function initTagEngine() {
@@ -154,13 +166,14 @@
             document.getElementById('homeNav').classList.add('hidden');
             document.getElementById('backBtn').classList.remove('hidden');
             aggiorna(); 
+            window.scrollTo({top: 0, behavior: 'smooth'}); 
         }
 
         function tornaHome() { 
             activeCat = "TUTTI"; 
             document.getElementById('homeNav').classList.remove('hidden');
             document.getElementById('backBtn').classList.add('hidden');
-            document.getElementById('searchInput').value = "";
+            document.getElementById('searchInput').value = ""; 
             aggiorna(); 
         }
 
@@ -168,49 +181,53 @@
 
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Cosa stai salvando?");
+            if(!nome) return alert("Dai un nome all'oggetto!");
             const tags = Array.from(document.querySelectorAll('.tag-pill.active')).map(t => t.innerText);
             db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags, qty: tempQty });
-            localStorage.setItem('trovapp_db', JSON.stringify(db));
+            localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
             chiudiModale(); aggiorna();
         }
 
         function aggiorna() {
             const grid = document.getElementById('grid');
             const tit = document.getElementById('titolo');
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             
             const filtrati = db.filter(o => {
                 const matchesCat = (activeCat === 'TUTTI' || o.cat === activeCat);
-                const matchesSearch = (o.nome.toLowerCase().includes(query) || o.pos.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query)));
+                const matchesSearch = (
+                    o.nome.toLowerCase().includes(query) || 
+                    o.pos.toLowerCase().includes(query) || 
+                    o.tags.some(t => t.toLowerCase().includes(query))
+                );
                 return matchesCat && matchesSearch;
             });
 
-            tit.innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
+            tit.innerText = activeCat === 'TUTTI' ? "IL CAVEAU" : activeCat;
             grid.innerHTML = '';
             
             filtrati.reverse().forEach(o => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative flex flex-col border border-gray-100 item-card">
-                        <img src="${o.foto[0] || 'https://via.placeholder.com/300x300?text=📦'}" class="w-full h-40 object-cover">
-                        <div class="absolute top-2 left-2 qty-badge">x${o.qty}</div>
-                        <div class="p-3">
-                            <h4 class="font-black text-[11px] truncate uppercase text-gray-800">${o.nome}</h4>
-                            <p class="text-[9px] text-blue-600 font-bold truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
+                        <img src="${o.foto[0] || 'https://via.placeholder.com/150?text=BOX'}" class="w-full h-32 object-cover">
+                        <div class="absolute top-2 left-2 qty-badge">x${o.qty || 1}</div>
+                        <div class="p-4">
+                            <h4 class="font-black text-[10px] truncate uppercase text-gray-800">${o.nome}</h4>
+                            <p class="text-[8px] text-blue-600 font-bold truncate uppercase">${o.pos || 'POSIZIONE'}</p>
                         </div>
-                        <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-7 h-7 rounded-full text-red-500 text-sm font-bold flex items-center justify-center shadow-sm">×</button>
+                        <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-6 h-6 rounded-full text-red-500 text-xs font-bold flex items-center justify-center shadow-sm">×</button>
                     </div>`;
             });
         }
 
-        function elimina(id) { if(confirm('Eliminare questo oggetto?')) { db = db.filter(o => o.id !== id); localStorage.setItem('trovapp_db', JSON.stringify(db)); aggiorna(); } }
+        function elimina(id) { if(confirm('Eliminare questo oggetto?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
         function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('qtyVal').innerText = "1"; renderGallery(); document.querySelectorAll('.tag-pill').forEach(t => t.classList.remove('active')); }
 
         function esportaDati() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
             const dlAnchorElem = document.createElement('a');
             dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "backup_trovapp.json");
+            dlAnchorElem.setAttribute("download", "backup_caveau.json");
             dlAnchorElem.click();
         }
 
@@ -219,7 +236,7 @@
             reader.onload = (e) => {
                 try {
                     db = JSON.parse(e.target.result);
-                    localStorage.setItem('trovapp_db', JSON.stringify(db));
+                    localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
                     aggiorna();
                 } catch(err) { alert("File non valido!"); }
             };
