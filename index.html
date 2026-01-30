@@ -15,15 +15,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* BLOCCO REFRESH TOTALE */
+        /* PROTEZIONE TOTALE REFRESH */
         html, body { 
             overscroll-behavior-y: none !important; 
             height: 100%;
-            overflow: hidden; /* Blocca lo scroll della pagina esterna */
+            overflow: hidden; 
+            position: fixed; /* Blocca la pagina principale al 100% */
+            width: 100%;
         }
         
-        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; letter-spacing: -0.01em; overflow-y: auto; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; letter-spacing: -0.01em; }
         
+        #mainContainer {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .tag-pill { cursor: pointer; transition: all 0.1s; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 500; padding: 4px 10px; border-radius: 8px; font-size: 11px; white-space: nowrap; margin-bottom: 5px; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; transform: scale(1.05); }
         .cat-box { background: #F9FAFB; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid #F3F4F6; }
@@ -34,60 +42,61 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-4 pb-32">
+<body>
 
-    <div class="max-w-xl mx-auto space-y-4">
-        <header class="flex justify-between items-start py-4">
-            <div>
-                <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase">IL CAVEAU</h1>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Smart Search & Backup</p>
-            </div>
-            <div class="flex flex-col gap-2">
-                <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
-                <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase cursor-pointer text-center">
-                    📂 Carica
-                    <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
-                </label>
-            </div>
-        </header>
+    <div id="mainContainer" class="p-4 pb-32">
+        <div class="max-w-xl mx-auto space-y-4">
+            <header class="flex justify-between items-start py-4">
+                <div>
+                    <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase">IL CAVEAU</h1>
+                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Smart Search & Backup</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
+                    <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase cursor-pointer text-center">
+                        📂 Carica
+                        <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
+                    </label>
+                </div>
+            </header>
 
-        <div id="homeNav">
-            <div class="relative mb-4">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-400"></i>
-                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 transition-all font-medium">
+            <div id="homeNav">
+                <div class="relative mb-4">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-400"></i>
+                    <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 transition-all font-medium">
+                </div>
+
+                <nav id="catMenu" class="grid grid-cols-2 gap-2">
+                    <button onclick="apriSpazio('CANTINA')" class="p-6 rounded-[30px] bg-zinc-800 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
+                        <i class="fa-solid fa-box-open opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
+                        <span class="font-black italic text-xl z-10 uppercase">Cantina</span>
+                    </button>
+                    <button onclick="apriSpazio('SOFFITTA')" class="p-6 rounded-[30px] bg-amber-600 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
+                        <i class="fa-solid fa-warehouse opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
+                        <span class="font-black italic text-xl z-10 uppercase">Soffitta</span>
+                    </button>
+                    <button onclick="apriSpazio('ARMADI')" class="p-6 rounded-[30px] bg-rose-600 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
+                        <i class="fa-solid fa-shirt opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
+                        <span class="font-black italic text-xl z-10 uppercase">Armadi</span>
+                    </button>
+                    <button onclick="apriSpazio('BOX')" class="p-6 rounded-[30px] bg-indigo-700 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
+                        <i class="fa-solid fa-car opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
+                        <span class="font-black italic text-xl z-10 uppercase">Box</span>
+                    </button>
+                </nav>
             </div>
 
-            <nav id="catMenu" class="grid grid-cols-2 gap-2">
-                <button onclick="apriSpazio('CANTINA')" class="p-6 rounded-[30px] bg-zinc-800 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
-                    <i class="fa-solid fa-box-open opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-xl z-10 uppercase">Cantina</span>
-                </button>
-                <button onclick="apriSpazio('SOFFITTA')" class="p-6 rounded-[30px] bg-amber-600 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
-                    <i class="fa-solid fa-warehouse opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-xl z-10 uppercase">Soffitta</span>
-                </button>
-                <button onclick="apriSpazio('ARMADI')" class="p-6 rounded-[30px] bg-rose-600 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
-                    <i class="fa-solid fa-shirt opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-xl z-10 uppercase">Armadi</span>
-                </button>
-                <button onclick="apriSpazio('BOX')" class="p-6 rounded-[30px] bg-indigo-700 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
-                    <i class="fa-solid fa-car opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-xl z-10 uppercase">Box</span>
-                </button>
-            </nav>
+            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase tracking-widest">← Torna alla Home</button>
+            <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </div>
-
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase tracking-widest">← Torna alla Home</button>
-
-        <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
     </div>
 
-    <button onclick="document.getElementById('modal').classList.remove('hidden')" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
+    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
         <i class="fa-solid fa-plus"></i>
     </button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[60] flex items-end">
-        <div id="modalScroll" class="bg-white w-full rounded-t-[40px] p-6 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior-y: contain;">
+        <div id="modalScroll" class="bg-white w-full rounded-t-[40px] p-6 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain; touch-action: pan-y;">
             <div class="flex justify-between items-center sticky top-0 bg-white z-10 pb-4">
                 <h3 class="text-2xl font-black tracking-tighter uppercase text-gray-800">Nuovo Oggetto</h3>
                 <button onclick="chiudiModale()" class="bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">&times;</button>
@@ -173,7 +182,7 @@
             document.getElementById('homeNav').classList.add('hidden');
             document.getElementById('backBtn').classList.remove('hidden');
             aggiorna(); 
-            window.scrollTo({top: 0, behavior: 'smooth'}); 
+            document.getElementById('mainContainer').scrollTo({top: 0, behavior: 'smooth'}); 
         }
 
         function tornaHome() { 
@@ -184,6 +193,7 @@
             aggiorna(); 
         }
 
+        function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
 
         function salva() {
@@ -202,20 +212,15 @@
             
             const filtrati = db.filter(o => {
                 const matchesCat = (activeCat === 'TUTTI' || o.cat === activeCat);
-                const matchesSearch = (
-                    o.nome.toLowerCase().includes(query) || 
-                    o.pos.toLowerCase().includes(query) || 
-                    o.tags.some(t => t.toLowerCase().includes(query))
-                );
+                const matchesSearch = (o.nome.toLowerCase().includes(query) || o.pos.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query)));
                 return matchesCat && matchesSearch;
             });
 
             tit.innerText = activeCat === 'TUTTI' ? "IL CAVEAU" : activeCat;
             grid.innerHTML = '';
-            
             filtrati.reverse().forEach(o => {
                 grid.innerHTML += `
-                    <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative flex flex-col border border-gray-100 item-card">
+                    <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative flex flex-col border border-gray-100">
                         <img src="${o.foto[0] || 'https://via.placeholder.com/150?text=BOX'}" class="w-full h-32 object-cover">
                         <div class="absolute top-2 left-2 qty-badge">x${o.qty || 1}</div>
                         <div class="p-4">
@@ -278,23 +283,21 @@
             });
         }
 
-        // --- SOLUZIONE DEFINITIVA BUG SCROLL ---
-        const scrollElement = document.getElementById('modalScroll');
-        scrollElement.addEventListener('touchstart', (e) => {
-            if (scrollElement.scrollTop <= 0) {
-                scrollElement.scrollTop = 1; // Sposta di un pixel così non è mai "a zero"
-            } else if (scrollElement.scrollTop + scrollElement.offsetHeight >= scrollElement.scrollHeight) {
-                scrollElement.scrollTop = scrollElement.scrollHeight - scrollElement.offsetHeight - 1;
+        // BLOCO FISICO DEL REFRESH CON JAVASCRIPT
+        document.addEventListener('touchmove', function (e) {
+            // Se la modale è chiusa, permetti lo scorrimento solo dentro mainContainer
+            // Se la modale è aperta, blocca tutto tranne il contenuto della modale
+            const isModalOpen = !document.getElementById('modal').classList.contains('hidden');
+            if (isModalOpen) {
+                if (!e.target.closest('#modalScroll')) {
+                    e.preventDefault();
+                }
             }
-        });
-
-        // Blocca la propagazione così il body non sente il movimento
-        scrollElement.addEventListener('touchmove', (e) => {
-            e.stopPropagation();
-        }, {passive: false});
+        }, { passive: false });
 
         initTagEngine();
         aggiorna();
     </script>
 </body>
 </html>
+
