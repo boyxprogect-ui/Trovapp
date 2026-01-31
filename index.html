@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* BLOCCO TOTALE REFRESH ESTERNO */
         html, body { 
-            overscroll-behavior-y: contain !important; 
+            overscroll-behavior-y: none !important; 
             height: 100%;
             overflow: hidden; 
             position: fixed;
@@ -18,11 +19,17 @@
             background-color: #F2F2F7;
         }
         
+        /* AREA SCORREVOLE PRINCIPALE */
         #mainContainer {
             height: 100vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding-bottom: 120px;
+        }
+
+        /* MODALE: La rendiamo scorrevole in modo che non tocchi il bordo superiore */
+        #modalScroll {
+            overscroll-behavior-y: contain !important; /* Blocca il refresh dentro la modale */
         }
 
         .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 600; padding: 6px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; margin-bottom: 4px; }
@@ -56,14 +63,14 @@
             <div id="homeNav">
                 <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none mb-4">
                 <nav class="grid grid-cols-2 gap-3">
-                    <button onclick="apriSpazio('CANTINA')" class="p-8 rounded-[30px] bg-zinc-800 text-white font-black italic uppercase">Cantina</button>
-                    <button onclick="apriSpazio('SOFFITTA')" class="p-8 rounded-[30px] bg-amber-600 text-white font-black italic uppercase">Soffitta</button>
-                    <button onclick="apriSpazio('ARMADI')" class="p-8 rounded-[30px] bg-rose-600 text-white font-black italic uppercase">Armadi</button>
-                    <button onclick="apriSpazio('BOX')" class="p-8 rounded-[30px] bg-indigo-700 text-white font-black italic uppercase">Box</button>
+                    <button onclick="apriSpazio('CANTINA')" class="p-8 rounded-[30px] bg-zinc-800 text-white font-black italic uppercase shadow-md">Cantina</button>
+                    <button onclick="apriSpazio('SOFFITTA')" class="p-8 rounded-[30px] bg-amber-600 text-white font-black italic uppercase shadow-md">Soffitta</button>
+                    <button onclick="apriSpazio('ARMADI')" class="p-8 rounded-[30px] bg-rose-600 text-white font-black italic uppercase shadow-md">Armadi</button>
+                    <button onclick="apriSpazio('BOX')" class="p-8 rounded-[30px] bg-indigo-700 text-white font-black italic uppercase shadow-md">Box</button>
                 </nav>
             </div>
 
-            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black uppercase mb-4">← Home</button>
+            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black uppercase mb-4">← Torna alla Home</button>
             <div id="grid" class="grid grid-cols-2 gap-3"></div>
         </div>
     </div>
@@ -71,9 +78,9 @@
     <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">+</button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[60] flex items-end">
-        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-6 max-h-[92vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
+        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-6 max-h-[92vh] overflow-y-auto no-scrollbar">
             <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-4">
-                <h3 class="text-2xl font-black uppercase">Nuovo Oggetto</h3>
+                <h3 class="text-2xl font-black uppercase tracking-tighter">Nuovo Oggetto</h3>
                 <button onclick="chiudiModale()" class="text-3xl">&times;</button>
             </div>
 
@@ -106,7 +113,7 @@
 
                 <div id="tagEngine" class="space-y-4"></div>
 
-                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl shadow-lg uppercase italic">Salva</button>
+                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl shadow-lg uppercase italic">Aggiungi</button>
             </div>
         </div>
     </div>
@@ -116,10 +123,10 @@
             "🏠 CASA": ["Generico Casa", "Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Vasi", "Cuscini", "Tende"],
             "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Posate", "Pentole", "Mixer", "Bilance", "Contenitori"],
             "🧥 VESTITI": ["Generico Vestiti", "Giacche", "Camicie", "Maglioni", "Pantaloni", "Intimo", "Calze", "Sneakers"],
-            "👟 SCARPE": ["Generico Scarpe", "Sneakers", "Eleganti", "Stivali", "Ciabatte", "Sport"],
+            "👟 SCARPE": ["Generico Scarpe", "Sneakers", "Eleganti", "Stivali", "Ciabatte"],
             "🛠 OFFICINA": ["Generico Officina", "Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Pinze", "Seghetto"],
             "🔌 TECH": ["Generico Tech", "Cavi USB", "Alimentatori", "Powerbank", "Pile", "Monitor", "HD Esterni"],
-            "⚽️ SPORT": ["Generico Sport", "Calcio", "Fitness", "Bici", "Sci", "Outdoor"],
+            "⚽️ SPORT": ["Generico Sport", "Calcio", "Fitness", "Bici", "Sci"],
             "🔄 ALTRO": ["Generico Altro", "Regali", "Da Vendere", "Documenti", "Misteriosi"]
         };
 
@@ -157,7 +164,7 @@
             const grid = document.getElementById('grid');
             const tit = document.getElementById('titolo');
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
+            const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.pos.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             tit.innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
                 <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative border border-gray-100">
@@ -178,7 +185,6 @@
                     db = JSON.parse(e.target.result);
                     localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
                     aggiorna();
-                    alert("Backup caricato con successo!");
                 } catch(err) { alert("File non valido!"); }
             };
             reader.readAsText(event.target.files[0]);
