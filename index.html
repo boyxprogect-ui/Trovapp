@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Camera Fix</title>
+    <title>Trovapp Pro - Full Info</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,7 +29,7 @@
             gap: 10px;
             padding: 5px 0;
             -webkit-overflow-scrolling: touch;
-            min-height: 125px;
+            min-height: 135px; /* Aumentato leggermente per la riga extra */
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
@@ -54,14 +54,6 @@
             display: flex;
             align-items: center;
             gap: 4px;
-        }
-
-        #tagCloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            max-height: 60px;
-            overflow-y: auto;
         }
 
         .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
@@ -172,7 +164,7 @@
                     <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                     <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                 </select>
-                <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
+                <input id="pIn" type="text" placeholder="Dove? (es. Scatola 1)" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
             </div>
 
             <div class="bg-white p-3 rounded-2xl shadow-sm flex flex-col mb-4">
@@ -180,7 +172,7 @@
                     <input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-sm outline-none border border-gray-100" onkeypress="if(event.key==='Enter') aggiungiTag()">
                     <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
                 </div>
-                <div id="tagCloud" class="no-scrollbar"></div>
+                <div id="tagCloud" class="flex flex-wrap gap-1"></div>
             </div>
 
             <button onclick="salva()" class="btn-salva">Salva</button>
@@ -198,7 +190,7 @@
             reader.onload = (e) => {
                 try {
                     const caricati = JSON.parse(e.target.result);
-                    if (confirm("Vuoi sovrascrivere i dati attuali con questo backup?")) {
+                    if (confirm("Vuoi sovrascrivere i dati attuali?")) {
                         db = caricati;
                         localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
                         aggiorna();
@@ -242,13 +234,17 @@
             const topList = filtrati.slice(0, metà).reverse();
             const bottomList = filtrati.slice(metà).reverse();
 
+            // MODIFICA QUI: Aggiunta la categoria sotto il nome
             const renderCard = o => `
                 <div class="item-card">
                     <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-50">
                     <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
                     <div class="p-2">
                         <h4 class="font-black text-[8px] truncate uppercase italic text-gray-800">${o.nome}</h4>
-                        <p class="text-[6px] text-blue-600 font-bold uppercase">${o.pos || '-'}</p>
+                        <div class="flex flex-col">
+                            <span class="text-[6px] text-blue-600 font-black uppercase">${o.pos || 'Senza pos.'}</span>
+                            <span class="text-[5px] text-gray-400 font-bold uppercase tracking-tighter">${o.cat}</span>
+                        </div>
                     </div>
                     <button onclick="elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 font-black text-[8px]">×</button>
                 </div>`;
@@ -273,18 +269,12 @@
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const dl = document.createElement('a');
-            const ora = new Date();
-            const timestamp = ora.toISOString().split('T')[0] + "_" + ora.getHours() + "-" + ora.getMinutes();
-            const nomeFile = `TROVAPP_BACKUP_${timestamp}.json`;
+            const timestamp = new Date().toISOString().split('T')[0];
             dl.href = url;
-            dl.download = nomeFile;
+            dl.download = `TROVAPP_BACKUP_${timestamp}.json`;
             document.body.appendChild(dl);
             dl.click();
-            setTimeout(() => {
-                document.body.removeChild(dl);
-                window.URL.revokeObjectURL(url);
-                alert("Backup creato: " + nomeFile);
-            }, 100);
+            setTimeout(() => { document.body.removeChild(dl); window.URL.revokeObjectURL(url); }, 100);
         }
 
         function comprimeECarica() {
