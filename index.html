@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Custom</title>
+    <title>Trovapp Pro - Ultimate</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,8 +17,7 @@
         html, body { height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; background-color: #F2F2F7; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         #mainContainer { height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 6px 12px; border-radius: 12px; font-size: 11px; display: flex; items-center; gap: 6px; }
-        .tag-pill i { font-size: 10px; opacity: 0.7; }
+        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 6px 12px; border-radius: 12px; font-size: 11px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,122,255,0.2); }
         
         .modal-content {
             background: #F2F2F7;
@@ -26,13 +25,15 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: env(safe-area-inset-top, 10px) 20px 20px 20px;
+            padding: env(safe-area-inset-top, 10px) 15px 15px 15px;
         }
 
         .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 900; }
-        .modal-up { animation: slideUp 0.25s ease-out; }
+        .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        input, select { -webkit-appearance: none; appearance: none; }
     </style>
 </head>
 <body>
@@ -41,38 +42,38 @@
         <header class="flex justify-between items-start mb-6">
             <div>
                 <h1 id="titolo" class="text-3xl font-black tracking-tighter italic uppercase text-gray-900">TROVAPP</h1>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Custom Tags Edition</p>
+                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Smart Search System</p>
             </div>
-            <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
+            <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-2 rounded-xl font-bold shadow-sm uppercase active:scale-95 transition-all">💾 Backup</button>
         </header>
 
         <div id="homeNav" class="space-y-4">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border border-transparent focus:border-blue-500 font-medium">
+                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca tra gli oggetti..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border border-transparent focus:border-blue-500 font-medium text-sm">
             </div>
             
             <nav class="grid grid-cols-2 gap-3">
-                <button onclick="apriSpazio('CANTINA')" class="p-6 rounded-[30px] bg-zinc-800 text-white shadow-lg flex flex-col items-start gap-2 relative overflow-hidden active:scale-95 transition-transform">
+                <button onclick="apriSpazio('CANTINA')" class="p-5 rounded-[28px] bg-zinc-800 text-white shadow-lg flex flex-col items-start gap-1 relative overflow-hidden active:scale-95 transition-all">
                     <i class="fa-solid fa-glasses opacity-10 text-5xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-lg z-10 uppercase">Cantina</span>
+                    <span class="font-black italic text-md z-10 uppercase">Cantina</span>
                 </button>
-                <button onclick="apriSpazio('SOFFITTA')" class="p-6 rounded-[30px] bg-amber-600 text-white shadow-lg flex flex-col items-start gap-2 relative overflow-hidden active:scale-95 transition-transform">
+                <button onclick="apriSpazio('SOFFITTA')" class="p-5 rounded-[28px] bg-amber-600 text-white shadow-lg flex flex-col items-start gap-1 relative overflow-hidden active:scale-95 transition-all">
                     <i class="fa-solid fa-warehouse opacity-10 text-5xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-lg z-10 uppercase">Soffitta</span>
+                    <span class="font-black italic text-md z-10 uppercase">Soffitta</span>
                 </button>
-                <button onclick="apriSpazio('ARMADI')" class="p-6 rounded-[30px] bg-rose-600 text-white shadow-lg flex flex-col items-start gap-2 relative overflow-hidden active:scale-95 transition-transform">
+                <button onclick="apriSpazio('ARMADI')" class="p-5 rounded-[28px] bg-rose-600 text-white shadow-lg flex flex-col items-start gap-1 relative overflow-hidden active:scale-95 transition-all">
                     <i class="fa-solid fa-shirt opacity-10 text-5xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-lg z-10 uppercase">Armadi</span>
+                    <span class="font-black italic text-md z-10 uppercase">Armadi</span>
                 </button>
-                <button onclick="apriSpazio('BOX')" class="p-6 rounded-[30px] bg-indigo-700 text-white shadow-lg flex flex-col items-start gap-2 relative overflow-hidden active:scale-95 transition-transform">
+                <button onclick="apriSpazio('BOX')" class="p-5 rounded-[28px] bg-indigo-700 text-white shadow-lg flex flex-col items-start gap-1 relative overflow-hidden active:scale-95 transition-all">
                     <i class="fa-solid fa-car opacity-10 text-5xl absolute -right-2 -bottom-2"></i>
-                    <span class="font-black italic text-lg z-10 uppercase">Box</span>
+                    <span class="font-black italic text-md z-10 uppercase">Box</span>
                 </button>
             </nav>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase">← Home</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase">← Torna alla Home</button>
         <div id="grid" class="grid grid-cols-2 gap-4 mt-4"></div>
     </div>
 
@@ -82,49 +83,61 @@
 
     <div id="modal" class="hidden fixed inset-0 z-[60]">
         <div class="modal-content modal-up">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-black italic uppercase tracking-tighter">Nuovo Oggetto</h3>
-                <button onclick="chiudiModale()" class="text-4xl font-light p-2 text-gray-400">&times;</button>
+            
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-black italic uppercase tracking-tighter text-gray-800">Crea Scheda</h3>
+                <button onclick="chiudiModale()" class="text-3xl font-light p-2 text-gray-400">&times;</button>
             </div>
 
-            <div class="flex gap-4 mb-4">
-                <label class="w-24 h-24 shrink-0 bg-white border-2 border-dashed border-blue-400 rounded-3xl flex items-center justify-center text-blue-600 shadow-sm active:scale-95 transition-transform">
-                    <i class="fa-solid fa-camera text-3xl"></i>
-                    <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
-                </label>
-                <div id="gallery" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
-                <div class="flex-1 flex flex-col gap-2">
-                    <input id="nIn" type="text" placeholder="Nome (es. Trapano)" class="w-full p-4 bg-white rounded-2xl text-base font-bold outline-none border border-gray-100 shadow-sm">
-                    <input id="pIn" type="text" placeholder="Posizione (es. Scaffale A)" class="w-full p-4 bg-white rounded-2xl text-sm outline-none border border-gray-100 shadow-sm">
+            <div class="bg-white p-3 rounded-3xl shadow-sm border border-gray-100 mb-3">
+                <div class="flex gap-3">
+                    <label class="w-20 h-20 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl flex flex-col items-center justify-center text-blue-600 active:scale-95 transition-all">
+                        <i class="fa-solid fa-camera text-xl mb-1"></i>
+                        <span class="text-[8px] font-black uppercase">Foto</span>
+                        <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
+                    </label>
+                    <div id="gallery" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
+                    <div class="flex-1">
+                        <input id="nIn" type="text" placeholder="Cosa salvi?" class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none border border-transparent focus:border-blue-300 mb-2">
+                        <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-3 py-2 shadow-md">
+                            <span class="text-[9px] font-black italic uppercase opacity-70">Quantità</span>
+                            <div class="flex gap-4 items-center">
+                                <button onclick="changeQty(-1)" class="text-lg font-bold w-6">-</button>
+                                <span id="qtyVal" class="text-sm font-black w-4 text-center">1</span>
+                                <button onclick="changeQty(1)" class="text-lg font-bold w-6 text-blue-400">+</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-5 gap-3 mb-6">
-                <select id="cIn" class="col-span-3 p-4 bg-white rounded-2xl text-sm font-bold border border-gray-100 shadow-sm appearance-none">
-                    <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
-                    <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
-                </select>
-                <div class="col-span-2 bg-zinc-900 text-white rounded-2xl flex items-center justify-between px-4 shadow-lg">
-                    <span class="text-xs font-black italic">QTY: <span id="qtyVal" class="text-lg">1</span></span>
-                    <div class="flex gap-3">
-                        <button onclick="changeQty(-1)" class="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center font-bold">-</button>
-                        <button onclick="changeQty(1)" class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center font-bold">+</button>
-                    </div>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
+                    <label class="text-[8px] font-black uppercase text-gray-400 block mb-1">Ambiente</label>
+                    <select id="cIn" class="w-full bg-transparent text-xs font-bold outline-none border-none">
+                        <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
+                        <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
+                    </select>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
+                    <label class="text-[8px] font-black uppercase text-gray-400 block mb-1">Posizione</label>
+                    <input id="pIn" type="text" placeholder="Scaffale/Sacca..." class="w-full bg-transparent text-xs font-bold outline-none">
                 </div>
             </div>
 
             <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex-1 flex flex-col overflow-hidden">
-                <label class="text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">Tag Personalizzati</label>
-                <div class="flex gap-2 mb-3">
-                    <input id="tagInput" type="text" placeholder="Esempio: pupazzo rosa..." class="flex-1 bg-gray-50 p-3 rounded-xl text-sm outline-none font-medium border border-transparent focus:border-blue-300" onkeypress="if(event.key==='Enter') aggiungiTag()">
-                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-12 h-11 rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-plus"></i></button>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-[9px] font-black uppercase text-blue-600 tracking-widest">Tag Personalizzati</label>
                 </div>
-                <div id="tagCloud" class="flex flex-wrap gap-2 overflow-y-auto no-scrollbar pb-4">
-                    </div>
+                <div class="flex gap-2 mb-3">
+                    <input id="tagInput" type="text" placeholder="Es: trapano, pupazzo rosa..." class="flex-1 bg-gray-50 p-3 rounded-xl text-sm outline-none font-medium border border-transparent focus:border-blue-200" onkeypress="if(event.key==='Enter') aggiungiTag()">
+                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-12 h-11 rounded-xl flex items-center justify-center text-xl shadow-lg active:scale-90"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <div id="tagCloud" class="flex flex-wrap gap-2 overflow-y-auto no-scrollbar pb-4"></div>
             </div>
 
-            <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[25px] font-black text-xl italic uppercase mt-6 shadow-xl active:bg-blue-700 active:scale-95 transition-all">
-                Salva in TROVAPP
+            <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[28px] font-black text-xl italic uppercase mt-4 shadow-xl active:bg-blue-700 active:translate-y-1 transition-all">
+                Salva Oggetto
             </button>
         </div>
     </div>
@@ -134,7 +147,7 @@
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [];
 
         function aggiungiTag() {
-            const val = document.getElementById('tagInput').value.trim();
+            const val = document.getElementById('tagInput').value.trim().toLowerCase();
             if(val && !currentTags.includes(val)) {
                 currentTags.push(val);
                 document.getElementById('tagInput').value = "";
@@ -149,11 +162,7 @@
 
         function renderTags() {
             const cloud = document.getElementById('tagCloud');
-            cloud.innerHTML = currentTags.map(t => `
-                <div onclick="rimuoviTag('${t}')" class="tag-pill active:scale-90 transition-transform">
-                    ${t} <i class="fa-solid fa-xmark"></i>
-                </div>
-            `).join('');
+            cloud.innerHTML = currentTags.map(t => `<div onclick="rimuoviTag('${t}')" class="tag-pill active:scale-90 transition-transform">${t} <i class="fa-solid fa-xmark ml-1 opacity-50"></i></div>`).join('');
         }
 
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
@@ -164,7 +173,7 @@
 
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Manca il nome!");
+            if(!nome) return alert("Inserisci almeno il nome!");
             db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [...currentTags], qty: tempQty });
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
             chiudiModale(); aggiorna();
@@ -176,33 +185,23 @@
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm relative border border-gray-100">
-                    <img src="${o.foto[0] || ''}" class="w-full h-36 object-cover bg-gray-50">
+                <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative border border-gray-100">
+                    <img src="${o.foto[0] || ''}" class="w-full h-40 object-cover bg-gray-50">
                     <div class="absolute top-3 left-3 qty-badge">x${o.qty}</div>
                     <div class="p-4">
                         <h4 class="font-black text-xs truncate uppercase italic mb-1 text-gray-800">${o.nome}</h4>
-                        <div class="flex flex-wrap gap-1 mb-1">
-                            ${o.tags.slice(0, 2).map(t => `<span class="text-[7px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md font-bold uppercase">${t}</span>`).join('')}
-                            ${o.tags.length > 2 ? `<span class="text-[7px] text-gray-400 font-bold">+${o.tags.length - 2}</span>` : ''}
-                        </div>
-                        <p class="text-[9px] text-blue-600 font-bold uppercase tracking-tight">${o.pos || 'Senza Posizione'}</p>
+                        <p class="text-[9px] text-blue-600 font-bold uppercase tracking-tight">${o.pos || '---'}</p>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-3 right-3 bg-white/90 w-7 h-7 rounded-full text-red-500 font-bold shadow-sm flex items-center justify-center active:bg-red-500 active:text-white transition-colors">×</button>
+                    <button onclick="elimina(${o.id})" class="absolute top-3 right-3 bg-white/90 w-7 h-7 rounded-full text-red-500 font-bold shadow-sm flex items-center justify-center active:scale-75 transition-transform">×</button>
                 </div>`).join('');
         }
 
-        function elimina(id) { if(confirm('Eliminare definitivamente questo oggetto?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
+        function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
         
         function resetModale() { 
-            document.getElementById('nIn').value = ""; 
-            document.getElementById('pIn').value = ""; 
-            document.getElementById('tagInput').value = "";
-            tempPhotos = []; 
-            tempQty = 1; 
-            currentTags = [];
-            document.getElementById('qtyVal').innerText = "1"; 
-            document.getElementById('gallery').innerHTML = ""; 
-            document.getElementById('tagCloud').innerHTML = "";
+            document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; document.getElementById('tagInput').value = "";
+            tempPhotos = []; tempQty = 1; currentTags = [];
+            document.getElementById('qtyVal').innerText = "1"; document.getElementById('gallery').innerHTML = ""; document.getElementById('tagCloud').innerHTML = "";
         }
 
         function esportaDati() {
@@ -221,12 +220,11 @@
                     canvas.width = img.width * scale; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.8));
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-24 h-24 object-cover rounded-2xl shadow-md border-2 border-white">`).join('');
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-20 h-20 object-cover rounded-2xl shadow-md border-2 border-white">`).join('');
                 };
             };
             reader.readAsDataURL(file);
         }
-
         aggiorna();
     </script>
 </body>
