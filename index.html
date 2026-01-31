@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Dual Row & Backup Fix</title>
+    <title>Trovapp Pro - Backup & Restore</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,7 +29,7 @@
             gap: 10px;
             padding: 5px 0;
             -webkit-overflow-scrolling: touch;
-            min-height: 130px;
+            min-height: 125px;
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
@@ -43,22 +43,28 @@
             position: relative;
         }
 
-        /* STILE PULSANTE BACKUP RIPRISTINATO */
-        .btn-backup {
+        .btn-action {
             background: #1c1c1e;
             color: white;
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 8px;
             font-weight: 800;
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            gap: 4px;
         }
 
-        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 4px 8px; border-radius: 8px; font-size: 10px; display: flex; align-items: center; gap: 4px; }
+        #tagCloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
         .modal-content { background: #F2F2F7; width: 100%; height: 100%; display: flex; flex-direction: column; padding: env(safe-area-inset-top, 10px) 15px 15px 15px; }
         .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 1px 5px; border-radius: 6px; font-size: 9px; font-weight: 900; }
         .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -73,9 +79,15 @@
                 <h1 id="titolo" class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
                 <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Cloud Sync Mode</p>
             </div>
-            <button onclick="esportaDati()" class="btn-backup active:scale-90 transition-transform">
-                <i class="fa-solid fa-cloud-arrow-down"></i> Backup
-            </button>
+            <div class="flex gap-2">
+                <label class="btn-action bg-blue-600 cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Carica
+                    <input type="file" id="importFile" class="hidden" accept=".json" onchange="importaDati(event)">
+                </label>
+                <button onclick="esportaDati()" class="btn-action">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Backup
+                </button>
+            </div>
         </header>
 
         <div id="homeNav" class="space-y-4">
@@ -102,13 +114,13 @@
 
         <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-3 rounded-2xl font-black italic mb-2 uppercase">← Torna alla Home</button>
         
-        <div class="mt-6 flex flex-col gap-4">
+        <div class="mt-4 flex flex-col gap-2">
             <div id="gridTop" class="scroll-row no-scrollbar"></div>
             <div id="gridBottom" class="scroll-row no-scrollbar"></div>
         </div>
     </div>
 
-    <button onclick="apriModale()" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl z-50 text-3xl flex items-center justify-center active:scale-90">
+    <button onclick="apriModale()" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl z-50 text-3xl flex items-center justify-center active:scale-90">
         <i class="fa-solid fa-plus"></i>
     </button>
 
@@ -118,39 +130,42 @@
                 <h3 class="text-xl font-black italic uppercase">Nuova Scheda</h3>
                 <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
             </div>
-            <div class="bg-white p-3 rounded-2xl mb-3 flex gap-3">
+
+            <div class="bg-white p-3 rounded-2xl mb-3 flex gap-3 items-center">
                 <label class="w-16 h-16 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
-                <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
-                <div class="flex-1">
-                    <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-2 bg-gray-50 rounded-lg text-xs font-bold outline-none mb-1">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-lg px-2 py-1">
-                        <span class="text-[8px] font-black uppercase">QTY</span>
-                        <div class="flex gap-3 items-center">
-                            <button onclick="changeQty(-1)" class="font-bold">-</button>
-                            <span id="qtyVal" class="text-xs font-black">1</span>
-                            <button onclick="changeQty(1)" class="text-blue-400 font-bold">+</button>
+                <div class="flex-1 space-y-2">
+                    <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-2 bg-gray-50 rounded-lg text-sm font-bold outline-none border border-gray-100">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-lg px-3 py-2">
+                        <span class="text-[10px] font-black">QTY</span>
+                        <div class="flex gap-4 items-center">
+                            <button onclick="changeQty(-1)" class="font-bold text-lg">-</button>
+                            <span id="qtyVal" class="text-sm font-black">1</span>
+                            <button onclick="changeQty(1)" class="text-blue-400 font-bold text-lg">+</button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="grid grid-cols-2 gap-2 mb-3">
-                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold">
+                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm border border-gray-50">
                     <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                     <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                 </select>
-                <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none">
+                <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
             </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden">
-                <div class="flex gap-2 mb-3">
-                    <input id="tagInput" type="text" placeholder="Aggiungi Tag..." class="flex-1 bg-gray-50 p-3 rounded-xl text-sm outline-none" onkeypress="if(event.key==='Enter') aggiungiTag()">
-                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-10 rounded-xl"><i class="fa-solid fa-plus"></i></button>
+
+            <div class="bg-white p-3 rounded-2xl shadow-sm flex flex-col mb-4">
+                <div class="flex gap-2 mb-2">
+                    <input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-sm outline-none border border-gray-100" onkeypress="if(event.key==='Enter') aggiungiTag()">
+                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
                 </div>
-                <div id="tagCloud" class="flex flex-wrap gap-2 overflow-y-auto pb-4"></div>
+                <div id="tagCloud" class="no-scrollbar"></div>
             </div>
-            <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-xl italic uppercase mt-4 shadow-xl">Salva</button>
+
+            <button onclick="salva()" class="w-full bg-blue-600 text-white py-4 rounded-3xl font-black text-xl italic uppercase mt-auto shadow-xl">Salva</button>
         </div>
     </div>
 
@@ -158,6 +173,26 @@
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [];
 
+        // FUNZIONE IMPORTA BACKUP
+        function importaDati(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const caricati = JSON.parse(e.target.result);
+                    if (confirm("Vuoi sovrascrivere i dati attuali con questo backup?")) {
+                        db = caricati;
+                        localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                        aggiorna();
+                        alert("Backup caricato con successo!");
+                    }
+                } catch (err) { alert("Errore nel file di backup!"); }
+            };
+            reader.readAsText(file);
+        }
+
+        // Restanti funzioni script uguali a prima...
         function aggiungiTag() {
             const val = document.getElementById('tagInput').value.trim().toLowerCase();
             if(val && !currentTags.includes(val)) { currentTags.push(val); document.getElementById('tagInput').value = ""; renderTags(); }
@@ -187,7 +222,6 @@
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             
             document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
-
             const metà = Math.ceil(filtrati.length / 2);
             const topList = filtrati.slice(0, metà).reverse();
             const bottomList = filtrati.slice(metà).reverse();
@@ -211,7 +245,7 @@
         function resetModale() { 
             document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; document.getElementById('tagInput').value = "";
             tempPhotos = []; tempQty = 1; currentTags = [];
-            document.getElementById('qtyVal').innerText = "1"; document.getElementById('gallery').innerHTML = ""; document.getElementById('tagCloud').innerHTML = "";
+            document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = "";
         }
 
         function esportaDati() {
@@ -231,7 +265,6 @@
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.5));
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-12 h-12 object-cover rounded-lg shadow-sm">`).join('');
                 };
             };
             reader.readAsDataURL(document.getElementById('fIn').files[0]);
