@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* BLOCCO TOTALE REFRESH ESTERNO */
         html, body { 
             overscroll-behavior-y: none !important; 
             height: 100%;
@@ -19,7 +18,6 @@
             background-color: #F2F2F7;
         }
         
-        /* AREA SCORREVOLE PRINCIPALE */
         #mainContainer {
             height: 100vh;
             overflow-y: auto;
@@ -27,18 +25,45 @@
             padding-bottom: 120px;
         }
 
-        /* MODALE: La rendiamo scorrevole in modo che non tocchi il bordo superiore */
-        #modalScroll {
-            overscroll-behavior-y: contain !important; /* Blocca il refresh dentro la modale */
+        /* BOTTONI CON IMMAGINI */
+        .nav-btn {
+            position: relative;
+            height: 140px;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .nav-btn:active { transform: scale(0.95); }
+        .nav-btn img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-cover: cover;
+            filter: brightness(0.6);
+        }
+        .nav-btn span {
+            position: relative;
+            z-index: 10;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: -1px;
         }
 
-        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 600; padding: 6px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; margin-bottom: 4px; }
+        /* TAG LATERALI */
+        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 600; padding: 8px 16px; border-radius: 12px; font-size: 12px; white-space: nowrap; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; }
+        .tag-row { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; }
+        .tag-row::-webkit-scrollbar { display: none; }
         
-        .cat-box { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid #E5E7EB; }
-        .cat-label { font-size: 10px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; opacity: 0.5; }
-        
-        .qty-badge { background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
+        .cat-label { font-size: 10px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 6px; opacity: 0.4; }
+        .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -48,12 +73,12 @@
         <div class="max-w-xl mx-auto space-y-4">
             <header class="flex justify-between items-start py-4">
                 <div>
-                    <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase">TROVAPP</h1>
+                    <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase italic">TROVAPP</h1>
                     <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Smart Search & Backup</p>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
-                    <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase cursor-pointer text-center">
+                    <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold uppercase shadow-sm">💾 Backup</button>
+                    <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold uppercase shadow-sm cursor-pointer text-center">
                         📂 Carica
                         <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
                     </label>
@@ -61,26 +86,39 @@
             </header>
 
             <div id="homeNav">
-                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none mb-4">
+                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca tutto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none border-none mb-4 font-medium">
+                
                 <nav class="grid grid-cols-2 gap-3">
-                    <button onclick="apriSpazio('CANTINA')" class="p-8 rounded-[30px] bg-zinc-800 text-white font-black italic uppercase shadow-md">Cantina</button>
-                    <button onclick="apriSpazio('SOFFITTA')" class="p-8 rounded-[30px] bg-amber-600 text-white font-black italic uppercase shadow-md">Soffitta</button>
-                    <button onclick="apriSpazio('ARMADI')" class="p-8 rounded-[30px] bg-rose-600 text-white font-black italic uppercase shadow-md">Armadi</button>
-                    <button onclick="apriSpazio('BOX')" class="p-8 rounded-[30px] bg-indigo-700 text-white font-black italic uppercase shadow-md">Box</button>
+                    <button onclick="apriSpazio('CANTINA')" class="nav-btn">
+                        <img src="https://images.unsplash.com/photo-1513161455079-7dc1de15ef3e?auto=format&fit=crop&w=300" alt="Cantina">
+                        <span>Cantina</span>
+                    </button>
+                    <button onclick="apriSpazio('SOFFITTA')" class="nav-btn">
+                        <img src="https://images.unsplash.com/photo-1597201648445-9a6217570987?auto=format&fit=crop&w=300" alt="Soffitta">
+                        <span>Soffitta</span>
+                    </button>
+                    <button onclick="apriSpazio('ARMADI')" class="nav-btn">
+                        <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=300" alt="Armadi">
+                        <span>Armadi</span>
+                    </button>
+                    <button onclick="apriSpazio('BOX')" class="nav-btn">
+                        <img src="https://images.unsplash.com/photo-1553024520-21394b9015ba?auto=format&fit=crop&w=300" alt="Box">
+                        <span>Box</span>
+                    </button>
                 </nav>
             </div>
 
-            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black uppercase mb-4">← Torna alla Home</button>
+            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black uppercase italic shadow-md">← Torna alla Home</button>
             <div id="grid" class="grid grid-cols-2 gap-3"></div>
         </div>
     </div>
 
-    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">+</button>
+    <button onclick="apriModale()" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">+</button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-[60] flex items-end">
         <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-6 max-h-[92vh] overflow-y-auto no-scrollbar">
             <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-4">
-                <h3 class="text-2xl font-black uppercase tracking-tighter">Nuovo Oggetto</h3>
+                <h3 class="text-2xl font-black uppercase italic tracking-tighter">Nuovo Oggetto</h3>
                 <button onclick="chiudiModale()" class="text-3xl">&times;</button>
             </div>
 
@@ -103,7 +141,7 @@
                     <input id="pIn" type="text" placeholder="Posizione" class="p-4 bg-white rounded-2xl outline-none shadow-sm">
                 </div>
 
-                <div class="bg-zinc-900 text-white p-5 rounded-[28px] flex items-center justify-between shadow-lg">
+                <div class="bg-zinc-900 text-white p-5 rounded-[28px] flex items-center justify-between shadow-xl">
                     <div class="flex flex-col"><span class="text-[10px] font-bold opacity-50 uppercase">Quantità</span><span id="qtyVal" class="text-3xl font-black italic">1</span></div>
                     <div class="flex gap-3">
                         <button onclick="changeQty(-1)" class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center font-bold text-xl">-</button>
@@ -120,14 +158,12 @@
 
     <script>
         const CATEGORIE = {
-            "🏠 CASA": ["Generico Casa", "Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Vasi", "Cuscini", "Tende"],
-            "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Posate", "Pentole", "Mixer", "Bilance", "Contenitori"],
-            "🧥 VESTITI": ["Generico Vestiti", "Giacche", "Camicie", "Maglioni", "Pantaloni", "Intimo", "Calze", "Sneakers"],
-            "👟 SCARPE": ["Generico Scarpe", "Sneakers", "Eleganti", "Stivali", "Ciabatte"],
-            "🛠 OFFICINA": ["Generico Officina", "Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Pinze", "Seghetto"],
-            "🔌 TECH": ["Generico Tech", "Cavi USB", "Alimentatori", "Powerbank", "Pile", "Monitor", "HD Esterni"],
-            "⚽️ SPORT": ["Generico Sport", "Calcio", "Fitness", "Bici", "Sci"],
-            "🔄 ALTRO": ["Generico Altro", "Regali", "Da Vendere", "Documenti", "Misteriosi"]
+            "🏠 CASA": ["Generico Casa", "Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Vasi", "Cuscini"],
+            "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Posate", "Pentole", "Mixer", "Bilance"],
+            "🧥 VESTITI": ["Generico Vestiti", "Giacche", "Camicie", "Maglioni", "Pantaloni", "Intimo", "Scarpe"],
+            "🛠 OFFICINA": ["Generico Officina", "Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Pinze"],
+            "🔌 TECH": ["Generico Tech", "Cavi USB", "Alimentatori", "Powerbank", "Pile", "Monitor"],
+            "⚽️ SPORT": ["Generico Sport", "Calcio", "Fitness", "Bici", "Sci", "Outdoor"]
         };
 
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -138,9 +174,9 @@
             container.innerHTML = "";
             for (const [cat, tags] of Object.entries(CATEGORIE)) {
                 container.innerHTML += `
-                    <div class="cat-box">
+                    <div>
                         <div class="cat-label">${cat}</div>
-                        <div class="flex flex-wrap gap-2">${tags.map(t => `<span onclick="this.classList.toggle('active')" class="tag-pill">${t}</span>`).join('')}</div>
+                        <div class="tag-row no-scrollbar">${tags.map(t => `<span onclick="this.classList.toggle('active')" class="tag-pill">${t}</span>`).join('')}</div>
                     </div>`;
             }
         }
@@ -153,7 +189,7 @@
 
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Inserisci un nome!");
+            if(!nome) return alert("Manca il nome!");
             const tags = Array.from(document.querySelectorAll('.tag-pill.active')).map(t => t.innerText);
             db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, tags, qty: tempQty, foto: [...tempPhotos] });
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
@@ -185,7 +221,7 @@
                     db = JSON.parse(e.target.result);
                     localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
                     aggiorna();
-                } catch(err) { alert("File non valido!"); }
+                } catch(err) { alert("Errore file!"); }
             };
             reader.readAsText(event.target.files[0]);
         }
