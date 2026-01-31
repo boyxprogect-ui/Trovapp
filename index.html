@@ -15,12 +15,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        html, body { overscroll-behavior-y: none !important; height: 100%; overflow: hidden; position: fixed; width: 100%; }
-        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; }
-        #mainContainer { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        /* Base e prevenzione pull-to-refresh */
+        html, body { 
+            overscroll-behavior-y: contain; 
+            height: 100%; 
+            margin: 0; 
+            padding: 0;
+            background-color: #F2F2F7;
+        }
 
-        /* TAG ULTRA COMPATTI */
-        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 10px; white-space: nowrap; display: inline-block; }
+        #mainContainer {
+            height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Tag ultra compatti con scroll laterale */
+        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 10px; white-space: nowrap; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; }
         
         .tag-row { display: flex; gap: 4px; overflow-x: auto; padding: 2px 0; -webkit-overflow-scrolling: touch; }
@@ -29,9 +40,11 @@
         .cat-box { background: white; border-radius: 14px; padding: 6px 10px; margin-bottom: 4px; border: 1px solid #F3F4F6; }
         .cat-label { font-size: 8px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 2px; opacity: 0.4; }
         
-        .qty-badge { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
-        .modal-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Modale */
+        .modal-up { animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .qty-badge { background: rgba(0,0,0,0.7); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -44,7 +57,7 @@
                     <h1 id="titolo" class="text-4xl font-extrabold tracking-tighter text-gray-900 uppercase italic">TROVAPP</h1>
                     <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Smart Search & Backup</p>
                 </div>
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 text-right">
                     <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
                     <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase cursor-pointer text-center">
                         📂 Carica <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
@@ -58,7 +71,7 @@
                     <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 font-medium">
                 </div>
 
-                <nav id="catMenu" class="grid grid-cols-2 gap-2">
+                <nav class="grid grid-cols-2 gap-2">
                     <button onclick="apriSpazio('CANTINA')" class="p-6 rounded-[30px] bg-zinc-800 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
                         <i class="fa-solid fa-glasses opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
                         <span class="font-black italic text-xl z-10 uppercase">Cantina</span>
@@ -87,14 +100,15 @@
         <i class="fa-solid fa-plus"></i>
     </button>
 
-    <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[60] flex items-end">
-        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-4 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
-            <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-2">
-                <h3 class="text-xl font-black uppercase italic text-gray-800 tracking-tighter">Nuovo Oggetto</h3>
+    <div id="modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-end">
+        <div class="bg-[#F2F2F7] w-full rounded-t-[30px] modal-up flex flex-col max-h-[92vh]">
+            
+            <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                <h3 class="text-xl font-black uppercase italic text-gray-800">Nuovo Oggetto</h3>
                 <button onclick="chiudiModale()" class="bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold">&times;</button>
             </div>
 
-            <div class="space-y-3 pb-16">
+            <div id="modalBody" class="overflow-y-auto p-4 space-y-3 pb-24">
                 <div class="flex gap-2 overflow-x-auto no-scrollbar">
                     <label class="shrink-0 w-20 h-20 bg-white border-2 border-dashed border-blue-200 rounded-[20px] flex items-center justify-center text-blue-600 cursor-pointer shadow-sm">
                         <i class="fa-solid fa-camera text-xl"></i>
@@ -106,7 +120,7 @@
                 <input id="nIn" type="text" placeholder="Nome oggetto" class="w-full p-3 bg-white rounded-xl outline-none font-bold shadow-sm text-sm">
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="cIn" class="p-3 bg-white rounded-xl font-bold shadow-sm appearance-none text-sm">
+                    <select id="cIn" class="p-3 bg-white rounded-xl font-bold shadow-sm text-sm">
                         <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                         <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                     </select>
@@ -123,7 +137,7 @@
 
                 <div id="tagEngine" class="space-y-1"></div>
 
-                <button onclick="salva()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg shadow-lg uppercase italic tracking-tighter">Salva in TROVAPP</button>
+                <button onclick="salva()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg shadow-lg uppercase italic">Salva in TROVAPP</button>
             </div>
         </div>
     </div>
@@ -149,18 +163,18 @@
             for (const [cat, tags] of Object.entries(CATEGORIE)) {
                 const section = document.createElement('div');
                 section.className = "cat-box";
-                section.innerHTML = `
-                    <div class="cat-label">${cat}</div>
-                    <div class="tag-row">
-                        ${tags.map(t => `<span onclick="tg(this)" class="tag-pill">${t}</span>`).join('')}
-                    </div>`;
+                section.innerHTML = `<div class="cat-label">${cat}</div><div class="tag-row no-scrollbar">${tags.map(t => `<span onclick="tg(this)" class="tag-pill">${t}</span>`).join('')}</div>`;
                 container.appendChild(section);
             }
         }
 
         function tg(el) { el.classList.toggle('active'); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
+        
+        function apriModale() { 
+            document.getElementById('modal').classList.remove('hidden'); 
+            document.getElementById('modalBody').scrollTop = 0; // Forza il ritorno in alto
+        }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
 
         function apriSpazio(c) { 
@@ -192,9 +206,9 @@
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
-                <div class="bg-white rounded-[25px] overflow-hidden shadow-sm relative border border-gray-100">
+                <div class="bg-white rounded-[20px] overflow-hidden shadow-sm relative border border-gray-100">
                     <img src="${o.foto[0] || ''}" class="w-full h-32 object-cover bg-gray-50">
-                    <div class="qty-badge">x${o.qty}</div>
+                    <div class="absolute top-2 left-2 qty-badge">x${o.qty}</div>
                     <div class="p-3">
                         <h4 class="font-black text-[10px] truncate uppercase italic">${o.nome}</h4>
                         <p class="text-[8px] text-blue-600 font-bold truncate uppercase">${o.pos || '---'}</p>
