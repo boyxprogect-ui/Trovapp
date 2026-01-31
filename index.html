@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Backup & Restore</title>
+    <title>Trovapp Pro - Bug Fix</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -66,6 +66,23 @@
 
         .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
         .modal-content { background: #F2F2F7; width: 100%; height: 100%; display: flex; flex-direction: column; padding: env(safe-area-inset-top, 10px) 15px 15px 15px; }
+        
+        /* FIX PULSANTE SALVA PIÙ ALTO */
+        .btn-salva {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            padding: 16px;
+            border-radius: 24px;
+            font-weight: 900;
+            font-size: 20px;
+            font-style: italic;
+            text-transform: uppercase;
+            margin-top: auto;
+            margin-bottom: 20px; /* Alza il pulsante dal fondo */
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+        }
+
         .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 1px 5px; border-radius: 6px; font-size: 9px; font-weight: 900; }
         .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -136,6 +153,8 @@
                     <i class="fa-solid fa-camera"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
+                <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
+                
                 <div class="flex-1 space-y-2">
                     <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-2 bg-gray-50 rounded-lg text-sm font-bold outline-none border border-gray-100">
                     <div class="flex items-center justify-between bg-zinc-900 text-white rounded-lg px-3 py-2">
@@ -165,7 +184,7 @@
                 <div id="tagCloud" class="no-scrollbar"></div>
             </div>
 
-            <button onclick="salva()" class="w-full bg-blue-600 text-white py-4 rounded-3xl font-black text-xl italic uppercase mt-auto shadow-xl">Salva</button>
+            <button onclick="salva()" class="btn-salva">Salva</button>
         </div>
     </div>
 
@@ -173,7 +192,6 @@
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [];
 
-        // FUNZIONE IMPORTA BACKUP
         function importaDati(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -185,14 +203,13 @@
                         db = caricati;
                         localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
                         aggiorna();
-                        alert("Backup caricato con successo!");
+                        alert("Backup caricato!");
                     }
-                } catch (err) { alert("Errore nel file di backup!"); }
+                } catch (err) { alert("Errore file!"); }
             };
             reader.readAsText(file);
         }
 
-        // Restanti funzioni script uguali a prima...
         function aggiungiTag() {
             const val = document.getElementById('tagInput').value.trim().toLowerCase();
             if(val && !currentTags.includes(val)) { currentTags.push(val); document.getElementById('tagInput').value = ""; renderTags(); }
@@ -242,10 +259,17 @@
         }
 
         function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
+        
         function resetModale() { 
-            document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; document.getElementById('tagInput').value = "";
-            tempPhotos = []; tempQty = 1; currentTags = [];
-            document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = "";
+            document.getElementById('nIn').value = ""; 
+            document.getElementById('pIn').value = ""; 
+            document.getElementById('tagInput').value = "";
+            document.getElementById('gallery').innerHTML = ""; /* Svuota le foto caricate */
+            tempPhotos = []; 
+            tempQty = 1; 
+            currentTags = [];
+            document.getElementById('qtyVal').innerText = "1"; 
+            document.getElementById('tagCloud').innerHTML = "";
         }
 
         function esportaDati() {
@@ -255,6 +279,8 @@
         }
 
         function comprimeECarica() {
+            const file = document.getElementById('fIn').files[0];
+            if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image(); img.src = e.target.result;
@@ -264,10 +290,16 @@
                     if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } }
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    tempPhotos.push(canvas.toDataURL('image/jpeg', 0.5));
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+                    tempPhotos.push(dataUrl);
+                    
+                    /* AGGIORNAMENTO GALLERY VISIVA NELLA MODALE */
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `
+                        <img src="${f}" class="w-16 h-16 object-cover rounded-lg border border-blue-200">
+                    `).join('');
                 };
             };
-            reader.readAsDataURL(document.getElementById('fIn').files[0]);
+            reader.readAsDataURL(file);
         }
         aggiorna();
     </script>
