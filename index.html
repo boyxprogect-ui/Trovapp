@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Smart Backup</title>
+    <title>Trovapp Pro - Final Adjustments</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -78,7 +78,8 @@
             font-style: italic;
             text-transform: uppercase;
             margin-top: auto;
-            margin-bottom: 20px;
+            /* ULTERIORE RIALZO PULSANTE SALVA */
+            margin-bottom: 50px; 
             box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
         }
 
@@ -268,27 +269,22 @@
             document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = "";
         }
 
-        // --- FUNZIONE BACKUP CON NOME INTELLIGENTE ---
         function esportaDati() {
             const dataStr = JSON.stringify(db, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const dl = document.createElement('a');
-            
-            // Crea un nome file con data e ora: TROVAPP_BACKUP_2026-01-31_12-00.json
             const ora = new Date();
             const timestamp = ora.toISOString().split('T')[0] + "_" + ora.getHours() + "-" + ora.getMinutes();
             const nomeFile = `TROVAPP_BACKUP_${timestamp}.json`;
-
             dl.href = url;
             dl.download = nomeFile;
             document.body.appendChild(dl);
             dl.click();
-            
             setTimeout(() => {
                 document.body.removeChild(dl);
                 window.URL.revokeObjectURL(url);
-                alert("Backup creato: " + nomeFile + "\nLo trovi nella cartella Download.");
+                alert("Backup creato: " + nomeFile);
             }, 100);
         }
 
