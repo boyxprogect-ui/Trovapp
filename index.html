@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Fixed Layout</title>
+    <title>Trovapp Pro - Perfect Layout</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -64,10 +64,10 @@
         .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* POSIZIONE TASTO PIÙ RIALZATA */
+        /* POSIZIONE TASTO PIÙ - REGOLATA */
         #addButton {
             position: fixed;
-            bottom: 110px; /* Alzato per non sovrapporsi alla barra di navigazione */
+            bottom: 85px; /* Abbassato leggermente per non coprire i suggerimenti */
             left: 50%;
             transform: translateX(-50%);
             background-color: #2563eb;
@@ -75,7 +75,7 @@
             width: 64px;
             height: 64px;
             border-radius: 9999px;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
             z-index: 50;
             display: flex;
             align-items: center;
@@ -132,7 +132,8 @@
             <div id="gridBottom" class="scroll-row no-scrollbar"></div>
         </div>
 
-        <div id="tipsSection" class="mt-auto mb-32"> <div class="flex items-center gap-3">
+        <div id="tipsSection" class="mt-auto mb-28">
+            <div class="flex items-center gap-3">
                 <div class="bg-blue-600 text-white w-7 h-7 rounded-lg flex items-center justify-center shrink-0">
                     <i class="fa-solid fa-lightbulb text-xs"></i>
                 </div>
@@ -204,7 +205,7 @@
             "Fai un Backup settimanale per tenere i tuoi dati al sicuro.",
             "Usa i Tag per trovare oggetti simili in spazi diversi.",
             "La fotocamera è impostata su 'Ambiente' per inquadrare meglio.",
-            "Clicca sul nome di un oggetto per vedere i dettagli."
+            "Ricorda di salvare la posizione (Scatola 1, Ripiano A)!"
         ];
 
         function mostraSuggerimento() {
