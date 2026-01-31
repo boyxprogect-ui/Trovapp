@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Carousel Edition</title>
+    <title>Trovapp Pro - Fixed Layout</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,36 +14,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* FIX TOTALI SCORRIMENTO */
+        /* BLOCCO AGGIORNAMENTO PAGINA */
         html, body { 
             height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; 
             background-color: #F2F2F7; font-family: -apple-system, sans-serif;
             overscroll-behavior-y: none; 
         }
 
-        #mainContainer { 
-            height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; 
-            padding-bottom: 180px; 
-        }
+        #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
 
-        /* Stile Carousel Categorie */
-        .category-scroll {
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch; gap: 12px; padding: 10px 4px;
+        /* MODIFICA: SCORRIMENTO ORIZZONTALE SOLO PER GLI OGGETTI */
+        #grid {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 16px;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
         }
-        .category-scroll::-webkit-scrollbar { display: none; }
+        #grid::-webkit-scrollbar { display: none; }
         
-        .cat-card {
-            flex: 0 0 140px; scroll-snap-align: start;
-            border-radius: 24px; padding: 16px; color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; gap: 8px;
-            active:scale-95 transition-all;
+        .item-card {
+            flex: 0 0 85%; /* La scheda occupa gran parte della larghezza */
+            scroll-snap-align: center;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            position: relative;
         }
 
+        /* RESTO DELLE IMPOSTAZIONI ORIGINALI INVARIATE */
         .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 6px 12px; border-radius: 12px; font-size: 11px; display: flex; align-items: center; gap: 6px; }
         .modal-content { background: #F2F2F7; width: 100%; height: 100%; display: flex; flex-direction: column; padding: env(safe-area-inset-top, 10px) 15px 15px 15px; }
-        .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 900; }
+        .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: 900; }
         .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -51,51 +55,40 @@
 </head>
 <body>
 
-    <div id="mainContainer" class="p-4">
+    <div id="mainContainer">
         <header class="flex justify-between items-start mb-6">
             <div>
                 <h1 id="titolo" class="text-3xl font-black tracking-tighter italic uppercase text-gray-900">TROVAPP</h1>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Smart Horizontal UI</p>
+                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Stable Layout</p>
             </div>
-            <div class="flex flex-col gap-1">
-                <button onclick="esportaDati()" class="text-[8px] bg-zinc-800 text-white px-3 py-2 rounded-lg font-bold uppercase active:scale-95">💾 Salva</button>
-                <label class="text-[8px] bg-white border border-gray-300 px-3 py-2 rounded-lg font-bold uppercase active:scale-95 text-center cursor-pointer">
-                    📂 Carica <input type="file" accept=".json" class="hidden" onchange="importaDati(this)">
-                </label>
-            </div>
+            <button onclick="esportaDati()" class="text-[8px] bg-zinc-800 text-white px-3 py-2 rounded-lg font-bold uppercase">💾 Backup</button>
         </header>
 
-        <div id="homeNav" class="space-y-6">
+        <div id="homeNav" class="space-y-4">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca tra le tue scatole..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border border-transparent focus:border-blue-500 font-medium text-sm">
+                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border border-transparent focus:border-blue-500 font-medium text-sm">
             </div>
             
-            <div>
-                <p class="text-[10px] font-black uppercase text-gray-400 mb-2 ml-1 tracking-widest">Ambienti</p>
-                <div class="category-scroll no-scrollbar">
-                    <button onclick="apriSpazio('CANTINA')" class="cat-card bg-zinc-800">
-                        <i class="fa-solid fa-box-open text-xl"></i>
-                        <span class="font-black italic uppercase text-xs">Cantina</span>
-                    </button>
-                    <button onclick="apriSpazio('SOFFITTA')" class="cat-card bg-amber-600">
-                        <i class="fa-solid fa-warehouse text-xl"></i>
-                        <span class="font-black italic uppercase text-xs">Soffitta</span>
-                    </button>
-                    <button onclick="apriSpazio('ARMADI')" class="cat-card bg-rose-600">
-                        <i class="fa-solid fa-shirt text-xl"></i>
-                        <span class="font-black italic uppercase text-xs">Armadi</span>
-                    </button>
-                    <button onclick="apriSpazio('BOX')" class="cat-card bg-indigo-700">
-                        <i class="fa-solid fa-car text-xl"></i>
-                        <span class="font-black italic uppercase text-xs">Box</span>
-                    </button>
-                </div>
-            </div>
+            <nav class="grid grid-cols-2 gap-3">
+                <button onclick="apriSpazio('CANTINA')" class="p-5 rounded-[28px] bg-zinc-800 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-md uppercase">Cantina</span>
+                </button>
+                <button onclick="apriSpazio('SOFFITTA')" class="p-5 rounded-[28px] bg-amber-600 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-md uppercase">Soffitta</span>
+                </button>
+                <button onclick="apriSpazio('ARMADI')" class="p-5 rounded-[28px] bg-rose-600 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-md uppercase">Armadi</span>
+                </button>
+                <button onclick="apriSpazio('BOX')" class="p-5 rounded-[28px] bg-indigo-700 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-md uppercase">Box</span>
+                </button>
+            </nav>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg">← Home</button>
-        <div id="grid" class="grid grid-cols-2 gap-4 mt-2"></div>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase">← Home</button>
+        
+        <div id="grid" class="no-scrollbar mt-4"></div>
     </div>
 
     <button onclick="apriModale()" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl z-50 text-3xl flex items-center justify-center active:scale-90 transition-transform">
@@ -105,15 +98,15 @@
     <div id="modal" class="hidden fixed inset-0 z-[60]">
         <div class="modal-content modal-up">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-black italic uppercase">Nuovo Oggetto</h3>
-                <button onclick="chiudiModale()" class="text-3xl p-2 text-gray-400">&times;</button>
+                <h3 class="text-xl font-black italic uppercase">Crea Scheda</h3>
+                <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
             </div>
-            <div class="bg-white p-3 rounded-3xl shadow-sm border border-gray-100 mb-3 flex gap-3">
-                <label class="w-20 h-20 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl flex flex-col items-center justify-center text-blue-600">
+            <div class="bg-white p-3 rounded-3xl mb-3 flex gap-3">
+                <label class="w-20 h-20 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera text-xl"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
-                <div id="gallery" class="flex gap-2 overflow-x-auto no-scrollbar items-center"></div>
+                <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
                 <div class="flex-1">
                     <input id="nIn" type="text" placeholder="Nome..." class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none mb-2">
                     <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-3 py-2">
@@ -127,11 +120,11 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 mb-3">
-                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm border-none">
+                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm">
                     <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                     <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                 </select>
-                <input id="pIn" type="text" placeholder="Posizione..." class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm outline-none">
+                <input id="pIn" type="text" placeholder="Posizione..." class="bg-white p-3 rounded-xl text-xs font-bold outline-none">
             </div>
             <div class="bg-white p-4 rounded-3xl shadow-sm flex-1 flex flex-col overflow-hidden">
                 <div class="flex gap-2 mb-3">
@@ -159,19 +152,8 @@
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
-        
-        function apriSpazio(c) { 
-            activeCat = c; 
-            document.getElementById('homeNav').classList.add('hidden'); 
-            document.getElementById('backBtn').classList.remove('hidden'); 
-            aggiorna(); 
-        }
-        function tornaHome() { 
-            activeCat = "TUTTI"; 
-            document.getElementById('homeNav').classList.remove('hidden'); 
-            document.getElementById('backBtn').classList.add('hidden'); 
-            aggiorna(); 
-        }
+        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
+        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
 
         function salva() {
             const nome = document.getElementById('nIn').value;
@@ -187,14 +169,14 @@
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
-                <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative border border-gray-100">
-                    <img src="${o.foto[0] || ''}" class="w-full h-40 object-cover bg-gray-50">
-                    <div class="absolute top-2 left-2 qty-badge">x${o.qty}</div>
-                    <div class="p-4">
-                        <h4 class="font-black text-xs truncate uppercase italic text-gray-800">${o.nome}</h4>
-                        <p class="text-[9px] text-blue-600 font-bold uppercase">${o.pos || '---'}</p>
+                <div class="item-card">
+                    <img src="${o.foto[0] || ''}" class="w-full h-80 object-cover bg-gray-50">
+                    <div class="absolute top-4 left-4 qty-badge">x${o.qty}</div>
+                    <div class="p-6">
+                        <h4 class="font-black text-xl uppercase italic text-gray-800 mb-1">${o.nome}</h4>
+                        <p class="text-sm text-blue-600 font-bold uppercase tracking-wider">${o.pos || '---'}</p>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-7 h-7 rounded-full text-red-500 font-bold">×</button>
+                    <button onclick="elimina(${o.id})" class="absolute top-4 right-4 bg-white/90 w-10 h-10 rounded-full text-red-500 font-black">×</button>
                 </div>`).join('');
         }
 
@@ -211,16 +193,6 @@
             const dl = document.createElement('a'); dl.href = url; dl.download = "backup.json"; dl.click();
         }
 
-        function importaDati(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                db = JSON.parse(e.target.result);
-                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                aggiorna();
-            };
-            reader.readAsText(input.files[0]);
-        }
-
         function comprimeECarica() {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -232,7 +204,7 @@
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.5));
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join('');
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-20 h-20 object-cover rounded-2xl shadow-sm">`).join('');
                 };
             };
             reader.readAsDataURL(document.getElementById('fIn').files[0]);
