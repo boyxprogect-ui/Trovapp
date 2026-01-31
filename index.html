@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Backup Fix</title>
+    <title>Trovapp Pro - Smart Backup</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -264,31 +264,31 @@
             document.getElementById('pIn').value = ""; 
             document.getElementById('tagInput').value = "";
             document.getElementById('gallery').innerHTML = "";
-            tempPhotos = []; 
-            tempQty = 1; 
-            currentTags = [];
-            document.getElementById('qtyVal').innerText = "1"; 
-            document.getElementById('tagCloud').innerHTML = "";
+            tempPhotos = []; tempQty = 1; currentTags = [];
+            document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = "";
         }
 
-        // --- MODIFICA CHIRURGICA QUI ---
+        // --- FUNZIONE BACKUP CON NOME INTELLIGENTE ---
         function esportaDati() {
             const dataStr = JSON.stringify(db, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const dl = document.createElement('a');
             
-            // Forziamo il nome file e l'aggiunta al documento per i browser mobili
+            // Crea un nome file con data e ora: TROVAPP_BACKUP_2026-01-31_12-00.json
+            const ora = new Date();
+            const timestamp = ora.toISOString().split('T')[0] + "_" + ora.getHours() + "-" + ora.getMinutes();
+            const nomeFile = `TROVAPP_BACKUP_${timestamp}.json`;
+
             dl.href = url;
-            dl.download = "backup_trovapp.json";
+            dl.download = nomeFile;
             document.body.appendChild(dl);
             dl.click();
             
-            // Pulizia immediata
             setTimeout(() => {
                 document.body.removeChild(dl);
                 window.URL.revokeObjectURL(url);
-                alert("File generato! Controlla la cartella Download o le notifiche del telefono.");
+                alert("Backup creato: " + nomeFile + "\nLo trovi nella cartella Download.");
             }, 100);
         }
 
