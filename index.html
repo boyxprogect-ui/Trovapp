@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Layout Ottimizzato</title>
+    <title>Trovapp Pro - Fixed Scroll</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -64,23 +64,22 @@
         .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* TASTO + RIMPICCIOLITO E ALZATO DI POCO */
         #addButton {
             position: fixed;
-            bottom: 35px; /* Alzato leggermente dal fondo */
+            bottom: 35px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #2563eb;
             color: white;
-            width: 58px;  /* Rimpicciolito */
-            height: 58px; /* Rimpicciolito */
+            width: 58px;
+            height: 58px;
             border-radius: 9999px;
             box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
             z-index: 50;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px; /* Icona più piccola */
+            font-size: 28px;
         }
     </style>
 </head>
@@ -199,18 +198,29 @@
     <script>
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
+        let tTimer, isScrolling = false;
 
         const tips = [
-            "Tieni premuto su un prodotto per modificarlo rapidamente.",
+            "Tieni premuto a lungo su un oggetto per modificarlo.",
             "Fai un Backup settimanale per tenere i tuoi dati al sicuro.",
             "Usa i Tag per trovare oggetti simili in spazi diversi.",
-            "La fotocamera è impostata su 'Ambiente' per inquadrare meglio.",
-            "Ricorda di salvare la posizione esatta per ogni oggetto!"
+            "La fotocamera è impostata su 'Ambiente' per inquadrare meglio."
         ];
 
         function mostraSuggerimento() {
             document.getElementById('tipText').innerText = tips[Math.floor(Math.random() * tips.length)];
         }
+
+        // --- GESTIONE PRESSIONE LUNGA MIGLIORATA ---
+        function startT(id) { 
+            isScrolling = false;
+            // Aumentato a 1200ms per sicurezza contro gli scorrimenti accidentali
+            tTimer = setTimeout(() => {
+                if (!isScrolling) apriModale(id);
+            }, 1200); 
+        }
+        function endT() { clearTimeout(tTimer); }
+        function handleScroll() { isScrolling = true; clearTimeout(tTimer); }
 
         function importaDati(event) {
             const file = event.target.files[0];
@@ -275,8 +285,15 @@
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             const metà = Math.ceil(filtrati.length / 2);
+            
+            // Aggiunto listener onscroll per annullare la pressione lunga
             const renderCard = o => `
-                <div class="item-card" ontouchstart="startT(${o.id})" ontouchend="endT()" onmousedown="startT(${o.id})" onmouseup="endT()">
+                <div class="item-card" 
+                     ontouchstart="startT(${o.id})" 
+                     ontouchend="endT()" 
+                     ontouchmove="handleScroll()"
+                     onmousedown="startT(${o.id})" 
+                     onmouseup="endT()">
                     <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-50">
                     <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
                     <div class="p-2">
@@ -291,10 +308,6 @@
             gridTop.innerHTML = filtrati.slice(0, metà).reverse().map(renderCard).join('');
             gridBottom.innerHTML = filtrati.slice(metà).reverse().map(renderCard).join('');
         }
-
-        let tTimer;
-        function startT(id) { tTimer = setTimeout(() => apriModale(id), 800); }
-        function endT() { clearTimeout(tTimer); }
 
         function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
         
