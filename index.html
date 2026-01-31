@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Edit Mode</title>
+    <title>Trovapp Pro - Final Fix</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,6 +39,16 @@
             background: #1c1c1e; color: white; padding: 8px 10px; border-radius: 10px;
             font-size: 8px; font-weight: 800; text-transform: uppercase;
             display: flex; align-items: center; gap: 4px;
+        }
+
+        /* TIP SECTION STYLING */
+        #tipsSection {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 12px 18px;
+            margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 5px solid #007AFF;
         }
 
         .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
@@ -103,9 +113,21 @@
             <div id="gridTop" class="scroll-row no-scrollbar"></div>
             <div id="gridBottom" class="scroll-row no-scrollbar"></div>
         </div>
+
+        <div id="tipsSection" class="mt-auto mb-20">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white w-7 h-7 rounded-lg flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-lightbulb text-xs"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black uppercase text-blue-600 tracking-wider">Lo sapevi?</p>
+                    <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Usa il tasto + per iniziare.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <button onclick="apriModale()" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl z-50 text-3xl flex items-center justify-center active:scale-90">
+    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl z-50 text-3xl flex items-center justify-center active:scale-90">
         <i class="fa-solid fa-plus"></i>
     </button>
 
@@ -141,7 +163,7 @@
                     <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                     <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                 </select>
-                <input id="pIn" type="text" placeholder="Dove? (es. Scatola 1)" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
+                <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
             </div>
 
             <div class="bg-white p-3 rounded-2xl shadow-sm flex flex-col mb-4">
@@ -158,8 +180,19 @@
 
     <script>
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [];
-        let editId = null; // ID dell'oggetto che stiamo modificando
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
+
+        const tips = [
+            "Tieni premuto su un prodotto per modificarlo rapidamente.",
+            "Fai un Backup settimanale per tenere i tuoi dati al sicuro.",
+            "Usa i Tag per trovare oggetti simili in spazi diversi.",
+            "La fotocamera è impostata su 'Ambiente' per inquadrare meglio.",
+            "Clicca sul nome di un oggetto per vedere i dettagli."
+        ];
+
+        function mostraSuggerimento() {
+            document.getElementById('tipText').innerText = tips[Math.floor(Math.random() * tips.length)];
+        }
 
         function importaDati(event) {
             const file = event.target.files[0];
@@ -168,11 +201,11 @@
             reader.onload = (e) => {
                 try {
                     const caricati = JSON.parse(e.target.result);
-                    if (confirm("Vuoi sovrascrivere i dati attuali?")) {
+                    if (confirm("Sovrascrivere i dati?")) {
                         db = caricati; localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                        aggiorna(); alert("Backup caricato!");
+                        aggiorna(); alert("Dati caricati!");
                     }
-                } catch (err) { alert("Errore file!"); }
+                } catch (err) { alert("File non valido!"); }
             };
             reader.readAsText(file);
         }
@@ -191,19 +224,13 @@
             editId = id;
             if (id) {
                 const o = db.find(item => item.id === id);
-                document.getElementById('modalTitle').innerText = "Modifica Prodotto";
-                document.getElementById('nIn').value = o.nome;
-                document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat;
-                tempQty = o.qty;
-                tempPhotos = [...o.foto];
-                currentTags = [...o.tags];
-                document.getElementById('qtyVal').innerText = tempQty;
-                renderTags();
-                renderGallery();
+                document.getElementById('modalTitle').innerText = "Modifica";
+                document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
+                document.getElementById('cIn').value = o.cat; tempQty = o.qty;
+                tempPhotos = [...o.foto]; currentTags = [...o.tags];
+                document.getElementById('qtyVal').innerText = tempQty; renderTags(); renderGallery();
             } else {
-                document.getElementById('modalTitle').innerText = "Nuova Scheda";
-                resetModale();
+                document.getElementById('modalTitle').innerText = "Nuova Scheda"; resetModale();
             }
             document.getElementById('modal').classList.remove('hidden');
         }
@@ -214,59 +241,44 @@
 
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Inserisci il nome!");
-            
+            if(!nome) return alert("Nome obbligatorio!");
             const dati = { nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [...currentTags], qty: tempQty };
-
             if (editId) {
-                const index = db.findIndex(item => item.id === editId);
-                db[index] = { ...db[index], ...dati };
+                const idx = db.findIndex(i => i.id === editId); db[idx] = { ...db[idx], ...dati };
             } else {
                 db.push({ id: Date.now(), ...dati });
             }
-
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
             chiudiModale(); aggiorna();
         }
 
         function aggiorna() {
-            const gridTop = document.getElementById('gridTop');
-            const gridBottom = document.getElementById('gridBottom');
+            const gridTop = document.getElementById('gridTop'), gridBottom = document.getElementById('gridBottom');
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
-            
             const metà = Math.ceil(filtrati.length / 2);
-            const topList = filtrati.slice(0, metà).reverse();
-            const bottomList = filtrati.slice(metà).reverse();
-
             const renderCard = o => `
-                <div class="item-card" 
-                     ontouchstart="startTouch(${o.id})" 
-                     ontouchend="endTouch()" 
-                     onmousedown="startTouch(${o.id})" 
-                     onmouseup="endTouch()">
+                <div class="item-card" ontouchstart="startT(${o.id})" ontouchend="endT()" onmousedown="startT(${o.id})" onmouseup="endT()">
                     <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-50">
                     <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
                     <div class="p-2">
                         <h4 class="font-black text-[8px] truncate uppercase italic text-gray-800">${o.nome}</h4>
                         <div class="flex flex-col">
                             <span class="text-[6px] text-blue-600 font-black uppercase">${o.pos || 'Senza pos.'}</span>
-                            <span class="text-[5px] text-gray-400 font-bold uppercase tracking-tighter">${o.cat}</span>
+                            <span class="text-[5px] text-gray-400 font-bold uppercase">${o.cat}</span>
                         </div>
                     </div>
-                    <button onclick="event.stopPropagation(); elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 font-black text-[8px]">×</button>
+                    <button onclick="event.stopPropagation(); elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 text-[8px]">×</button>
                 </div>`;
-
-            gridTop.innerHTML = topList.map(renderCard).join('');
-            gridBottom.innerHTML = bottomList.map(renderCard).join('');
+            gridTop.innerHTML = filtrati.slice(0, metà).reverse().map(renderCard).join('');
+            gridBottom.innerHTML = filtrati.slice(metà).reverse().map(renderCard).join('');
         }
 
-        // --- LOGICA LONG PRESS (TENERE PREMUTO) ---
-        let touchTimer;
-        function startTouch(id) { touchTimer = setTimeout(() => { apriModale(id); }, 800); }
-        function endTouch() { clearTimeout(touchTimer); }
+        let tTimer;
+        function startT(id) { tTimer = setTimeout(() => apriModale(id), 800); }
+        function endT() { clearTimeout(tTimer); }
 
-        function elimina(id) { if(confirm('Eliminare definitivamente?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
+        function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
         
         function resetModale() { 
             document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; 
@@ -276,7 +288,7 @@
         }
 
         function renderGallery() {
-            document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg border border-blue-200">`).join('');
+            document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg border">`).join('');
         }
 
         function esportaDati() {
@@ -284,11 +296,8 @@
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const dl = document.createElement('a');
-            const ora = new Date();
-            const timestamp = ora.toISOString().split('T')[0] + "_" + ora.getHours() + "-" + ora.getMinutes();
-            dl.download = `TROVAPP_BACKUP_${timestamp}.json`;
-            dl.href = url; document.body.appendChild(dl); dl.click();
-            setTimeout(() => { document.body.removeChild(dl); window.URL.revokeObjectURL(url); }, 100);
+            dl.download = `TROVAPP_BACKUP_${new Date().toISOString().split('T')[0]}.json`;
+            dl.href = url; dl.click();
         }
 
         function comprimeECarica() {
@@ -303,14 +312,14 @@
                     if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } }
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
-                    tempPhotos.push(dataUrl);
-                    renderGallery();
+                    tempPhotos.push(canvas.toDataURL('image/jpeg', 0.5)); renderGallery();
                 };
             };
             reader.readAsDataURL(file);
         }
+        
         aggiorna();
+        mostraSuggerimento();
     </script>
 </body>
 </html>
