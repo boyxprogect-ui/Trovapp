@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Full Info</title>
+    <title>Trovapp Pro - Edit Mode</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,54 +23,31 @@
         #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
 
         .scroll-row {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 10px;
-            padding: 5px 0;
-            -webkit-overflow-scrolling: touch;
-            min-height: 135px; /* Aumentato leggermente per la riga extra */
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            gap: 10px; padding: 5px 0; -webkit-overflow-scrolling: touch; min-height: 135px;
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
         .item-card {
-            flex: 0 0 23%;
-            scroll-snap-align: start;
-            background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            position: relative;
+            flex: 0 0 23%; scroll-snap-align: start; background: white;
+            border-radius: 18px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative; transition: transform 0.1s;
         }
+        .item-card:active { transform: scale(0.95); }
 
         .btn-action {
-            background: #1c1c1e;
-            color: white;
-            padding: 8px 10px;
-            border-radius: 10px;
-            font-size: 8px;
-            font-weight: 800;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            background: #1c1c1e; color: white; padding: 8px 10px; border-radius: 10px;
+            font-size: 8px; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; gap: 4px;
         }
 
         .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
         .modal-content { background: #F2F2F7; width: 100%; height: 100%; display: flex; flex-direction: column; padding: env(safe-area-inset-top, 10px) 15px 15px 15px; }
         
         .btn-salva {
-            width: 100%;
-            background-color: #2563eb;
-            color: white;
-            padding: 16px;
-            border-radius: 24px;
-            font-weight: 900;
-            font-size: 20px;
-            font-style: italic;
-            text-transform: uppercase;
-            margin-top: auto;
-            margin-bottom: 50px; 
+            width: 100%; background-color: #2563eb; color: white; padding: 16px;
+            border-radius: 24px; font-weight: 900; font-size: 20px; font-style: italic;
+            text-transform: uppercase; margin-top: auto; margin-bottom: 50px; 
             box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
         }
 
@@ -135,7 +112,7 @@
     <div id="modal" class="hidden fixed inset-0 z-[60]">
         <div class="modal-content modal-up">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-black italic uppercase">Nuova Scheda</h3>
+                <h3 id="modalTitle" class="text-xl font-black italic uppercase">Nuova Scheda</h3>
                 <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
             </div>
 
@@ -175,13 +152,14 @@
                 <div id="tagCloud" class="flex flex-wrap gap-1"></div>
             </div>
 
-            <button onclick="salva()" class="btn-salva">Salva</button>
+            <button id="saveBtn" onclick="salva()" class="btn-salva">Salva</button>
         </div>
     </div>
 
     <script>
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [];
+        let editId = null; // ID dell'oggetto che stiamo modificando
 
         function importaDati(event) {
             const file = event.target.files[0];
@@ -191,10 +169,8 @@
                 try {
                     const caricati = JSON.parse(e.target.result);
                     if (confirm("Vuoi sovrascrivere i dati attuali?")) {
-                        db = caricati;
-                        localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                        aggiorna();
-                        alert("Backup caricato!");
+                        db = caricati; localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                        aggiorna(); alert("Backup caricato!");
                     }
                 } catch (err) { alert("Errore file!"); }
             };
@@ -210,7 +186,28 @@
             document.getElementById('tagCloud').innerHTML = currentTags.map(t => `<div onclick="rimuoviTag('${t}')" class="tag-pill">${t}</div>`).join('');
         }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
+        
+        function apriModale(id = null) {
+            editId = id;
+            if (id) {
+                const o = db.find(item => item.id === id);
+                document.getElementById('modalTitle').innerText = "Modifica Prodotto";
+                document.getElementById('nIn').value = o.nome;
+                document.getElementById('pIn').value = o.pos;
+                document.getElementById('cIn').value = o.cat;
+                tempQty = o.qty;
+                tempPhotos = [...o.foto];
+                currentTags = [...o.tags];
+                document.getElementById('qtyVal').innerText = tempQty;
+                renderTags();
+                renderGallery();
+            } else {
+                document.getElementById('modalTitle').innerText = "Nuova Scheda";
+                resetModale();
+            }
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
@@ -218,7 +215,16 @@
         function salva() {
             const nome = document.getElementById('nIn').value;
             if(!nome) return alert("Inserisci il nome!");
-            db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [...currentTags], qty: tempQty });
+            
+            const dati = { nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [...currentTags], qty: tempQty };
+
+            if (editId) {
+                const index = db.findIndex(item => item.id === editId);
+                db[index] = { ...db[index], ...dati };
+            } else {
+                db.push({ id: Date.now(), ...dati });
+            }
+
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
             chiudiModale(); aggiorna();
         }
@@ -229,14 +235,16 @@
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             
-            document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             const metà = Math.ceil(filtrati.length / 2);
             const topList = filtrati.slice(0, metà).reverse();
             const bottomList = filtrati.slice(metà).reverse();
 
-            // MODIFICA QUI: Aggiunta la categoria sotto il nome
             const renderCard = o => `
-                <div class="item-card">
+                <div class="item-card" 
+                     ontouchstart="startTouch(${o.id})" 
+                     ontouchend="endTouch()" 
+                     onmousedown="startTouch(${o.id})" 
+                     onmouseup="endTouch()">
                     <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-50">
                     <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
                     <div class="p-2">
@@ -246,22 +254,29 @@
                             <span class="text-[5px] text-gray-400 font-bold uppercase tracking-tighter">${o.cat}</span>
                         </div>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 font-black text-[8px]">×</button>
+                    <button onclick="event.stopPropagation(); elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 font-black text-[8px]">×</button>
                 </div>`;
 
             gridTop.innerHTML = topList.map(renderCard).join('');
             gridBottom.innerHTML = bottomList.map(renderCard).join('');
         }
 
-        function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
+        // --- LOGICA LONG PRESS (TENERE PREMUTO) ---
+        let touchTimer;
+        function startTouch(id) { touchTimer = setTimeout(() => { apriModale(id); }, 800); }
+        function endTouch() { clearTimeout(touchTimer); }
+
+        function elimina(id) { if(confirm('Eliminare definitivamente?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
         
         function resetModale() { 
-            document.getElementById('nIn').value = ""; 
-            document.getElementById('pIn').value = ""; 
-            document.getElementById('tagInput').value = "";
-            document.getElementById('gallery').innerHTML = "";
-            tempPhotos = []; tempQty = 1; currentTags = [];
+            document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; 
+            document.getElementById('tagInput').value = ""; document.getElementById('gallery').innerHTML = "";
+            tempPhotos = []; tempQty = 1; currentTags = []; editId = null;
             document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = "";
+        }
+
+        function renderGallery() {
+            document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg border border-blue-200">`).join('');
         }
 
         function esportaDati() {
@@ -269,11 +284,10 @@
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const dl = document.createElement('a');
-            const timestamp = new Date().toISOString().split('T')[0];
-            dl.href = url;
+            const ora = new Date();
+            const timestamp = ora.toISOString().split('T')[0] + "_" + ora.getHours() + "-" + ora.getMinutes();
             dl.download = `TROVAPP_BACKUP_${timestamp}.json`;
-            document.body.appendChild(dl);
-            dl.click();
+            dl.href = url; document.body.appendChild(dl); dl.click();
             setTimeout(() => { document.body.removeChild(dl); window.URL.revokeObjectURL(url); }, 100);
         }
 
@@ -291,7 +305,7 @@
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
                     tempPhotos.push(dataUrl);
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg border border-blue-200">`).join('');
+                    renderGallery();
                 };
             };
             reader.readAsDataURL(file);
