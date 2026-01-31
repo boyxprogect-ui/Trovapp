@@ -17,23 +17,22 @@
         html, body { height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; background-color: #F2F2F7; }
         #mainContainer { height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-        /* TAG FISSI E ORIZZONTALI */
-        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 3px 8px; border-radius: 6px; font-size: 9px; white-space: nowrap; }
+        /* TAG ORIZZONTALI - MASSIMA DENSITÀ */
+        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 2px 6px; border-radius: 5px; font-size: 8px; white-space: nowrap; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; }
-        .tag-row { display: flex; gap: 4px; overflow-x: auto; padding: 2px 0; -webkit-overflow-scrolling: touch; }
+        .tag-row { display: flex; gap: 3px; overflow-x: auto; padding: 1px 0; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
         .tag-row::-webkit-scrollbar { display: none; }
         
-        .cat-box { background: white; border-radius: 10px; padding: 4px 8px; margin-bottom: 3px; border: 1px solid #F3F4F6; }
-        .cat-label { font-size: 7px; font-weight: 800; color: #111827; text-transform: uppercase; opacity: 0.5; }
+        .cat-box { background: white; border-radius: 8px; padding: 3px 6px; margin-bottom: 2px; border: 1px solid #F3F4F6; }
+        .cat-label { font-size: 6.5px; font-weight: 900; color: #111827; text-transform: uppercase; opacity: 0.6; margin-bottom: 1px; }
         
-        /* MODALE STATICA (NIENTE SCROLL) */
         .modal-content {
             background: #F2F2F7;
             width: 100%;
-            height: 100%; /* Copre tutto per evitare scroll sotto */
+            height: 100%;
             display: flex;
             flex-direction: column;
-            padding: env(safe-area-inset-top, 10px) 12px 12px 12px;
+            padding: env(safe-area-inset-top, 5px) 10px 10px 10px;
         }
 
         .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: 900; }
@@ -47,9 +46,8 @@
         <header class="flex justify-between items-start mb-4">
             <div>
                 <h1 id="titolo" class="text-3xl font-black tracking-tighter italic uppercase">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Smart Search</p>
             </div>
-            <button onclick="esportaDati()" class="text-[9px] bg-white border px-3 py-1 rounded-lg font-bold uppercase">💾 Backup</button>
+            <button onclick="esportaDati()" class="text-[9px] bg-white border px-3 py-1 rounded-lg font-bold">💾 BACKUP</button>
         </header>
 
         <div id="homeNav" class="space-y-4">
@@ -62,7 +60,7 @@
             </nav>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-3 rounded-xl font-black italic mb-4">← HOME</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-3 rounded-xl font-black mb-4 uppercase">← Home</button>
         <div id="grid" class="grid grid-cols-2 gap-3 mt-4"></div>
     </div>
 
@@ -72,54 +70,53 @@
 
     <div id="modal" class="hidden fixed inset-0 z-[60]">
         <div class="modal-content modal-up">
-            <div class="flex justify-between items-center mb-2">
-                <h3 class="text-lg font-black italic uppercase">NUOVO OGGETTO</h3>
-                <button onclick="chiudiModale()" class="text-2xl font-bold p-2">&times;</button>
+            <div class="flex justify-between items-center mb-1">
+                <h3 class="text-md font-black italic uppercase">NUOVO OGGETTO</h3>
+                <button onclick="chiudiModale()" class="text-2xl font-bold p-1">&times;</button>
             </div>
 
-            <div class="flex gap-3 mb-2">
-                <label class="w-16 h-16 shrink-0 bg-white border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center text-blue-600">
+            <div class="flex gap-2 mb-2">
+                <label class="w-14 h-14 shrink-0 bg-white border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera text-lg"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
                 <div id="gallery" class="flex gap-1 overflow-x-auto no-scrollbar"></div>
-                <div class="flex-1 space-y-2">
-                    <input id="nIn" type="text" placeholder="Nome" class="w-full p-2 bg-white rounded-lg text-xs font-bold outline-none border">
-                    <input id="pIn" type="text" placeholder="Posizione" class="w-full p-2 bg-white rounded-lg text-xs outline-none border">
+                <div class="flex-1 grid grid-cols-1 gap-1">
+                    <input id="nIn" type="text" placeholder="Nome" class="w-full p-1.5 bg-white rounded-lg text-[10px] font-bold border">
+                    <input id="pIn" type="text" placeholder="Posizione" class="w-full p-1.5 bg-white rounded-lg text-[10px] border">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2 mb-2">
-                <select id="cIn" class="p-2 bg-white rounded-lg text-xs font-bold border">
+                <select id="cIn" class="p-1.5 bg-white rounded-lg text-[10px] font-bold border">
                     <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                     <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                 </select>
                 <div class="bg-zinc-900 text-white rounded-lg flex items-center justify-between px-2">
-                    <span class="text-[10px] font-bold italic">QTY: <span id="qtyVal">1</span></span>
+                    <span class="text-[9px] font-bold">QTY: <span id="qtyVal">1</span></span>
                     <div class="flex gap-1">
-                        <button onclick="changeQty(-1)" class="w-6 h-6 bg-white/10 rounded">-</button>
-                        <button onclick="changeQty(1)" class="w-6 h-6 bg-blue-600 rounded">+</button>
+                        <button onclick="changeQty(-1)" class="w-5 h-5 bg-white/10 rounded">-</button>
+                        <button onclick="changeQty(1)" class="w-5 h-5 bg-blue-600 rounded">+</button>
                     </div>
                 </div>
             </div>
 
-            <div id="tagEngine" class="flex-1 overflow-hidden">
-                </div>
+            <div id="tagEngine" class="flex-1 overflow-hidden space-y-0.5"></div>
 
-            <button onclick="salva()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-black italic uppercase mt-2 shadow-lg">Salva in TROVAPP</button>
+            <button onclick="salva()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-black italic uppercase mt-2">Salva</button>
         </div>
     </div>
 
     <script>
         const CATEGORIE = {
-            "🏠 CASA": ["Gen. Casa", "Arredo", "Mobili", "Quadri", "Vasi"],
-            "🍳 CUCINA": ["Gen. Cucina", "Piatti", "Posate", "Pentole", "Mixer"],
-            "🧥 VESTITI": ["Gen. Vestiti", "Giacche", "Maglioni", "Scarpe"],
-            "🛠 UTENSILI": ["Gen. Attrezzi", "Viti", "Bulloni", "Trapano"],
-            "🔌 TECH": ["Gen. Tech", "Cavi", "Pile", "Audio", "PC"],
-            "⚽️ SPORT": ["Gen. Sport", "Fitness", "Bici", "Outdoor"],
-            "🎄 FESTE": ["Gen. Feste", "Natale", "Luci", "Addobbi"],
-            "🔄 ALTRO": ["Gen. Altro", "Regali", "Scatole", "Mistero"]
+            "🏠 CASA": ["Gen. Casa", "Arredo", "Mobili", "Quadri", "Vasi", "Tende", "Cuscini", "Orologi", "Specchi", "Lampade", "Cornici", "Libri", "Tappeti", "Divani", "Sedie", "Tavoli", "Letti", "Materassi", "Lenzuola", "Coperte", "Piumoni", "Asciugamani", "Accappatoi", "Detersivi", "Pulizia", "Ferro Stiro", "Asse Stiro", "Ventilatori", "Stufe", "Deumidificatori", "Tazze", "Bicchieri", "Piatti", "Posate", "Vassoi", "Contenitori", "Spezie", "Dispensa", "Vino", "Acqua"],
+            "🍳 CUCINA": ["Gen. Cucina", "Piatti", "Bicchieri", "Posate", "Pentole", "Padelle", "Coperchi", "Mixer", "Frullatore", "Bilancia", "Forno", "Microonde", "Tostapane", "Bollitore", "Macchina Caffè", "Capsule", "Coltelli", "Taglieri", "Mestoli", "Grattugia", "Scolapasta", "Teglie", "Stampi Dolce", "Grembiuli", "Tovaglioli", "Tovaglie", "Stoviglie", "Posacenere", "Carrello", "Dispensa", "Frigo", "Freezer", "Surgelati", "Conserve", "Pasta", "Riso", "Farina", "Zucchero", "Sale", "Olio"],
+            "🧥 VESTITI": ["Gen. Vestiti", "Cappotti", "Giacche", "Piumini", "Impermeabili", "Maglioni", "Cardigan", "Felpe", "T-Shirt", "Camicie", "Canotte", "Pantaloni", "Jeans", "Shorts", "Gonne", "Abiti", "Tute", "Intimo", "Calze", "Pigiami", "Scarpe", "Stivali", "Sneakers", "Sandali", "Ciabatte", "Borse", "Zaini", "Valigie", "Cinture", "Cappelli", "Guanti", "Sciarpe", "Cravatte", "Gioielli", "Orologi", "Occhiali", "Costumi", "Sportivo", "Lavoro", "Elegante"],
+            "🛠 UTENSILI": ["Gen. Attrezzi", "Martello", "Cacciavite", "Pinze", "Chiavi", "Viti", "Bulloni", "Chiodi", "Tasselli", "Trapano", "Punte", "Smerigliatrice", "Sega", "Seghetto", "Livella", "Metro", "Nastro", "Colla", "Silicone", "Vernice", "Pennelli", "Rullo", "Scala", "Prolunga", "Torcia", "Batterie", "Lampadine", "Guanti Lavoro", "Mascherina", "Occhiali Prot", "Lubrificante", "Sbloccante", "Carta Vetro", "Stucco", "Pennelli", "Cesoie", "Pinzatrice", "Saldatore", "Tester", "Cassetta"],
+            "🔌 TECH": ["Gen. Tech", "Cavi", "Caricatori", "USB", "HDMI", "Powerbank", "Pile", "Batterie", "Audio", "Cuffie", "Casse", "Bluetooth", "PC", "Mouse", "Tastiera", "Monitor", "Hard Disk", "Chiavette", "Tablet", "Smartphone", "Macchina Foto", "Videocamera", "Treppiede", "Schede Memoria", "Router", "Modem", "Switch", "Console", "Joystick", "Giochi", "TV", "Telecomando", "Decoder", "Cavi Corrente", "Multipresa", "Adattatori", "Stampante", "Cartucce", "Scanner", "Webcam"],
+            "⚽️ SPORT": ["Gen. Sport", "Palestra", "Pesi", "Manubri", "Elastici", "Tappetino", "Fitness", "Corsa", "Scarpe Sport", "Calcio", "Pallone", "Tennis", "Racchetta", "Padel", "Bici", "Casco", "Pompa", "Nuoto", "Cuffia", "Occhialini", "Sci", "Scarponi", "Trekking", "Zaino", "Borraccia", "Camping", "Tenda", "Sacco Pelo", "Pesca", "Yoga", "Boxe", "Guantoni", "Arrampicata", "Pattinaggio", "Skateboard", "Basket", "Volley", "Golf", "Danza", "Arti Marziali"],
+            "🎄 FESTE": ["Gen. Feste", "Natale", "Albero", "Luci", "Addobbi", "Presepe", "Palline", "Ghirlande", "Pasqua", "Uova", "Carnevale", "Costumi", "Halloween", "Decorazioni", "Compleanno", "Candeline", "Palloncini", "Festone", "Regali", "Carta Regalo", "Fiocchi", "Biglietti", "Party", "Bicchieri Plast", "Piatti Plast", "Cannucce", "Musica", "Fuochi", "Lanterne", "Coriandoli", "Stelle Filanti", "Maschere", "Trucco", "Cappellini", "Gadget", "Cerimonie", "Bomboniere", "Nozze", "Anniversario", "Laurea"],
+            "🔄 ALTRO": ["Gen. Altro", "Mistero", "Scatole", "Documenti", "Ricordi", "Foto", "Medicine", "Primo Soccorso", "Viaggio", "Auto", "Moto", "Accessori Auto", "Giardinaggio", "Piante", "Vasi", "Concime", "Animali", "Cibo Cani", "Cibo Gatti", "Giochi Animali", "Cancelleria", "Penne", "Quaderni", "Zaini", "Scuola", "Hobby", "Pittura", "Cucito", "Filati", "Ferri", "Libri vecchi", "Riviste", "Collezioni", "Da Vendere", "Da Regalare", "Da Buttare", "Rotto", "Da Riparare", "Bricolage", "Varie"]
         };
 
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -140,13 +137,12 @@
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
-
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
 
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Inserisci un nome");
+            if(!nome) return alert("Manca il nome!");
             const tags = Array.from(document.querySelectorAll('.tag-pill.active')).map(t => t.innerText);
             db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags, qty: tempQty });
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
@@ -159,14 +155,14 @@
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm relative border">
-                    <img src="${o.foto[0] || ''}" class="w-full h-28 object-cover bg-gray-50">
-                    <div class="absolute top-2 left-2 qty-badge">x${o.qty}</div>
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm relative border">
+                    <img src="${o.foto[0] || ''}" class="w-full h-24 object-cover">
+                    <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
                     <div class="p-2">
-                        <h4 class="font-black text-[9px] truncate uppercase italic">${o.nome}</h4>
+                        <h4 class="font-black text-[8px] truncate uppercase italic">${o.nome}</h4>
                         <p class="text-[7px] text-blue-600 font-bold uppercase">${o.pos || '---'}</p>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-1 right-1 text-red-500 text-xs p-1">×</button>
+                    <button onclick="elimina(${o.id})" class="absolute top-1 right-1 text-red-500 text-[10px]">×</button>
                 </div>`).join('');
         }
 
@@ -189,7 +185,7 @@
                     canvas.width = img.width * scale; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.6));
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join('');
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-14 h-14 object-cover rounded-xl">`).join('');
                 };
             };
             reader.readAsDataURL(file);
