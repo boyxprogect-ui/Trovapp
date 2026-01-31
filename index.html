@@ -15,43 +15,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        html, body { 
-            overscroll-behavior-y: none !important; 
-            height: 100%;
-            overflow: hidden; 
-            position: fixed; 
-            width: 100%;
-        }
-        
+        html, body { overscroll-behavior-y: none !important; height: 100%; overflow: hidden; position: fixed; width: 100%; }
         body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; }
-        
-        #mainContainer {
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+        #mainContainer { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-        /* TAG COMPATTI E SCROLL LATERALE */
-        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 6px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; display: inline-block; }
+        /* TAG ULTRA COMPATTI */
+        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 10px; white-space: nowrap; display: inline-block; }
         .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; }
         
-        .tag-row { 
-            display: flex; 
-            gap: 6px; 
-            overflow-x: auto; 
-            padding: 2px 0; 
-            -webkit-overflow-scrolling: touch;
-        }
+        .tag-row { display: flex; gap: 4px; overflow-x: auto; padding: 2px 0; -webkit-overflow-scrolling: touch; }
         .tag-row::-webkit-scrollbar { display: none; }
         
-        .cat-box { 
-            background: white; 
-            border-radius: 18px; 
-            padding: 10px 14px; 
-            margin-bottom: 8px; 
-            border: 1px solid #F3F4F6; 
-        }
-        .cat-label { font-size: 9px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 6px; opacity: 0.4; letter-spacing: 0.05em; }
+        .cat-box { background: white; border-radius: 14px; padding: 6px 10px; margin-bottom: 4px; border: 1px solid #F3F4F6; }
+        .cat-label { font-size: 8px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 2px; opacity: 0.4; }
         
         .qty-badge { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
         .modal-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -112,56 +88,56 @@
     </button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[60] flex items-end">
-        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-5 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
-            <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-3">
+        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-4 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
+            <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-2">
                 <h3 class="text-xl font-black uppercase italic text-gray-800 tracking-tighter">Nuovo Oggetto</h3>
                 <button onclick="chiudiModale()" class="bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold">&times;</button>
             </div>
 
-            <div class="space-y-4 pb-20">
+            <div class="space-y-3 pb-16">
                 <div class="flex gap-2 overflow-x-auto no-scrollbar">
-                    <label class="shrink-0 w-24 h-24 bg-white border-2 border-dashed border-blue-200 rounded-[25px] flex items-center justify-center text-blue-600 cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-camera text-2xl"></i>
+                    <label class="shrink-0 w-20 h-20 bg-white border-2 border-dashed border-blue-200 rounded-[20px] flex items-center justify-center text-blue-600 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-camera text-xl"></i>
                         <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                     </label>
                     <div id="gallery" class="flex gap-2"></div>
                 </div>
 
-                <input id="nIn" type="text" placeholder="Nome oggetto" class="w-full p-4 bg-white rounded-2xl outline-none font-bold shadow-sm">
+                <input id="nIn" type="text" placeholder="Nome oggetto" class="w-full p-3 bg-white rounded-xl outline-none font-bold shadow-sm text-sm">
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="cIn" class="p-4 bg-white rounded-2xl font-bold shadow-sm appearance-none">
+                    <select id="cIn" class="p-3 bg-white rounded-xl font-bold shadow-sm appearance-none text-sm">
                         <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                         <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                     </select>
-                    <input id="pIn" type="text" placeholder="Posizione" class="p-4 bg-white rounded-2xl outline-none shadow-sm">
+                    <input id="pIn" type="text" placeholder="Posizione" class="p-3 bg-white rounded-xl outline-none shadow-sm text-sm">
                 </div>
 
-                <div class="bg-zinc-900 text-white p-4 rounded-[25px] flex items-center justify-between shadow-lg">
-                    <div class="flex flex-col"><span class="text-[9px] font-black opacity-40 uppercase tracking-widest">Quantità</span><span id="qtyVal" class="text-2xl font-black italic">1</span></div>
+                <div class="bg-zinc-900 text-white p-3 rounded-xl flex items-center justify-between shadow-lg">
+                    <div class="flex flex-col"><span class="text-[8px] font-black opacity-40 uppercase tracking-widest">Quantità</span><span id="qtyVal" class="text-xl font-black italic">1</span></div>
                     <div class="flex gap-2">
-                        <button onclick="changeQty(-1)" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-lg font-bold">-</button>
-                        <button onclick="changeQty(1)" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-lg font-bold">+</button>
+                        <button onclick="changeQty(-1)" class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-sm font-bold">-</button>
+                        <button onclick="changeQty(1)" class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-sm font-bold">+</button>
                     </div>
                 </div>
 
-                <div id="tagEngine" class="space-y-2"></div>
+                <div id="tagEngine" class="space-y-1"></div>
 
-                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[25px] font-black text-xl shadow-lg uppercase italic tracking-tighter">Conferma e Salva</button>
+                <button onclick="salva()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg shadow-lg uppercase italic tracking-tighter">Salva in TROVAPP</button>
             </div>
         </div>
     </div>
 
     <script>
         const CATEGORIE = {
-            "🏠 CASA": ["Mobili", "Quadri", "Vasi", "Tende", "Tappeti", "Cuscini", "Orologi"],
-            "🍳 CUCINA": ["Piatti", "Bicchieri", "Posate", "Pentole", "Mixer", "Bilance"],
-            "🧥 VESTIARIO": ["Cappotti", "Giacche", "Camicie", "Maglioni", "Pantaloni", "Abiti"],
-            "🛠 UTENSILI": ["Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Chiodi"],
-            "🔌 TECH": ["Cavi", "Alimentatori", "Powerbank", "Pile", "Multiprese"],
-            "⚽️ SPORT": ["Calcio", "Tennis", "Fitness", "Bici", "Sci", "Outdoor"],
-            "🎄 FESTE": ["Natale", "Luci", "Addobbi", "Pasqua", "Compleanno"],
-            "🔄 ALTRO": ["Misteriosi", "Cianfrusaglie", "Da Vendere", "Regali"]
+            "🏠 CASA": ["Generico Casa", "Arredo", "Mobili", "Quadri", "Vasi", "Tende", "Cuscini"],
+            "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Posate", "Pentole", "Mixer"],
+            "🧥 VESTITI": ["Generico Vestiti", "Cappotti", "Maglioni", "Camicie", "Pantaloni", "Scarpe"],
+            "🛠 UTENSILI": ["Generico Attrezzi", "Martello", "Viti", "Bulloni", "Trapano", "Chiodi"],
+            "🔌 TECH": ["Generico Tech", "Cavi", "Alimentatori", "Pile", "Audio", "PC"],
+            "⚽️ SPORT": ["Generico Sport", "Fitness", "Bici", "Outdoor", "Sci", "Calcio"],
+            "🎄 FESTE": ["Generico Feste", "Natale", "Luci", "Addobbi", "Compleanno"],
+            "🔄 ALTRO": ["Generico Altro", "Misteriosi", "Da Vendere", "Regali", "Scatole"]
         };
 
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -212,19 +188,18 @@
 
         function aggiorna() {
             const grid = document.getElementById('grid');
-            const tit = document.getElementById('titolo');
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
-            tit.innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
+            document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
-                <div class="bg-white rounded-[30px] overflow-hidden shadow-sm relative border border-gray-100">
+                <div class="bg-white rounded-[25px] overflow-hidden shadow-sm relative border border-gray-100">
                     <img src="${o.foto[0] || ''}" class="w-full h-32 object-cover bg-gray-50">
                     <div class="qty-badge">x${o.qty}</div>
-                    <div class="p-4">
+                    <div class="p-3">
                         <h4 class="font-black text-[10px] truncate uppercase italic">${o.nome}</h4>
                         <p class="text-[8px] text-blue-600 font-bold truncate uppercase">${o.pos || '---'}</p>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-6 h-6 rounded-full text-red-500 font-bold">×</button>
+                    <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-6 h-6 rounded-full text-red-500 font-bold shadow-sm">×</button>
                 </div>`).join('');
         }
 
@@ -253,7 +228,7 @@
                     canvas.width = img.width * scale; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.7));
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-24 h-24 object-cover rounded-[25px] shadow-sm">`).join('');
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-20 h-20 object-cover rounded-xl shadow-sm">`).join('');
                 };
             };
             reader.readAsDataURL(file);
