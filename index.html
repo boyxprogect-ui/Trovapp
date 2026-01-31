@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Trovapp Pro</title>
     
     <meta name="mobile-web-app-capable" content="yes">
@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* PROTEZIONE TOTALE REFRESH */
         html, body { 
             overscroll-behavior-y: none !important; 
             height: 100%;
@@ -24,7 +23,7 @@
             width: 100%;
         }
         
-        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; letter-spacing: -0.01em; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #F2F2F7; }
         
         #mainContainer {
             height: 100%;
@@ -32,15 +31,27 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .tag-pill { cursor: pointer; transition: all 0.1s; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 600; padding: 8px 16px; border-radius: 12px; font-size: 12px; white-space: nowrap; display: inline-block; }
-        .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; transform: scale(1.05); }
+        /* TAG COMPATTI E SCROLL LATERALE */
+        .tag-pill { cursor: pointer; border: 1px solid #E5E7EB; background: white; color: #3F3F46; font-weight: 700; padding: 6px 12px; border-radius: 10px; font-size: 11px; white-space: nowrap; display: inline-block; }
+        .tag-pill.active { background-color: #007AFF; color: white; border-color: #007AFF; }
         
-        /* SCORRIMENTO LATERALE TAG */
-        .tag-row { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; -ms-overflow-style: none; }
+        .tag-row { 
+            display: flex; 
+            gap: 6px; 
+            overflow-x: auto; 
+            padding: 2px 0; 
+            -webkit-overflow-scrolling: touch;
+        }
         .tag-row::-webkit-scrollbar { display: none; }
         
-        .cat-box { background: white; border-radius: 24px; padding: 16px; margin-bottom: 12px; border: 1px solid #F3F4F6; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        .cat-label { font-size: 10px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 10px; opacity: 0.5; letter-spacing: 0.05em; }
+        .cat-box { 
+            background: white; 
+            border-radius: 18px; 
+            padding: 10px 14px; 
+            margin-bottom: 8px; 
+            border: 1px solid #F3F4F6; 
+        }
+        .cat-label { font-size: 9px; font-weight: 800; color: #111827; text-transform: uppercase; margin-bottom: 6px; opacity: 0.4; letter-spacing: 0.05em; }
         
         .qty-badge { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; }
         .modal-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -60,8 +71,7 @@
                 <div class="flex flex-col gap-2">
                     <button onclick="esportaDati()" class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase">💾 Backup</button>
                     <label class="text-[9px] bg-white border border-gray-300 px-3 py-1 rounded-lg font-bold shadow-sm uppercase cursor-pointer text-center">
-                        📂 Carica
-                        <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
+                        📂 Carica <input type="file" id="importFile" class="hidden" onchange="importaDati(event)">
                     </label>
                 </div>
             </header>
@@ -69,12 +79,12 @@
             <div id="homeNav">
                 <div class="relative mb-4">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-400"></i>
-                    <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 transition-all font-medium">
+                    <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca nome o tag..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border-2 border-transparent focus:border-blue-500 font-medium">
                 </div>
 
                 <nav id="catMenu" class="grid grid-cols-2 gap-2">
                     <button onclick="apriSpazio('CANTINA')" class="p-6 rounded-[30px] bg-zinc-800 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
-                        <i class="fa-solid fa-box-open opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
+                        <i class="fa-solid fa-glasses opacity-20 text-6xl absolute -right-2 -bottom-2"></i>
                         <span class="font-black italic text-xl z-10 uppercase">Cantina</span>
                     </button>
                     <button onclick="apriSpazio('SOFFITTA')" class="p-6 rounded-[30px] bg-amber-600 text-white shadow-xl flex flex-col items-start gap-2 overflow-hidden relative">
@@ -92,78 +102,66 @@
                 </nav>
             </div>
 
-            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase tracking-widest">← Torna alla Home</button>
-            <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+            <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase">← Torna alla Home</button>
+            <div id="grid" class="grid grid-cols-2 gap-3"></div>
         </div>
     </div>
 
-    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl z-50">
+    <button onclick="apriModale()" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl z-50">
         <i class="fa-solid fa-plus"></i>
     </button>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[60] flex items-end">
-        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-6 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain; touch-action: pan-y;">
-            <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-4">
-                <h3 class="text-2xl font-black tracking-tighter uppercase text-gray-800">Nuovo Oggetto</h3>
-                <button onclick="chiudiModale()" class="bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">&times;</button>
+        <div id="modalScroll" class="bg-[#F2F2F7] w-full rounded-t-[40px] p-5 modal-up max-h-[96vh] overflow-y-auto no-scrollbar" style="overscroll-behavior: contain;">
+            <div class="flex justify-between items-center sticky top-0 bg-[#F2F2F7] z-10 pb-3">
+                <h3 class="text-xl font-black uppercase italic text-gray-800 tracking-tighter">Nuovo Oggetto</h3>
+                <button onclick="chiudiModale()" class="bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold">&times;</button>
             </div>
 
-            <div class="space-y-6 pb-24">
-                <div id="gallery" class="flex gap-2 overflow-x-auto py-2 no-scrollbar">
-                    <label class="shrink-0 w-28 h-28 bg-white border-2 border-dashed border-blue-200 rounded-[30px] flex items-center justify-center text-blue-600 cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-camera-retro text-3xl"></i>
+            <div class="space-y-4 pb-20">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar">
+                    <label class="shrink-0 w-24 h-24 bg-white border-2 border-dashed border-blue-200 rounded-[25px] flex items-center justify-center text-blue-600 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-camera text-2xl"></i>
                         <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                     </label>
+                    <div id="gallery" class="flex gap-2"></div>
                 </div>
 
-                <div class="space-y-2">
-                    <input id="nIn" type="text" placeholder="Cosa stai salvando?" class="w-full p-4 bg-white rounded-2xl outline-none font-bold text-lg shadow-sm">
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <select id="cIn" class="p-4 bg-white rounded-2xl font-bold appearance-none shadow-sm">
-                            <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
-                            <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
-                        </select>
-                        <input id="pIn" type="text" placeholder="Posizione (Scaffale X)" class="p-4 bg-white rounded-2xl outline-none shadow-sm">
+                <input id="nIn" type="text" placeholder="Nome oggetto" class="w-full p-4 bg-white rounded-2xl outline-none font-bold shadow-sm">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="cIn" class="p-4 bg-white rounded-2xl font-bold shadow-sm appearance-none">
+                        <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
+                        <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
+                    </select>
+                    <input id="pIn" type="text" placeholder="Posizione" class="p-4 bg-white rounded-2xl outline-none shadow-sm">
+                </div>
+
+                <div class="bg-zinc-900 text-white p-4 rounded-[25px] flex items-center justify-between shadow-lg">
+                    <div class="flex flex-col"><span class="text-[9px] font-black opacity-40 uppercase tracking-widest">Quantità</span><span id="qtyVal" class="text-2xl font-black italic">1</span></div>
+                    <div class="flex gap-2">
+                        <button onclick="changeQty(-1)" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-lg font-bold">-</button>
+                        <button onclick="changeQty(1)" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-lg font-bold">+</button>
                     </div>
                 </div>
 
-                <div class="bg-zinc-900 text-white p-5 rounded-[28px] flex items-center justify-between shadow-lg">
-                    <div class="flex flex-col"><span class="text-[10px] font-black opacity-50 uppercase tracking-widest">Quantità</span><span id="qtyVal" class="text-3xl font-black italic">1</span></div>
-                    <div class="flex gap-3">
-                        <button onclick="changeQty(-1)" class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-xl font-bold">-</button>
-                        <button onclick="changeQty(1)" class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-xl font-bold">+</button>
-                    </div>
-                </div>
+                <div id="tagEngine" class="space-y-2"></div>
 
-                <div id="tagEngine" class="space-y-3"></div>
-
-                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[24px] font-black text-xl shadow-lg active:scale-95 transition-transform uppercase italic">Aggiungi a TROVAPP</button>
+                <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[25px] font-black text-xl shadow-lg uppercase italic tracking-tighter">Conferma e Salva</button>
             </div>
         </div>
     </div>
 
     <script>
         const CATEGORIE = {
-            "🏠 CASA": ["Generico Casa", "Mobili", "Sedie", "Tavoli", "Decorazioni", "Quadri", "Cornici", "Specchi", "Vasi", "Tende", "Tappeti", "Cuscini", "Orologi", "Candele", "Soprammobili", "Cristalli", "Argenteria", "Porcellane", "Altro Arredo"],
-            "🍳 CUCINA": ["Generico Cucina", "Piatti", "Bicchieri", "Calici", "Posate", "Coltelli Chef", "Pentole", "Padelle", "Teglie", "Mixer", "Bilance", "Sottovuoto", "Conserve", "Spezie", "Contenitori", "Altro Cucina"],
-            "🧥 VESTIARIO": ["Generico Vestiti", "Cappotti", "Giacche", "Piumini", "Camicie", "Maglioni", "T-Shirt", "Polo", "Jeans", "Pantaloni", "Gonne", "Abiti", "Intimo", "Calze", "Costumi", "Asciugamani", "Altro Vestiario"],
-            "👟 SCARPE": ["Sneakers", "Eleganti", "Stivali", "Neve", "Sandali", "Infradito", "Ciabatte", "Tacchi", "Mocassini", "Pulizia Scarpe"],
-            "🛠 OFFICINA": ["Martello", "Cacciavite Stella", "Cacciavite Taglio", "Brugole", "Chiavi Inglesi", "Pinze", "Trapano", "Avvitatore", "Smerigliatrice", "Saldatore", "Seghetto", "Livella", "Metri", "Viti Legno", "Viti Metallo", "Bulloni", "Tasselli", "Chiodi", "Attrezzi Pesanti", "Altro Officina"],
-            "🔌 TECH/CAVI": ["Cavo USB-C", "Cavo Lightning", "Cavo HDMI", "Cavo Ethernet", "Alimentatori", "Powerbank", "Pile AA", "Pile AAA", "Batterie 9V", "Adattatori", "Multiprese", "Prolunghe", "Altro Tech"],
-            "💻 INFORMATICA": ["HD Esterni", "SSD", "Pendrive", "Mouse", "Tastiere", "Monitor", "Webcam", "Router", "Switch", "RAM", "Schede Video"],
-            "📸 FOTO/VIDEO": ["Corpi Macchina", "Obiettivi", "Flash", "Treppiedi", "Filtri", "Schede SD", "Microfoni", "Droni"],
-            "🌿 GIARDINO": ["Semi", "Bulbi", "Concime", "Vasi", "Terriccio", "Innaffiatoi", "Cesoie", "Tagliasiepi", "Rasaerba", "Mobili Esterno"],
-            "⚽️ SPORT": ["Calcio", "Tennis", "Pesi/Fitness", "Yoga", "Bici", "Caschi", "Tenda", "Sacco a Pelo", "Sci", "Scarponi", "Outdoor"],
-            "🎨 HOBBY/ARTE": ["Pennelli", "Tele", "Cucito", "Modellismo", "Puzzle", "Giochi Tavolo", "Lana", "Argilla"],
-            "💊 SALUTE": ["Termometro", "Cerotti", "Disinfettanti", "Antidolorifici", "Integratori", "Mascherine", "Farmaci Generici"],
-            "🐶 ANIMALI": ["Guinzagli", "Ciotole", "Cibo", "Trasportini", "Spazzole", "Giochi"],
-            "🎄 FESTE": ["Natale", "Luci", "Addobbi", "Halloween", "Pasqua", "Compleanno"],
-            "📑 DOCS": ["Fatture", "Contratti", "Garanzie", "Passaporti", "Foto Famiglia", "Lettere"],
-            "🏗 EDILIZIA": ["Scale", "Cemento", "Piastrelle", "Parquet", "Elettrico", "Idraulica"],
-            "🚗 AUTO/MOTO": ["Olio", "Liquido Tergi", "Gomme", "Catene", "Batteria", "Accessori"],
-            "✨ PREZIOSI": ["Orologi", "Anelli", "Collane", "Oro", "Monete", "Pietre"],
-            "🧸 INFANZIA": ["Pannolini", "Biberon", "Passeggini", "Seggiolini", "Peluche"],
-            "🔄 ALTRO": ["Misteriosi", "Cianfrusaglie", "Da Riparare", "Da Vendere", "Regali", "Scatoloni"]
+            "🏠 CASA": ["Mobili", "Quadri", "Vasi", "Tende", "Tappeti", "Cuscini", "Orologi"],
+            "🍳 CUCINA": ["Piatti", "Bicchieri", "Posate", "Pentole", "Mixer", "Bilance"],
+            "🧥 VESTIARIO": ["Cappotti", "Giacche", "Camicie", "Maglioni", "Pantaloni", "Abiti"],
+            "🛠 UTENSILI": ["Martello", "Cacciavite", "Trapano", "Viti", "Bulloni", "Chiodi"],
+            "🔌 TECH": ["Cavi", "Alimentatori", "Powerbank", "Pile", "Multiprese"],
+            "⚽️ SPORT": ["Calcio", "Tennis", "Fitness", "Bici", "Sci", "Outdoor"],
+            "🎄 FESTE": ["Natale", "Luci", "Addobbi", "Pasqua", "Compleanno"],
+            "🔄 ALTRO": ["Misteriosi", "Cianfrusaglie", "Da Vendere", "Regali"]
         };
 
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -177,7 +175,7 @@
                 section.className = "cat-box";
                 section.innerHTML = `
                     <div class="cat-label">${cat}</div>
-                    <div class="tag-row no-scrollbar">
+                    <div class="tag-row">
                         ${tags.map(t => `<span onclick="tg(this)" class="tag-pill">${t}</span>`).join('')}
                     </div>`;
                 container.appendChild(section);
@@ -186,29 +184,26 @@
 
         function tg(el) { el.classList.toggle('active'); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        
+        function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
+        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
+
         function apriSpazio(c) { 
             activeCat = c; 
             document.getElementById('homeNav').classList.add('hidden');
             document.getElementById('backBtn').classList.remove('hidden');
             aggiorna(); 
-            document.getElementById('mainContainer').scrollTo({top: 0, behavior: 'smooth'}); 
         }
 
         function tornaHome() { 
             activeCat = "TUTTI"; 
             document.getElementById('homeNav').classList.remove('hidden');
             document.getElementById('backBtn').classList.add('hidden');
-            document.getElementById('searchInput').value = ""; 
             aggiorna(); 
         }
 
-        function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
-        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); resetModale(); }
-
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Dai un nome all'oggetto!");
+            if(!nome) return alert("Dai un nome!");
             const tags = Array.from(document.querySelectorAll('.tag-pill.active')).map(t => t.innerText);
             db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags, qty: tempQty });
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
@@ -219,56 +214,37 @@
             const grid = document.getElementById('grid');
             const tit = document.getElementById('titolo');
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            const filtrati = db.filter(o => {
-                const matchesCat = (activeCat === 'TUTTI' || o.cat === activeCat);
-                const matchesSearch = (o.nome.toLowerCase().includes(query) || o.pos.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query)));
-                return matchesCat && matchesSearch;
-            });
-
+            const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             tit.innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
-            grid.innerHTML = '';
-            filtrati.reverse().forEach(o => {
-                grid.innerHTML += `
-                    <div class="bg-white rounded-[32px] overflow-hidden shadow-sm relative flex flex-col border border-gray-100">
-                        <img src="${o.foto[0] || 'https://via.placeholder.com/150?text=BOX'}" class="w-full h-32 object-cover">
-                        <div class="absolute top-2 left-2 qty-badge">x${o.qty || 1}</div>
-                        <div class="p-4">
-                            <h4 class="font-black text-[10px] truncate uppercase text-gray-800">${o.nome}</h4>
-                            <p class="text-[8px] text-blue-600 font-bold truncate uppercase">${o.pos || 'POSIZIONE'}</p>
-                        </div>
-                        <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-6 h-6 rounded-full text-red-500 text-xs font-bold flex items-center justify-center shadow-sm">×</button>
-                    </div>`;
-            });
+            grid.innerHTML = filtrati.reverse().map(o => `
+                <div class="bg-white rounded-[30px] overflow-hidden shadow-sm relative border border-gray-100">
+                    <img src="${o.foto[0] || ''}" class="w-full h-32 object-cover bg-gray-50">
+                    <div class="qty-badge">x${o.qty}</div>
+                    <div class="p-4">
+                        <h4 class="font-black text-[10px] truncate uppercase italic">${o.nome}</h4>
+                        <p class="text-[8px] text-blue-600 font-bold truncate uppercase">${o.pos || '---'}</p>
+                    </div>
+                    <button onclick="elimina(${o.id})" class="absolute top-2 right-2 bg-white/90 w-6 h-6 rounded-full text-red-500 font-bold">×</button>
+                </div>`).join('');
         }
 
-        function elimina(id) { if(confirm('Eliminare questo oggetto?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
-        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('qtyVal').innerText = "1"; renderGallery(); document.querySelectorAll('.tag-pill').forEach(t => t.classList.remove('active')); }
+        function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
+        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('qtyVal').innerText = "1"; document.getElementById('gallery').innerHTML = ""; document.querySelectorAll('.tag-pill').forEach(t => t.classList.remove('active')); }
 
         function esportaDati() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "backup_trovapp.json");
-            dlAnchorElem.click();
+            const dl = document.createElement('a'); dl.href = dataStr; dl.download = "backup_trovapp.json"; dl.click();
         }
 
-        function importaDati(event) {
+        function importaDati(e) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    db = JSON.parse(e.target.result);
-                    localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                    aggiorna();
-                } catch(err) { alert("File non valido!"); }
-            };
-            reader.readAsText(event.target.files[0]);
+            reader.onload = (ev) => { db = JSON.parse(ev.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); };
+            reader.readAsText(e.target.files[0]);
         }
 
         function comprimeECarica() {
             const file = document.getElementById('fIn').files[0];
             const reader = new FileReader();
-            reader.readAsDataURL(file);
             reader.onload = (e) => {
                 const img = new Image(); img.src = e.target.result;
                 img.onload = () => {
@@ -277,33 +253,13 @@
                     canvas.width = img.width * scale; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.7));
-                    renderGallery();
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-24 h-24 object-cover rounded-[25px] shadow-sm">`).join('');
                 };
             };
+            reader.readAsDataURL(file);
         }
 
-        function renderGallery() {
-            const gal = document.getElementById('gallery');
-            gal.querySelectorAll('.p-img').forEach(e => e.remove());
-            tempPhotos.forEach((f) => {
-                const d = document.createElement('div');
-                d.className = "p-img shrink-0 w-28 h-28";
-                d.innerHTML = `<img src="${f}" class="w-full h-full object-cover rounded-[24px] shadow-md">`;
-                gal.appendChild(d);
-            });
-        }
-
-        document.addEventListener('touchmove', function (e) {
-            const isModalOpen = !document.getElementById('modal').classList.contains('hidden');
-            if (isModalOpen) {
-                if (!e.target.closest('#modalScroll')) {
-                    e.preventDefault();
-                }
-            }
-        }, { passive: false });
-
-        initTagEngine();
-        aggiorna();
+        initTagEngine(); aggiorna();
     </script>
 </body>
 </html>
