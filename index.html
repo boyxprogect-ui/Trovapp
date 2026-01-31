@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Fixed Layout</title>
+    <title>Trovapp Pro - Quad View</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* BLOCCO AGGIORNAMENTO PAGINA */
+        /* BLOCCO REFRESH E SCORRIMENTO FISSO */
         html, body { 
             height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; 
             background-color: #F2F2F7; font-family: -apple-system, sans-serif;
@@ -23,31 +23,31 @@
 
         #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
 
-        /* MODIFICA: SCORRIMENTO ORIZZONTALE SOLO PER GLI OGGETTI */
+        /* SCORRIMENTO ORIZZONTALE - 4 SCHEDE A SCHERMO */
         #grid {
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
-            gap: 16px;
+            gap: 8px; /* Gap ridotto per far stare più roba */
             padding: 10px 0;
             -webkit-overflow-scrolling: touch;
         }
         #grid::-webkit-scrollbar { display: none; }
         
         .item-card {
-            flex: 0 0 85%; /* La scheda occupa gran parte della larghezza */
-            scroll-snap-align: center;
+            flex: 0 0 22%; /* 22% permette di vederne circa 4 a schermo */
+            scroll-snap-align: start;
             background: white;
-            border-radius: 32px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: relative;
         }
 
-        /* RESTO DELLE IMPOSTAZIONI ORIGINALI INVARIATE */
-        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 6px 12px; border-radius: 12px; font-size: 11px; display: flex; align-items: center; gap: 6px; }
+        /* RESTO INVARIATO */
+        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 4px 8px; border-radius: 8px; font-size: 10px; display: flex; align-items: center; gap: 4px; }
         .modal-content { background: #F2F2F7; width: 100%; height: 100%; display: flex; flex-direction: column; padding: env(safe-area-inset-top, 10px) 15px 15px 15px; }
-        .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: 900; }
+        .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 1px 4px; border-radius: 6px; font-size: 9px; font-weight: 900; }
         .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -59,7 +59,7 @@
         <header class="flex justify-between items-start mb-6">
             <div>
                 <h1 id="titolo" class="text-3xl font-black tracking-tighter italic uppercase text-gray-900">TROVAPP</h1>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Stable Layout</p>
+                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Quad View Mode</p>
             </div>
             <button onclick="esportaDati()" class="text-[8px] bg-zinc-800 text-white px-3 py-2 rounded-lg font-bold uppercase">💾 Backup</button>
         </header>
@@ -67,21 +67,21 @@
         <div id="homeNav" class="space-y-4">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none border border-transparent focus:border-blue-500 font-medium text-sm">
+                <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none text-sm">
             </div>
             
             <nav class="grid grid-cols-2 gap-3">
-                <button onclick="apriSpazio('CANTINA')" class="p-5 rounded-[28px] bg-zinc-800 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-md uppercase">Cantina</span>
+                <button onclick="apriSpazio('CANTINA')" class="p-5 rounded-[24px] bg-zinc-800 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-sm uppercase">Cantina</span>
                 </button>
-                <button onclick="apriSpazio('SOFFITTA')" class="p-5 rounded-[28px] bg-amber-600 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-md uppercase">Soffitta</span>
+                <button onclick="apriSpazio('SOFFITTA')" class="p-5 rounded-[24px] bg-amber-600 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-sm uppercase">Soffitta</span>
                 </button>
-                <button onclick="apriSpazio('ARMADI')" class="p-5 rounded-[28px] bg-rose-600 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-md uppercase">Armadi</span>
+                <button onclick="apriSpazio('ARMADI')" class="p-5 rounded-[24px] bg-rose-600 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-sm uppercase">Armadi</span>
                 </button>
-                <button onclick="apriSpazio('BOX')" class="p-5 rounded-[28px] bg-indigo-700 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-md uppercase">Box</span>
+                <button onclick="apriSpazio('BOX')" class="p-5 rounded-[24px] bg-indigo-700 text-white shadow-lg flex flex-col items-start active:scale-95">
+                    <span class="font-black italic text-sm uppercase">Box</span>
                 </button>
             </nav>
         </div>
@@ -91,49 +91,49 @@
         <div id="grid" class="no-scrollbar mt-4"></div>
     </div>
 
-    <button onclick="apriModale()" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl z-50 text-3xl flex items-center justify-center active:scale-90 transition-transform">
+    <button onclick="apriModale()" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl z-50 text-2xl flex items-center justify-center active:scale-90">
         <i class="fa-solid fa-plus"></i>
     </button>
 
     <div id="modal" class="hidden fixed inset-0 z-[60]">
         <div class="modal-content modal-up">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-black italic uppercase">Crea Scheda</h3>
+                <h3 class="text-xl font-black italic uppercase text-gray-800">Nuovo</h3>
                 <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
             </div>
-            <div class="bg-white p-3 rounded-3xl mb-3 flex gap-3">
-                <label class="w-20 h-20 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl flex items-center justify-center text-blue-600">
-                    <i class="fa-solid fa-camera text-xl"></i>
+            <div class="bg-white p-3 rounded-2xl mb-3 flex gap-3">
+                <label class="w-16 h-16 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-camera"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
                 <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
                 <div class="flex-1">
-                    <input id="nIn" type="text" placeholder="Nome..." class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none mb-2">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-3 py-2">
-                        <span class="text-[9px] font-black uppercase">QTY</span>
-                        <div class="flex gap-4 items-center">
+                    <input id="nIn" type="text" placeholder="Nome..." class="w-full p-2 bg-gray-50 rounded-lg text-xs font-bold outline-none mb-1">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-lg px-2 py-1">
+                        <span class="text-[8px] font-black uppercase">QTY</span>
+                        <div class="flex gap-3 items-center">
                             <button onclick="changeQty(-1)" class="font-bold">-</button>
-                            <span id="qtyVal" class="text-sm font-black">1</span>
+                            <span id="qtyVal" class="text-xs font-black">1</span>
                             <button onclick="changeQty(1)" class="text-blue-400 font-bold">+</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 mb-3">
-                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm">
+                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold">
                     <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
                     <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
                 </select>
-                <input id="pIn" type="text" placeholder="Posizione..." class="bg-white p-3 rounded-xl text-xs font-bold outline-none">
+                <input id="pIn" type="text" placeholder="Pos..." class="bg-white p-3 rounded-xl text-xs font-bold outline-none">
             </div>
-            <div class="bg-white p-4 rounded-3xl shadow-sm flex-1 flex flex-col overflow-hidden">
+            <div class="bg-white p-4 rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden">
                 <div class="flex gap-2 mb-3">
                     <input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-3 rounded-xl text-sm outline-none" onkeypress="if(event.key==='Enter') aggiungiTag()">
-                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-12 rounded-xl"><i class="fa-solid fa-plus"></i></button>
+                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white w-10 rounded-xl"><i class="fa-solid fa-plus"></i></button>
                 </div>
                 <div id="tagCloud" class="flex flex-wrap gap-2 overflow-y-auto pb-4"></div>
             </div>
-            <button onclick="salva()" class="w-full bg-blue-600 text-white py-5 rounded-[28px] font-black text-xl italic uppercase mt-4 shadow-xl">Salva</button>
+            <button onclick="salva()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg italic uppercase mt-4 shadow-xl">Salva</button>
         </div>
     </div>
 
@@ -147,7 +147,7 @@
         }
         function rimuoviTag(tag) { currentTags = currentTags.filter(t => t !== tag); renderTags(); }
         function renderTags() {
-            document.getElementById('tagCloud').innerHTML = currentTags.map(t => `<div onclick="rimuoviTag('${t}')" class="tag-pill">${t} <i class="fa-solid fa-xmark ml-1"></i></div>`).join('');
+            document.getElementById('tagCloud').innerHTML = currentTags.map(t => `<div onclick="rimuoviTag('${t}')" class="tag-pill">${t}</div>`).join('');
         }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function apriModale() { document.getElementById('modal').classList.remove('hidden'); }
@@ -157,7 +157,7 @@
 
         function salva() {
             const nome = document.getElementById('nIn').value;
-            if(!nome) return alert("Inserisci il nome!");
+            if(!nome) return alert("Nome!");
             db.push({ id: Date.now(), nome, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [...currentTags], qty: tempQty });
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
             chiudiModale(); aggiorna();
@@ -170,13 +170,13 @@
             document.getElementById('titolo').innerText = activeCat === 'TUTTI' ? "TROVAPP" : activeCat;
             grid.innerHTML = filtrati.reverse().map(o => `
                 <div class="item-card">
-                    <img src="${o.foto[0] || ''}" class="w-full h-80 object-cover bg-gray-50">
-                    <div class="absolute top-4 left-4 qty-badge">x${o.qty}</div>
-                    <div class="p-6">
-                        <h4 class="font-black text-xl uppercase italic text-gray-800 mb-1">${o.nome}</h4>
-                        <p class="text-sm text-blue-600 font-bold uppercase tracking-wider">${o.pos || '---'}</p>
+                    <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-50">
+                    <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
+                    <div class="p-2">
+                        <h4 class="font-black text-[8px] truncate uppercase italic text-gray-800">${o.nome}</h4>
+                        <p class="text-[7px] text-blue-600 font-bold uppercase">${o.pos || '-'}</p>
                     </div>
-                    <button onclick="elimina(${o.id})" class="absolute top-4 right-4 bg-white/90 w-10 h-10 rounded-full text-red-500 font-black">×</button>
+                    <button onclick="elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 font-black text-[8px]">×</button>
                 </div>`).join('');
         }
 
@@ -199,12 +199,12 @@
                 const img = new Image(); img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX = 500; let w = img.width, h = img.height;
+                    const MAX = 400; let w = img.width, h = img.height;
                     if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } } else { if (h > MAX) { w *= MAX / h; h = MAX; } }
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     tempPhotos.push(canvas.toDataURL('image/jpeg', 0.5));
-                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-20 h-20 object-cover rounded-2xl shadow-sm">`).join('');
+                    document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-12 h-12 object-cover rounded-lg shadow-sm">`).join('');
                 };
             };
             reader.readAsDataURL(document.getElementById('fIn').files[0]);
