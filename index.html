@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Style Fix</title>
+    <title>Trovapp Pro - Scroll Fix</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,34 +16,33 @@
         * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
         input, textarea { user-select: text !important; -webkit-user-select: text !important; }
 
-        html, body { height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overscroll-behavior-y: none; }
-        #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
+        /* FIX: Permettiamo lo scorrimento della pagina */
+        html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
+        
+        /* Container principale che permette lo scroll */
+        #mainContainer { 
+            min-height: 100vh; 
+            padding: 16px; 
+            padding-bottom: 120px; /* Spazio per non far coprire l'ultimo bottone dal tasto + blu */
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
 
-        /* SCORRIMENTO FLUIDO */
+        /* SCORRIMENTO ORIZZONTALE OGGETTI (Invariato) */
         .scroll-row { 
             display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; 
             -webkit-overflow-scrolling: touch; scroll-behavior: smooth; min-height: 140px;
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
-        /* CARD & FOTO FIX */
         .item-card { flex: 0 0 26%; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
         .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; object-position: center !important; display: block !important; }
         
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         
-        /* TAG BLU (Come richiesto) */
-        .tag-pill { 
-            background-color: #2563eb !important; 
-            color: white !important; 
-            font-weight: 700; 
-            padding: 4px 10px; 
-            border-radius: 8px; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-        }
+        .tag-pill { background-color: #2563eb !important; color: white !important; font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; }
 
-        /* SMART MENU */
+        /* SMART MENU (Invariato) */
         #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
         #smartMenu.active { visibility: visible; opacity: 1; }
         #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -51,13 +50,10 @@
         
         .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
         
-        /* UI FIX SCHEDA */
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
+        
+        /* TASTO + BLU FISSO (Invariato) */
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .gallery-img { width: 70px; height: 70px; object-fit: cover !important; border-radius: 14px; }
-
-        /* FIX PLACEHOLDER POSIZIONE */
-        #pIn { min-width: 100%; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -104,7 +100,7 @@
         </div>
     </div>
 
-    <div id="modal" class="hidden fixed inset-0 z-[60] bg-[#F2F2F7]">
+    <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
         <div class="h-full flex flex-col p-6 overflow-y-auto">
             <div class="flex justify-between items-center mb-6"><h3 id="modalTitle" class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3><button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button></div>
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
