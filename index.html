@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Fix Salva</title>
+    <title>Trovapp Pro - Custom UI</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -54,7 +54,7 @@
         <div id="homeNav" class="space-y-4">
             <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriPromptNuovo()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
+            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
         </div>
 
         <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-3 rounded-2xl font-black italic mb-2 uppercase">← Home</button>
@@ -68,14 +68,32 @@
     <div id="smartMenu" onclick="chiudiSmartMenu()">
         <div id="smartMenuContent" onclick="event.stopPropagation()">
             <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+            
             <div id="menuPrincipale">
                 <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
                 <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
                 <button onclick="azioneSmart('colore')" class="smart-btn">Cambia Colore <i class="fa-solid fa-palette"></i></button>
                 <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
             </div>
-            <div id="menuRinomina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button></div>
-            <div id="menuElimina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">No</button></div>
+
+            <div id="menuNuovoSpazio" class="hidden text-center">
+                <h2 class="font-black italic uppercase text-lg mb-4">NOME NUOVO SPAZIO</h2>
+                <input type="text" id="nuovoSpazioInput" placeholder="ES: GARAGE" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase text-center">
+                <button onclick="confermaNuovoSpazio()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Crea Spazio</button>
+            </div>
+
+            <div id="menuRinomina" class="hidden text-center">
+                <h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2>
+                <input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase text-center">
+                <button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button>
+            </div>
+
+            <div id="menuElimina" class="hidden text-center">
+                <h2 id="eliminaTitolo" class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2>
+                <button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì, elimina</button>
+                <button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">Annulla</button>
+            </div>
+
             <button onclick="chiudiSmartMenu()" class="w-full mt-8 py-2 text-gray-400 font-bold uppercase text-[12px] tracking-widest">CHIUDI</button>
         </div>
     </div>
@@ -136,12 +154,41 @@
 
         function apriSmartMenu(i) { selectedBtnIndex = i; resetMenu(); document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); }
         function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
-        function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
+        
+        function resetMenu() { 
+            document.getElementById('menuPrincipale').classList.remove('hidden'); 
+            document.getElementById('menuNuovoSpazio').classList.add('hidden');
+            document.getElementById('menuRinomina').classList.add('hidden'); 
+            document.getElementById('menuElimina').classList.add('hidden'); 
+        }
+
+        function apriMenuNuovoSpazio() { 
+            resetMenu(); 
+            document.getElementById('menuPrincipale').classList.add('hidden'); 
+            document.getElementById('menuNuovoSpazio').classList.remove('hidden'); 
+            document.getElementById('nuovoSpazioInput').value = "";
+            document.getElementById('smartMenu').classList.add('active'); 
+        }
+
+        function confermaNuovoSpazio() {
+            const n = document.getElementById('nuovoSpazioInput').value.toUpperCase();
+            if(n) {
+                configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]});
+                salvaConfig();
+                chiudiSmartMenu();
+            }
+        }
+
         function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
         function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n) { configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
-        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); }
+        
+        function mostraConfermaElimina() { 
+            document.getElementById('menuPrincipale').classList.add('hidden'); 
+            document.getElementById('menuElimina').classList.remove('hidden'); 
+            document.getElementById('eliminaTitolo').innerText = `ELIMINARE ${configSpazi[selectedBtnIndex].nome}?`;
+        }
+
         function azioneSmart(t) { if (t === 'colore') { configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore) + 1) % palette.length]; salvaConfig(); } else if (t === 'elimina') { configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); } }
-        function apriPromptNuovo() { const n = prompt("NOME NUOVO SPAZIO:")?.toUpperCase(); if(n) { configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]}); salvaConfig(); } }
         function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); aggiorna(); }
 
         function apriModale(id = null) {
