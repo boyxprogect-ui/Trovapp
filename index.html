@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Smart Style</title>
+    <title>Trovapp Pro - Full Version</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,6 +34,17 @@
             position: relative; transition: transform 0.1s;
         }
 
+        .btn-action {
+            background: #1c1c1e; color: white; padding: 8px 10px; border-radius: 10px;
+            font-size: 8px; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        #tipsSection {
+            background: #ffffff; border-radius: 20px; padding: 12px 18px; margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #007AFF;
+        }
+
         /* Menu Smart */
         #smartMenu {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100;
@@ -51,10 +62,8 @@
             width: 100%; background: white; padding: 18px; border-radius: 20px;
             margin-bottom: 10px; display: flex; justify-content: space-between;
             align-items: center; font-weight: 800; font-style: italic; text-transform: uppercase;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
-        /* Animazioni Modali */
         .modal-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -64,6 +73,9 @@
             border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
             z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px;
         }
+        
+        .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
+        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 16px; border-radius: 24px; font-weight: 900; font-size: 20px; font-style: italic; text-transform: uppercase; margin-top: auto; margin-bottom: 50px; }
     </style>
 </head>
 <body>
@@ -75,6 +87,10 @@
                 <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Cloud Sync Mode</p>
             </div>
             <div class="flex gap-2">
+                <label class="btn-action bg-blue-600 cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Carica
+                    <input type="file" id="importFile" class="hidden" accept="*/*" onchange="importaDati(event)">
+                </label>
                 <button onclick="esportaDati()" class="btn-action"><i class="fa-solid fa-cloud-arrow-down"></i> Backup</button>
             </div>
         </header>
@@ -93,32 +109,39 @@
             <div id="gridTop" class="scroll-row"></div>
             <div id="gridBottom" class="scroll-row"></div>
         </div>
+
+        <div id="tipsSection" class="mt-auto mb-28">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white w-7 h-7 rounded-lg flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-lightbulb text-xs"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black uppercase text-blue-600 tracking-wider">Lo sapevi?</p>
+                    <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Usa il tasto + per iniziare.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="smartMenu" onclick="chiudiSmartMenu()">
         <div id="smartMenuContent" onclick="event.stopPropagation()">
             <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
-            
             <div id="menuPrincipale">
                 <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
                 <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen-nib text-blue-500"></i></button>
                 <button onclick="azioneSmart('colore')" class="smart-btn">Cambia Colore <i class="fa-solid fa-palette text-amber-500"></i></button>
                 <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
             </div>
-
             <div id="menuRinomina" class="hidden">
                 <h2 class="text-center font-black italic uppercase text-lg mb-4">Nuovo Nome</h2>
                 <input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase">
                 <button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button>
             </div>
-
             <div id="menuElimina" class="hidden">
                 <h2 class="text-center font-black italic uppercase text-lg mb-2 text-red-600">Sei sicuro?</h2>
-                <p class="text-center text-xs font-bold text-gray-400 mb-6 uppercase">Tutti i dati rimarranno nel database,<br>ma lo spazio non sarà più visibile.</p>
                 <button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì, Elimina</button>
                 <button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">Annulla</button>
             </div>
-
             <button onclick="chiudiSmartMenu()" class="w-full mt-4 text-gray-400 font-bold uppercase text-[10px] tracking-widest">Chiudi</button>
         </div>
     </div>
@@ -126,7 +149,7 @@
     <div id="modalNuovo" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center p-6">
         <div class="bg-white w-full rounded-3xl p-6 modal-up">
             <h2 class="font-black italic uppercase text-lg mb-4">Crea Spazio</h2>
-            <input type="text" id="nomeNuovoSpazio" placeholder="NOME SPAZIO..." class="w-full p-4 bg-gray-100 rounded-2xl mb-4 outline-none font-bold uppercase">
+            <input type="text" id="nomeNuovoSpazio" placeholder="NOME SPAZIO..." class="w-full p-4 bg-gray-100 rounded-2xl mb-4 outline-none font-bold uppercase text-center">
             <div class="flex gap-2">
                 <button onclick="chiudiPromptNuovo()" class="flex-1 p-4 bg-gray-200 rounded-2xl font-black italic uppercase">Annulla</button>
                 <button onclick="confermaNuovoSpazio()" class="flex-1 p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Crea</button>
@@ -136,40 +159,40 @@
 
     <button id="addButton" onclick="apriModale()" class="active:scale-90"><i class="fa-solid fa-plus"></i></button>
 
-    <div id="modal" class="hidden fixed inset-0 z-[60]">
-        <div class="modal-content modal-up">
-            <div class="flex justify-between items-center mb-4">
+    <div id="modal" class="hidden fixed inset-0 z-[60] bg-white">
+        <div class="h-full flex flex-col p-6">
+            <div class="flex justify-between items-center mb-6">
                 <h3 id="modalTitle" class="text-xl font-black italic uppercase">Scheda</h3>
                 <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
             </div>
-            <div class="bg-white p-3 rounded-2xl mb-3 flex gap-3 items-center">
-                <label class="w-16 h-16 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center text-blue-600">
-                    <i class="fa-solid fa-camera"></i>
+            <div class="bg-gray-50 p-4 rounded-3xl mb-4 flex gap-4 items-center">
+                <label class="w-20 h-20 shrink-0 bg-white border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-camera fa-lg"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
                 <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
                 <div class="flex-1 space-y-2">
-                    <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-2 bg-gray-50 rounded-lg text-sm font-bold outline-none">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-lg px-3 py-2">
-                        <span class="text-[10px] font-black">QTY</span>
+                    <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-3 bg-white rounded-xl text-sm font-bold outline-none border border-gray-100">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2">
+                        <span class="text-[10px] font-black uppercase">QTY</span>
                         <div class="flex gap-4 items-center">
-                            <button onclick="changeQty(-1)" class="font-bold">-</button>
+                            <button onclick="changeQty(-1)" class="font-bold text-lg">-</button>
                             <span id="qtyVal" class="text-sm font-black">1</span>
-                            <button onclick="changeQty(1)" class="text-blue-400 font-bold">+</button>
+                            <button onclick="changeQty(1)" class="text-blue-400 font-bold text-lg">+</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold"></select>
-                <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none">
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <select id="cIn" class="bg-gray-50 p-4 rounded-2xl text-xs font-bold border-0 outline-none"></select>
+                <input id="pIn" type="text" placeholder="Dove?" class="bg-gray-50 p-4 rounded-2xl text-xs font-bold outline-none">
             </div>
-            <div id="tagCloud" class="flex flex-wrap gap-1 mb-4"></div>
             <button id="saveBtn" onclick="salva()" class="btn-salva">Salva</button>
         </div>
     </div>
 
     <script>
+        const tips = ["Tieni premuto a lungo su un bottone per modificarlo.", "Fai un Backup settimanale per sicurezza.", "Ogni colore aiuta a distinguere gli spazi."];
         const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [
             { nome: 'CANTINA', colore: 'bg-zinc-800' },
@@ -178,8 +201,9 @@
             { nome: 'BOX', colore: 'bg-indigo-700' }
         ];
 
-        let selectedBtnIndex = null;
-        let btnTimer;
+        let selectedBtnIndex = null, btnTimer;
+        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
 
         function renderBottoni() {
             const nav = document.getElementById('navGrid');
@@ -197,84 +221,36 @@
             });
         }
 
-        function apriSmartMenu(index) {
-            selectedBtnIndex = index;
-            resetMenu();
-            document.getElementById('smartMenuTitle').innerText = configSpazi[index].nome;
-            document.getElementById('smartMenu').classList.add('active');
-        }
-
+        function apriSmartMenu(i) { selectedBtnIndex = i; resetMenu(); document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); }
         function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
-
-        function resetMenu() {
-            document.getElementById('menuPrincipale').classList.remove('hidden');
-            document.getElementById('menuRinomina').classList.add('hidden');
-            document.getElementById('menuElimina').classList.add('hidden');
+        function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
+        function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
+        function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n) { configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
+        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); }
+        function azioneSmart(t) {
+            if (t === 'colore') { configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore) + 1) % palette.length]; salvaConfig(); }
+            else if (t === 'elimina') { configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); }
         }
-
-        function mostraRinomina() {
-            document.getElementById('menuPrincipale').classList.add('hidden');
-            document.getElementById('menuRinomina').classList.remove('hidden');
-            document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome;
-            document.getElementById('nuovoNomeInput').focus();
-        }
-
-        function confermaRinomina() {
-            const nuovo = document.getElementById('nuovoNomeInput').value.toUpperCase();
-            if(nuovo) { configSpazi[selectedBtnIndex].nome = nuovo; salvaConfig(); chiudiSmartMenu(); }
-        }
-
-        function mostraConfermaElimina() {
-            document.getElementById('menuPrincipale').classList.add('hidden');
-            document.getElementById('menuElimina').classList.remove('hidden');
-        }
-
-        function azioneSmart(tipo) {
-            const s = configSpazi[selectedBtnIndex];
-            if (tipo === 'colore') {
-                s.colore = palette[(palette.indexOf(s.colore) + 1) % palette.length];
-                salvaConfig();
-            } else if (tipo === 'elimina') {
-                configSpazi.splice(selectedBtnIndex, 1);
-                salvaConfig();
-                chiudiSmartMenu();
-            }
-        }
-
         function apriPromptNuovo() { document.getElementById('modalNuovo').classList.remove('hidden'); }
         function chiudiPromptNuovo() { document.getElementById('modalNuovo').classList.add('hidden'); document.getElementById('nomeNuovoSpazio').value = ''; }
-        function confermaNuovoSpazio() {
-            const n = document.getElementById('nomeNuovoSpazio').value.toUpperCase();
-            if(n) {
-                configSpazi.push({ nome: n, colore: palette[configSpazi.length % palette.length] });
-                salvaConfig(); chiudiPromptNuovo();
-            }
-        }
-
+        function confermaNuovoSpazio() { const n = document.getElementById('nomeNuovoSpazio').value.toUpperCase(); if(n) { configSpazi.push({ nome: n, colore: palette[configSpazi.length % palette.length] }); salvaConfig(); chiudiPromptNuovo(); } }
         function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); }
 
-        // --- CORE LOGIC (DB) ---
-        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
-
+        // DB FUNCTIONS
         function apriModale(id = null) {
             editId = id;
             if (id) {
-                const o = db.find(item => item.id === id);
-                document.getElementById('modalTitle').innerText = "Modifica";
+                const o = db.find(x => x.id === id);
                 document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat; tempQty = o.qty;
-                tempPhotos = [...o.foto]; currentTags = [...o.tags];
+                document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto];
                 document.getElementById('qtyVal').innerText = tempQty; renderGallery();
             } else { resetModale(); }
             document.getElementById('modal').classList.remove('hidden');
         }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
-        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
-            const d = { nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [...currentTags], qty: tempQty };
+            const d = { nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value, foto: [...tempPhotos], tags: [], qty: tempQty };
             if(editId) { const i = db.findIndex(x => x.id === editId); db[i] = { ...db[i], ...d }; }
             else { db.push({ id: Date.now(), ...d }); }
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
@@ -284,13 +260,22 @@
             const q = document.getElementById('searchInput').value.toLowerCase();
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q)));
             const m = Math.ceil(f.length / 2);
-            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><img src="${o.foto[0] || ''}" class="w-full h-20 object-cover"><div class="p-2"><h4 class="font-black text-[8px] truncate uppercase italic">${o.nome}</h4></div><button onclick="event.stopPropagation(); elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 text-[8px]">×</button></div>`;
+            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><img src="${o.foto[0] || ''}" class="w-full h-20 object-cover"><div class="p-2"><h4 class="font-black text-[8px] truncate uppercase italic">${o.nome}</h4></div></div>`;
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
-        function elimina(id) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }
-        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('qtyVal').innerText = "1"; document.getElementById('gallery').innerHTML = ""; }
+        function importaDati(e) {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => { db = JSON.parse(ev.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); alert("Dati caricati!"); };
+            reader.readAsText(file);
+        }
+        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const u = URL.createObjectURL(b); const a = document.createElement('a'); a.download = "backup.json"; a.href = u; a.click(); }
+        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
+        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
+        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg">`).join(''); }
+        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('qtyVal').innerText = "1"; document.getElementById('gallery').innerHTML = ""; }
         function comprimeECarica() {
             const file = document.getElementById('fIn').files[0];
             const reader = new FileReader();
@@ -305,8 +290,8 @@
             };
             reader.readAsDataURL(file);
         }
-        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const u = URL.createObjectURL(b); const a = document.createElement('a'); a.download = "backup.json"; a.href = u; a.click(); }
 
+        setInterval(() => { document.getElementById('tipText').innerText = tips[Math.floor(Math.random()*tips.length)]; }, 5000);
         renderBottoni();
         aggiorna();
     </script>
