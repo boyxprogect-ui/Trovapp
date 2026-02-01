@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Custom UI</title>
+    <title>Trovapp Pro - Final UI</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,28 +13,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* Blocco selezioni e stile base */
         * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
         input, textarea { user-select: text !important; -webkit-user-select: text !important; }
 
         html, body { height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overscroll-behavior-y: none; }
         #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
 
+        /* Griglia Oggetti */
         .scroll-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; padding: 5px 0; -webkit-overflow-scrolling: touch; min-height: 135px; }
         .scroll-row::-webkit-scrollbar { display: none; }
         
+        /* FIX IMMAGINI SCHIACCIATE: object-fit cover */
         .item-card { flex: 0 0 23%; scroll-snap-align: start; background: white; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
+        .item-card img { width: 100%; height: 80px; object-fit: cover; background-color: #f3f4f6; }
+        
         .qty-badge { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.8); color: white; padding: 1px 5px; border-radius: 6px; font-size: 8px; font-weight: 900; z-index: 10; }
         
+        /* Smart Menu */
         #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
         #smartMenu.active { visibility: visible; opacity: 1; }
-        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 60px 24px; transform: translateY(100%); transition: 0.3s; }
+        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 80px 24px; transform: translateY(100%); transition: 0.3s; }
         #smartMenu.active #smartMenuContent { transform: translateY(0); }
         
         .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
         .tag-pill { background-color: #E5E7EB; color: #4B5563; font-weight: 700; padding: 2px 6px; border-radius: 6px; font-size: 9px; text-transform: uppercase; }
         
+        /* Scheda e Salva */
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 24px; font-weight: 900; font-size: 20px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 58px; height: 58px; border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        
+        /* Gallery Thumbnails Fix */
+        .gallery-img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -94,7 +104,7 @@
                 <button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">Annulla</button>
             </div>
 
-            <button onclick="chiudiSmartMenu()" class="w-full mt-8 py-2 text-gray-400 font-bold uppercase text-[12px] tracking-widest">CHIUDI</button>
+            <button onclick="chiudiSmartMenu()" class="w-full mt-10 py-2 text-gray-400 font-bold uppercase text-[12px] tracking-widest">CHIUDI</button>
         </div>
     </div>
 
@@ -147,47 +157,19 @@
             const q = document.getElementById('searchInput').value.toLowerCase();
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
-            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-100"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
+            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
         function apriSmartMenu(i) { selectedBtnIndex = i; resetMenu(); document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); }
         function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
-        
-        function resetMenu() { 
-            document.getElementById('menuPrincipale').classList.remove('hidden'); 
-            document.getElementById('menuNuovoSpazio').classList.add('hidden');
-            document.getElementById('menuRinomina').classList.add('hidden'); 
-            document.getElementById('menuElimina').classList.add('hidden'); 
-        }
-
-        function apriMenuNuovoSpazio() { 
-            resetMenu(); 
-            document.getElementById('menuPrincipale').classList.add('hidden'); 
-            document.getElementById('menuNuovoSpazio').classList.remove('hidden'); 
-            document.getElementById('nuovoSpazioInput').value = "";
-            document.getElementById('smartMenu').classList.add('active'); 
-        }
-
-        function confermaNuovoSpazio() {
-            const n = document.getElementById('nuovoSpazioInput').value.toUpperCase();
-            if(n) {
-                configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]});
-                salvaConfig();
-                chiudiSmartMenu();
-            }
-        }
-
+        function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuNuovoSpazio').classList.add('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
+        function apriMenuNuovoSpazio() { resetMenu(); document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuNuovoSpazio').classList.remove('hidden'); document.getElementById('nuovoSpazioInput').value = ""; document.getElementById('smartMenu').classList.add('active'); }
+        function confermaNuovoSpazio() { const n = document.getElementById('nuovoSpazioInput').value.toUpperCase(); if(n) { configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]}); salvaConfig(); chiudiSmartMenu(); } }
         function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
         function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n) { configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
-        
-        function mostraConfermaElimina() { 
-            document.getElementById('menuPrincipale').classList.add('hidden'); 
-            document.getElementById('menuElimina').classList.remove('hidden'); 
-            document.getElementById('eliminaTitolo').innerText = `ELIMINARE ${configSpazi[selectedBtnIndex].nome}?`;
-        }
-
+        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); document.getElementById('eliminaTitolo').innerText = `ELIMINARE ${configSpazi[selectedBtnIndex].nome}?`; }
         function azioneSmart(t) { if (t === 'colore') { configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore) + 1) % palette.length]; salvaConfig(); } else if (t === 'elimina') { configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); } }
         function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); aggiorna(); }
 
@@ -211,7 +193,7 @@
         function aggiungiTag() { const v = document.getElementById('tagInput').value.trim().toLowerCase(); if(v && !currentTags.includes(v)) { currentTags.push(v); document.getElementById('tagInput').value = ""; renderTags(); } }
         function renderTags() { document.getElementById('tagCloud').innerHTML = currentTags.map((t, i) => `<div onclick="currentTags.splice(${i},1);renderTags()" class="tag-pill">${t}</div>`).join(''); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg">`).join(''); }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="gallery-img">`).join(''); }
         function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; currentTags = []; }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
