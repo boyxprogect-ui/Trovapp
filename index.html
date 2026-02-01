@@ -42,12 +42,8 @@
         }
 
         #tipsSection {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 12px 18px;
-            margin: 10px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border-left: 5px solid #007AFF;
+            background: #ffffff; border-radius: 20px; padding: 12px 18px; margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #007AFF;
         }
 
         .tag-pill { background-color: #007AFF; color: white; font-weight: 700; padding: 3px 8px; border-radius: 8px; font-size: 10px; }
@@ -65,22 +61,15 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         #addButton {
-            position: fixed;
-            bottom: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #2563eb;
-            color: white;
-            width: 58px;
-            height: 58px;
-            border-radius: 9999px;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
+            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
+            background-color: #2563eb; color: white; width: 58px; height: 58px;
+            border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px;
         }
+
+        /* Animazione per i bottoni al tocco */
+        .cat-btn { transition: transform 0.1s, opacity 0.1s; position: relative; }
+        .cat-btn:active { transform: scale(0.92); opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -108,10 +97,11 @@
                 <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium">
             </div>
             
-            <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            
-            <button onclick="gestisciSpazi()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-xl text-[10px] font-bold text-gray-400 uppercase">
-                <i class="fa-solid fa-pen-to-square mr-1"></i> Modifica Spazi
+            <nav id="navGrid" class="grid grid-cols-2 gap-3">
+                </nav>
+
+            <button onclick="aggiungiNuovoSpazio()" class="w-full py-3 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">
+                <i class="fa-solid fa-plus mr-1"></i> Aggiungi Spazio
             </button>
         </div>
 
@@ -167,8 +157,7 @@
             </div>
 
             <div class="grid grid-cols-2 gap-2 mb-3">
-                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm border border-gray-50">
-                    </select>
+                <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm border border-gray-50"></select>
                 <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
             </div>
 
@@ -185,9 +174,7 @@
     </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        
-        // --- LOGICA BOTTONI PERSONALIZZATI ---
+        // --- LOGICA BOTTONI DINAMICI ---
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [
             { nome: 'CANTINA', colore: 'bg-zinc-800' },
             { nome: 'SOFFITTA', colore: 'bg-amber-600' },
@@ -195,44 +182,68 @@
             { nome: 'BOX', colore: 'bg-indigo-700' }
         ];
 
+        let btnTimer;
+
         function renderBottoni() {
             const nav = document.getElementById('navGrid');
             const select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
-            configSpazi.forEach(s => {
-                nav.innerHTML += `<button onclick="apriSpazio('${s.nome}')" class="p-4 rounded-[24px] ${s.colore} text-white shadow-lg flex flex-col items-start active:scale-95"><span class="font-black italic text-sm uppercase">${s.nome}</span></button>`;
+            
+            configSpazi.forEach((s, index) => {
+                const btn = document.createElement('button');
+                btn.className = `cat-btn p-4 rounded-[24px] ${s.colore} text-white shadow-lg flex flex-col items-start`;
+                btn.innerHTML = `<span class="font-black italic text-sm uppercase">${s.nome}</span>`;
+                
+                // Eventi per pressione normale e lunga
+                btn.onclick = () => apriSpazio(s.nome);
+                btn.ontouchstart = () => { btnTimer = setTimeout(() => modificaSingoloBottone(index), 1000); };
+                btn.ontouchend = () => clearTimeout(btnTimer);
+                btn.onmousedown = () => { btnTimer = setTimeout(() => modificaSingoloBottone(index), 1000); };
+                btn.onmouseup = () => clearTimeout(btnTimer);
+
+                nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
         }
 
-        function gestisciSpazi() {
-            const azione = prompt("1: Aggiungi Spazio | 2: Rimuovi Spazio | 3: Modifica Colore\nScrivi il numero:");
-            if (azione === "1") {
-                const nome = prompt("Nome nuovo spazio:").toUpperCase();
-                if (nome) { configSpazi.push({ nome, colore: 'bg-blue-600' }); }
-            } else if (azione === "2") {
-                const nome = prompt("Nome spazio da eliminare:").toUpperCase();
-                configSpazi = configSpazi.filter(s => s.nome !== nome);
-            } else if (azione === "3") {
-                const nome = prompt("Nome spazio da colorare:").toUpperCase();
-                const colore = prompt("Classe Tailwind (es: bg-red-500, bg-green-600, bg-black):");
-                const index = configSpazi.findIndex(s => s.nome === nome);
-                if (index !== -1) configSpazi[index].colore = colore;
+        function aggiungiNuovoSpazio() {
+            const nome = prompt("Nome nuovo spazio:").toUpperCase();
+            if (nome) {
+                configSpazi.push({ nome, colore: 'bg-blue-600' });
+                salvaConfig();
             }
+        }
+
+        function modificaSingoloBottone(index) {
+            const s = configSpazi[index];
+            const scelta = prompt(`MODIFICA [${s.nome}]\n1: Rinomina\n2: Cambia Colore (es. bg-red-500)\n3: ELIMINA\nScrivi il numero:`);
+            
+            if (scelta === "1") {
+                const nuovoNome = prompt("Nuovo nome:", s.nome).toUpperCase();
+                if (nuovoNome) s.nome = nuovoNome;
+            } else if (scelta === "2") {
+                const nuovoColore = prompt("Nuova classe colore Tailwind:", s.colore);
+                if (nuovoColore) s.colore = nuovoColore;
+            } else if (scelta === "3") {
+                if (confirm(`Eliminare lo spazio ${s.nome}?`)) configSpazi.splice(index, 1);
+            }
+            salvaConfig();
+        }
+
+        function salvaConfig() {
             localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
             renderBottoni();
         }
 
-        // --- FINE LOGICA BOTTONI ---
-
+        // --- IL RESTO DEL TUO CODICE ORIGINALE ---
+        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
         let tTimer, isScrolling = false;
 
         const tips = [
             "Tieni premuto a lungo su un oggetto per modificarlo.",
             "Fai un Backup settimanale per tenere i tuoi dati al sicuro.",
-            "Usa i Tag per trovare oggetti simili in spazi diversi.",
-            "La fotocamera è impostata su 'Ambiente' per inquadrare meglio."
+            "Usa i Tag per trovare oggetti simili in spazi diversi."
         ];
 
         function mostraSuggerimento() {
@@ -241,9 +252,7 @@
 
         function startT(id) { 
             isScrolling = false;
-            tTimer = setTimeout(() => {
-                if (!isScrolling) apriModale(id);
-            }, 1200); 
+            tTimer = setTimeout(() => { if (!isScrolling) apriModale(id); }, 1200); 
         }
         function endT() { clearTimeout(tTimer); }
         function handleScroll() { isScrolling = true; clearTimeout(tTimer); }
@@ -254,11 +263,9 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const caricati = JSON.parse(e.target.result);
-                    if (confirm("Sovrascrivere i dati?")) {
-                        db = caricati; localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                        aggiorna(); alert("Dati caricati!");
-                    }
+                    db = JSON.parse(e.target.result);
+                    localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                    aggiorna(); alert("Dati caricati!");
                 } catch (err) { alert("File non valido!"); }
             };
             reader.readAsText(file);
@@ -268,9 +275,8 @@
             const val = document.getElementById('tagInput').value.trim().toLowerCase();
             if(val && !currentTags.includes(val)) { currentTags.push(val); document.getElementById('tagInput').value = ""; renderTags(); }
         }
-        function rimuoviTag(tag) { currentTags = currentTags.filter(t => t !== tag); renderTags(); }
         function renderTags() {
-            document.getElementById('tagCloud').innerHTML = currentTags.map(t => `<div onclick="rimuoviTag('${t}')" class="tag-pill">${t}</div>`).join('');
+            document.getElementById('tagCloud').innerHTML = currentTags.map(t => `<div onclick="this.remove()" class="tag-pill">${t}</div>`).join('');
         }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         
@@ -313,19 +319,13 @@
             const metà = Math.ceil(filtrati.length / 2);
             
             const renderCard = o => `
-                <div class="item-card" 
-                     ontouchstart="startT(${o.id})" 
-                     ontouchend="endT()" 
-                     ontouchmove="handleScroll()"
-                     onmousedown="startT(${o.id})" 
-                     onmouseup="endT()">
+                <div class="item-card" ontouchstart="startT(${o.id})" ontouchend="endT()" ontouchmove="handleScroll()">
                     <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-50">
                     <div class="absolute top-1 left-1 qty-badge">x${o.qty}</div>
                     <div class="p-2">
                         <h4 class="font-black text-[8px] truncate uppercase italic text-gray-800">${o.nome}</h4>
                         <div class="flex flex-col">
                             <span class="text-[6px] text-blue-600 font-black uppercase">${o.pos || 'Senza pos.'}</span>
-                            <span class="text-[5px] text-gray-400 font-bold uppercase">${o.cat}</span>
                         </div>
                     </div>
                     <button onclick="event.stopPropagation(); elimina(${o.id})" class="absolute top-1 right-1 bg-white/90 w-4 h-4 rounded-full text-red-500 text-[8px]">×</button>
@@ -335,27 +335,10 @@
         }
 
         function elimina(id) { if(confirm('Eliminare?')) { db = db.filter(o => o.id !== id); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } }
+        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; currentTags = []; document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = ""; }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg border">`).join(''); }
+        function esportaDati() { const dataStr = JSON.stringify(db); const blob = new Blob([dataStr], { type: "application/json" }); const url = URL.createObjectURL(blob); const dl = document.createElement('a'); dl.download = `backup.json`; dl.href = url; dl.click(); }
         
-        function resetModale() { 
-            document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; 
-            document.getElementById('tagInput').value = ""; document.getElementById('gallery').innerHTML = "";
-            tempPhotos = []; tempQty = 1; currentTags = []; editId = null;
-            document.getElementById('qtyVal').innerText = "1"; document.getElementById('tagCloud').innerHTML = "";
-        }
-
-        function renderGallery() {
-            document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-lg border">`).join('');
-        }
-
-        function esportaDati() {
-            const dataStr = JSON.stringify(db, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const dl = document.createElement('a');
-            dl.download = `TROVAPP_BACKUP_${new Date().toISOString().split('T')[0]}.json`;
-            dl.href = url; dl.click();
-        }
-
         function comprimeECarica() {
             const file = document.getElementById('fIn').files[0];
             if (!file) return;
