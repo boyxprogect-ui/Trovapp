@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Full Info</title>
+    <title>Trovapp Pro - Classic Size</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/4080/4080030.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,36 +19,35 @@
             overscroll-behavior-y: none; 
         }
         #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
+        
+        /* Ripristino misura originale delle card */
         .scroll-row {
             display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            gap: 10px; padding: 5px 0; -webkit-overflow-scrolling: touch; min-height: 155px;
+            gap: 10px; padding: 5px 0; -webkit-overflow-scrolling: touch; min-height: 135px;
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
         .item-card {
-            flex: 0 0 45%; scroll-snap-align: start; background: white;
-            border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            flex: 0 0 23%; scroll-snap-align: start; background: white;
+            border-radius: 18px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             position: relative; transition: transform 0.1s;
         }
-        .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.75); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 900; z-index: 10; }
+
+        .qty-badge { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.8); color: white; padding: 1px 5px; border-radius: 6px; font-size: 8px; font-weight: 900; z-index: 10; }
         
-        /* Menu Smart */
         #smartMenu {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100;
             display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s;
             backdrop-filter: blur(4px);
         }
         #smartMenu.active { visibility: visible; opacity: 1; }
-        #smartMenuContent {
-            background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0;
-            padding: 24px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s; }
         #smartMenu.active #smartMenuContent { transform: translateY(0); }
-        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-style: italic; text-transform: uppercase; }
+        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
 
         .tag-pill { background-color: #E5E7EB; color: #4B5563; font-weight: 700; padding: 2px 6px; border-radius: 6px; font-size: 9px; text-transform: uppercase; }
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 16px; border-radius: 24px; font-weight: 900; font-size: 20px; font-style: italic; text-transform: uppercase; margin-top: auto; margin-bottom: 20px; }
-        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 60px; height: 60px; border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 58px; height: 58px; border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px; }
     </style>
 </head>
 <body>
@@ -67,7 +65,7 @@
         </header>
 
         <div id="homeNav" class="space-y-4">
-            <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto o un tag..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium">
+            <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
             <button onclick="apriPromptNuovo()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
         </div>
@@ -81,7 +79,7 @@
 
         <div id="tipsSection" class="mt-auto mb-28 bg-white p-4 rounded-3xl border-l-4 border-blue-600 shadow-sm">
             <p class="text-[9px] font-black uppercase text-blue-600">Lo sapevi?</p>
-            <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Puoi vedere subito in che stanza si trova l'oggetto.</p>
+            <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Le foto piccole ti permettono di vedere più oggetti insieme.</p>
         </div>
     </div>
 
@@ -89,53 +87,41 @@
         <div id="smartMenuContent" onclick="event.stopPropagation()">
             <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
             <div id="menuPrincipale">
-                <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6">SPAZIO</h2>
+                <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
                 <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
-                <button onclick="azioneSmart('colore')" class="smart-btn">Colore <i class="fa-solid fa-palette"></i></button>
-                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
+                <button onclick="azioneSmart('colore')" class="smart-btn">Cambia Colore <i class="fa-solid fa-palette"></i></button>
+                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500 text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
             </div>
-            <div id="menuRinomina" class="hidden"><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl bg-white mb-4 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Salva</button></div>
-            <div id="menuElimina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare lo spazio?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">No</button></div>
+            <div id="menuRinomina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button></div>
+            <div id="menuElimina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">No</button></div>
             <button onclick="chiudiSmartMenu()" class="w-full mt-4 text-gray-400 font-bold uppercase text-[10px]">Chiudi</button>
         </div>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[60] bg-[#F2F2F7]">
         <div class="h-full flex flex-col p-6 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="modalTitle" class="text-xl font-black italic uppercase">SCHEDA</h3>
-                <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 id="modalTitle" class="text-xl font-black italic uppercase">SCHEDA</h3><button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button></div>
             <div class="bg-white p-4 rounded-3xl shadow-sm mb-4 flex gap-4 items-center">
-                <label class="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600"><i class="fa-solid fa-camera"></i><input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()"></label>
+                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600"><i class="fa-solid fa-camera fa-lg"></i><input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()"></label>
                 <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
                 <div class="flex-1 space-y-2">
-                    <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2">
-                        <span class="text-[10px] font-black">QTY</span>
-                        <div class="flex gap-4 items-center"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)" class="text-blue-400">+</button></div>
-                    </div>
+                    <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none border-0">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2"><span class="text-[10px] font-black uppercase">QTY</span><div class="flex gap-4 items-center"><button onclick="changeQty(-1)" class="font-bold text-lg">-</button><span id="qtyVal" class="text-sm font-black">1</span><button onclick="changeQty(1)" class="text-blue-400 font-bold text-lg">+</button></div></div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <select id="cIn" class="bg-white p-4 rounded-2xl text-xs font-bold outline-none"></select>
-                <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-4 rounded-2xl text-xs font-bold outline-none uppercase">
-            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4"><select id="cIn" class="bg-white p-4 rounded-2xl text-xs font-bold border-0 shadow-sm outline-none text-gray-800"></select><input id="pIn" type="text" placeholder="Dove?" class="bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 text-gray-800 uppercase"></div>
             <div class="bg-white p-3 rounded-2xl shadow-sm mb-6">
-                <div class="flex gap-2 mb-2">
-                    <input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-xs font-bold outline-none">
-                    <button onclick="aggiungiTag()" class="bg-blue-600 text-white px-3 rounded-xl">+</button>
-                </div>
+                <div class="flex gap-2 mb-2"><input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-xs font-bold outline-none border-0"><button onclick="aggiungiTag()" class="bg-blue-600 text-white px-3 rounded-xl">+</button></div>
                 <div id="tagCloud" class="flex flex-wrap gap-1"></div>
             </div>
-            <button id="saveBtn" onclick="salva()" class="btn-salva">Salva Prodotto</button>
+            <button id="saveBtn" onclick="salva()" class="btn-salva shadow-xl">Salva</button>
         </div>
     </div>
 
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const tips = ["Puoi vedere subito in che stanza si trova l'oggetto.", "Usa i Tag per trovare oggetti simili.", "Fai un backup se aggiungi molti oggetti."];
+        const tips = ["Le foto piccole permettono di vedere più oggetti.", "La posizione indica dove cercare l'oggetto.", "Usa i Tag per ricerche veloci."];
         const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'ARMADI',colore:'bg-rose-600'},{nome:'BOX',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -147,7 +133,7 @@
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
                 btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
-                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase">${s.nome}</span>`;
+                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
                 btn.onpointerdown = () => btnTimer = setTimeout(() => apriSmartMenu(i), 800);
                 btn.onpointerup = () => clearTimeout(btnTimer);
@@ -165,11 +151,11 @@
             const r = o => `
                 <div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
-                    <img src="${o.foto[0] || ''}" class="w-full h-28 object-cover bg-gray-100">
-                    <div class="p-3">
-                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">${o.cat}</p>
-                        <h4 class="font-black text-[11px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4>
-                        <p class="text-[9px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p>
+                    <img src="${o.foto[0] || ''}" class="w-full h-20 object-cover bg-gray-100">
+                    <div class="p-2">
+                        <p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p>
+                        <h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p>
                     </div>
                 </div>`;
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
