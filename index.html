@@ -3,413 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrovApp Pro</title>
-    <link rel="manifest" href="data:application/manifest+json,{'name':'TrovApp','short_name':'TrovApp','start_url':'.','display':'standalone','background_color':'#f0f2f5','theme_color':'#4a90e2'}">
+    <title>TrovApp</title>
+    <link rel="manifest" href="data:application/manifest+json,{'name':'TrovApp','short_name':'TrovApp','start_url':'.','display':'standalone','background_color':'#ffffff','theme_color':'#ffffff'}">
     
     <style>
-        :root {
-            --primary: #4a90e2;
-            --secondary: #673ab7;
-            --accent: #ff4081;
-            --bg: #f0f2f5;
-            --card: #ffffff;
-            --text: #333;
-        }
+        body { font-family: sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
+        
+        /* Grafica Originale */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .search-bar { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
+        
+        /* Categorie come le volevi tu */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; align-items: center; }
+        .cat-btn { padding: 8px 15px; border: 1px solid #ccc; border-radius: 20px; background: white; white-space: nowrap; cursor: pointer; }
+        .cat-btn.active { background: #000; color: #fff; border-color: #000; }
+        .add-cat { background: #eee; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-weight: bold; }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 120px; object-fit: cover; }
+        .card-info { padding: 10px; }
+        .card-title { font-weight: bold; font-size: 14px; }
+        .card-tags { font-size: 12px; color: #666; margin-top: 4px; }
 
-        /* Header Moderno */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* Tasto Aggiungi */
+        .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
-
-        /* Barra Categorie Dinamiche */
-        #category-bar {
-            display: flex;
-            overflow-x: auto;
-            padding: 15px;
-            gap: 10px;
-            background: white;
-            white-space: nowrap;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-        }
-
-        .cat-btn {
-            padding: 8px 18px;
-            border-radius: 20px;
-            border: 2px solid var(--primary);
-            background: transparent;
-            color: var(--primary);
-            font-weight: bold;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-
-        .cat-btn.active {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 3px 8px rgba(74, 144, 226, 0.3);
-        }
-
-        .add-cat-btn {
-            background: #f0f0f0;
-            border: 2px dashed #ccc;
-            width: 40px;
-            height: 36px;
-            border-radius: 18px;
-            font-size: 20px;
-            color: #666;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* Ricerca */
-        .search-container { padding: 15px; }
-        #search-input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            font-size: 16px;
-            outline: none;
-            transition: border 0.3s;
-        }
-        #search-input:focus { border-color: var(--primary); }
-
-        /* Grid Oggetti */
-        #items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            padding: 15px;
-            padding-bottom: 100px;
-        }
-
-        .item-card {
-            background: var(--card);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            animation: fadeIn 0.4s ease-out forwards;
-            position: relative;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .item-card img {
-            width: 100%;
-            height: 130px;
-            object-fit: cover;
-            border-bottom: 1px solid #f9f9f9;
-        }
-
-        .item-info { padding: 12px; }
-        .item-name { font-weight: bold; font-size: 15px; margin-bottom: 4px; color: var(--text); }
-        .item-desc { font-size: 12px; color: #777; line-height: 1.4; }
-
-        .btn-delete {
-            color: #ff4d4d;
-            background: none;
-            border: none;
-            font-size: 11px;
-            margin-top: 8px;
-            padding: 0;
-            cursor: pointer;
-        }
-
-        /* Pulsante Fluttuante (FAB) */
-        #fab {
-            position: fixed;
-            bottom: 30px;
-            right: 25px;
-            width: 65px;
-            height: 65px;
-            background: var(--accent);
-            border-radius: 50%;
-            color: white;
-            font-size: 35px;
-            border: none;
-            box-shadow: 0 6px 20px rgba(255, 64, 129, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: transform 0.2s;
-        }
-        #fab:active { transform: scale(0.9); }
-
-        /* Modal Moderno */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            width: 85%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
-        .form-group input, .form-group select { 
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px;
-        }
-
-        .btn-save {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
-        }
+        /* Modal semplice */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 400px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .save-btn { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>TrovApp Pro</h1>
-</header>
-
-<div id="category-bar">
-    <button class="cat-btn active" onclick="filterCat('Tutti', this)">Tutti</button>
-    <div id="custom-cats" style="display: flex; gap: 10px;"></div>
-    <button class="add-cat-btn" onclick="addNewCategory()">+</button>
+<div class="header">
+    <h2>TrovApp</h2>
 </div>
 
-<div class="search-container">
-    <input type="text" id="search-input" placeholder="Cerca tra i tuoi oggetti..." oninput="searchItems()">
+<input type="text" class="search-bar" id="search" placeholder="Cerca oggetto..." oninput="search()">
+
+<div class="categories" id="cat-bar">
+    <button class="cat-btn active" onclick="filter('Tutti', this)">Tutti</button>
+    <div id="user-cats" style="display: flex; gap: 10px;"></div>
+    <button class="add-cat" onclick="addSpace()">+</button>
 </div>
 
-<div id="items-grid"></div>
+<div class="grid" id="grid"></div>
 
-<button id="fab" onclick="openModal()">+</button>
+<button class="fab" onclick="document.getElementById('modal').style.display='flex'">+</button>
 
 <div id="modal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0">Nuovo Oggetto</h3>
-        <div class="form-group">
-            <label>Foto</label>
-            <input type="file" id="item-image" accept="image/*" capture="environment">
-        </div>
-        <div class="form-group">
-            <label>Nome</label>
-            <input type="text" id="item-name" placeholder="Cosa stai mettendo via?">
-        </div>
-        <div class="form-group">
-            <label>Spazio / Categoria</label>
-            <select id="item-category"></select>
-        </div>
-        <div class="form-group">
-            <label>Note Extra</label>
-            <input type="text" id="item-tags" placeholder="Es: scatola gialla, ripiano alto">
-        </div>
-        <button class="btn-save" onclick="saveItem()">CONFERMA E SALVA</button>
-        <button onclick="closeModal()" style="background:none; border:none; color:#999; width:100%; margin-top:15px; font-size:14px;">Chiudi</button>
+        <h3>Nuovo Oggetto</h3>
+        <input type="file" id="photo" accept="image/*" capture="environment">
+        <input type="text" id="name" placeholder="Nome oggetto">
+        <select id="cat-select"></select>
+        <input type="text" id="tags" placeholder="Note (es. scatola rossa)">
+        <button class="save-btn" onclick="save()">SALVA</button>
+        <button onclick="document.getElementById('modal').style.display='none'" style="width:100%; background:none; border:none; margin-top:10px; color:#666;">Annulla</button>
     </div>
 </div>
 
 <script>
     let db;
-    // Carichiamo le categorie salvate o usiamo quelle base
-    let categories = JSON.parse(localStorage.getItem('myCategories')) || ['Cantina', 'Box', 'Soffitta'];
-    let currentFilter = 'Tutti';
+    let currentCat = 'Tutti';
+    let mySpaces = JSON.parse(localStorage.getItem('mySpaces')) || ['Cantina', 'Box', 'Soffitta'];
 
-    // DATABASE INDEXEDDB (Stessa struttura vSearch)
-    const request = indexedDB.open("the_vault_vSearch", 1);
-    
-    request.onupgradeneeded = e => {
+    const req = indexedDB.open("the_vault_vSearch", 1);
+    req.onupgradeneeded = e => {
         db = e.target.result;
-        if (!db.objectStoreNames.contains("items")) {
-            db.createObjectStore("items", { keyPath: "id", autoIncrement: true });
-        }
+        db.createObjectStore("items", { keyPath: "id", autoIncrement: true });
+    };
+    req.onsuccess = e => {
+        db = e.target.result;
+        renderCats();
+        load();
     };
 
-    request.onsuccess = e => {
-        db = e.target.result;
-        renderCategories();
-        loadItems();
-    };
-
-    // GESTIONE CATEGORIE
-    function renderCategories() {
-        const container = document.getElementById('custom-cats');
-        const select = document.getElementById('item-category');
-        container.innerHTML = '';
-        select.innerHTML = '';
-        
-        categories.forEach(cat => {
-            container.innerHTML += `<button class="cat-btn ${currentFilter === cat ? 'active' : ''}" onclick="filterCat('${cat}', this)">${cat}</button>`;
-            select.innerHTML += `<option value="${cat}">${cat}</option>`;
+    function renderCats() {
+        const bar = document.getElementById('user-cats');
+        const sel = document.getElementById('cat-select');
+        bar.innerHTML = ''; sel.innerHTML = '';
+        mySpaces.forEach(s => {
+            bar.innerHTML += `<button class="cat-btn" onclick="filter('${s}', this)">${s}</button>`;
+            sel.innerHTML += `<option value="${s}">${s}</option>`;
         });
-        localStorage.setItem('myCategories', JSON.stringify(categories));
+        localStorage.setItem('mySpaces', JSON.stringify(mySpaces));
     }
 
-    function addNewCategory() {
-        const name = prompt("Come vuoi chiamare il nuovo spazio? (es. Garage)");
-        if (name && !categories.includes(name)) {
-            categories.push(name);
-            renderCategories();
-        }
+    function addSpace() {
+        const n = prompt("Nome nuovo spazio:");
+        if(n && !mySpaces.includes(n)) { mySpaces.push(n); renderCats(); }
     }
 
-    // MODAL
-    function openModal() { document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    async function save() {
+        const f = document.getElementById('photo').files[0];
+        const n = document.getElementById('name').value;
+        if(!f || !n) return alert("Manca foto o nome!");
 
-    // SALVATAGGIO CON COMPRESSIONE
-    async function saveItem() {
-        const fileInput = document.getElementById('item-image');
-        const nameInput = document.getElementById('item-name');
-        const catInput = document.getElementById('item-category');
-        const tagsInput = document.getElementById('item-tags');
-
-        if(!fileInput.files[0] || !nameInput.value) {
-            alert("Inserisci almeno foto e nome!");
-            return;
-        }
-
-        const base64 = await compressImage(fileInput.files[0]);
-        const newItem = {
-            name: nameInput.value,
-            category: catInput.value,
-            tags: tagsInput.value,
-            image: base64,
-            date: new Date()
-        };
-
-        const transaction = db.transaction("items", "readwrite");
-        const store = transaction.objectStore("items");
-        store.add(newItem);
-
-        transaction.oncomplete = () => {
-            nameInput.value = '';
-            tagsInput.value = '';
-            fileInput.value = '';
-            closeModal();
-            loadItems();
-        };
-    }
-
-    function compressImage(file) {
-        return new Promise(resolve => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = e => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const maxW = 600;
-                    const scale = maxW / img.width;
-                    canvas.width = maxW;
-                    canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.75));
+        const reader = new FileReader();
+        reader.readAsDataURL(f);
+        reader.onload = async (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const max = 600;
+                const scale = max / img.width;
+                canvas.width = max; canvas.height = img.height * scale;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const item = {
+                    name: n,
+                    cat: document.getElementById('cat-select').value,
+                    tags: document.getElementById('tags').value,
+                    img: canvas.toDataURL("image/jpeg", 0.7)
                 };
+                
+                const tx = db.transaction("items", "readwrite");
+                tx.objectStore("items").add(item);
+                tx.oncomplete = () => { location.reload(); };
             };
-        });
+        };
     }
 
-    // CARICAMENTO E FILTRI
-    function loadItems() {
-        const transaction = db.transaction("items", "readonly");
-        const store = transaction.objectStore("items");
-        const request = store.getAll();
-        request.onsuccess = () => displayItems(request.result);
+    function load() {
+        db.transaction("items").objectStore("items").getAll().onsuccess = e => {
+            const items = e.target.result;
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            items.reverse().filter(i => currentCat === 'Tutti' || i.cat === currentCat).forEach(i => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${i.img}">
+                        <div class="card-info">
+                            <div class="card-title">${i.name}</div>
+                            <div class="card-tags">${i.cat} - ${i.tags}</div>
+                            <button onclick="del(${i.id})" style="color:red; border:none; background:none; font-size:10px; cursor:pointer;">Elimina</button>
+                        </div>
+                    </div>`;
+            });
+        };
     }
 
-    function displayItems(items) {
-        const grid = document.getElementById('items-grid');
-        grid.innerHTML = '';
-        
-        let filtered = items;
-        if(currentFilter !== 'Tutti') {
-            filtered = items.filter(i => i.category === currentFilter);
-        }
-
-        // Mostra i più recenti per primi
-        filtered.sort((a,b) => b.id - a.id).forEach(item => {
-            grid.innerHTML += `
-                <div class="item-card">
-                    <img src="${item.image}">
-                    <div class="item-info">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-desc">📍 ${item.category}<br>🏷️ ${item.tags}</div>
-                        <button class="btn-delete" onclick="deleteItem(${item.id})">Rimuovi</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function filterCat(cat, btn) {
-        currentFilter = cat;
+    function filter(c, btn) {
+        currentCat = c;
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        loadItems();
+        load();
     }
 
-    function searchItems() {
-        const query = document.getElementById('search-input').value.toLowerCase();
-        const transaction = db.transaction("items", "readonly");
-        const store = transaction.objectStore("items");
-        store.getAll().onsuccess = e => {
-            const filtered = e.target.result.filter(i => 
-                i.name.toLowerCase().includes(query) || 
-                i.tags.toLowerCase().includes(query) ||
-                i.category.toLowerCase().includes(query)
-            );
-            displayItems(filtered);
+    function search() {
+        const q = document.getElementById('search').value.toLowerCase();
+        db.transaction("items").objectStore("items").getAll().onsuccess = e => {
+            const filtered = e.target.result.filter(i => i.name.toLowerCase().includes(q) || i.tags.toLowerCase().includes(q));
+            // Qui usiamo una logica di visualizzazione rapida per la ricerca
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            filtered.reverse().forEach(i => {
+                grid.innerHTML += `<div class="card"><img src="${i.img}"><div class="card-info"><div class="card-title">${i.name}</div><div class="card-tags">${i.cat} - ${i.tags}</div></div></div>`;
+            });
         };
     }
 
-    function deleteItem(id) {
-        if(confirm("Vuoi eliminare definitivamente questo oggetto?")) {
-            const transaction = db.transaction("items", "readwrite");
-            transaction.objectStore("items").delete(id);
-            transaction.oncomplete = () => loadItems();
+    function del(id) {
+        if(confirm("Eliminare?")) {
+            const tx = db.transaction("items", "readwrite");
+            tx.objectStore("items").delete(id);
+            tx.oncomplete = () => load();
         }
     }
 </script>
