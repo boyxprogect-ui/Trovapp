@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - No Selection</title>
+    <title>Trovapp Pro - Adjusted UI</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Blocco totale della selezione testo e del menu contestuale di sistema */
         * {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
@@ -21,7 +20,6 @@
             -webkit-user-select: none;
         }
 
-        /* Permetti la selezione solo dentro i campi di input */
         input, textarea {
             user-select: text !important;
             -webkit-user-select: text !important;
@@ -55,7 +53,16 @@
             backdrop-filter: blur(4px);
         }
         #smartMenu.active { visibility: visible; opacity: 1; }
-        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px; transform: translateY(100%); transition: 0.3s; }
+        
+        /* Tasto CHIUDI spostato più in alto con padding-bottom per evitare sovrapposizione tasti sistema */
+        #smartMenuContent { 
+            background: #F2F2F7; 
+            width: 100%; 
+            border-radius: 32px 32px 0 0; 
+            padding: 24px 24px 40px 24px; 
+            transform: translateY(100%); 
+            transition: 0.3s; 
+        }
         #smartMenu.active #smartMenuContent { transform: translateY(0); }
         .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
 
@@ -64,7 +71,9 @@
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 58px; height: 58px; border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px; }
     </style>
 </head>
-<body oncontextmenu="return false;"> <div id="mainContainer">
+<body oncontextmenu="return false;">
+
+    <div id="mainContainer">
         <header class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
@@ -106,7 +115,8 @@
             </div>
             <div id="menuRinomina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button></div>
             <div id="menuElimina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">No</button></div>
-            <button onclick="chiudiSmartMenu()" class="w-full mt-4 text-gray-400 font-bold uppercase text-[10px]">Chiudi</button>
+            
+            <button onclick="chiudiSmartMenu()" class="w-full mt-6 py-2 text-gray-400 font-bold uppercase text-[11px] tracking-widest">CHIUDI</button>
         </div>
     </div>
 
@@ -148,7 +158,6 @@
                 btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
                 
-                // Eventi per tocco lungo senza selezione testo
                 btn.addEventListener('touchstart', (e) => {
                     btnTimer = setTimeout(() => {
                         window.navigator.vibrate && window.navigator.vibrate(50);
