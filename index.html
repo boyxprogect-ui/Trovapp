@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Style Fix</title>
+    <title>Trovapp Pro - Layout Fix</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,53 +17,58 @@
         input, textarea { user-select: text !important; -webkit-user-select: text !important; }
 
         html, body { height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overscroll-behavior-y: none; }
-        #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
+        
+        #mainContainer { 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 16px 16px 100px 16px; /* Spazio extra in fondo per non coprire i tasti */
+        }
 
-        /* SCORRIMENTO FLUIDO */
+        /* FIX: Griglia spazi con scorrimento indipendente per non andare in conflitto */
+        #navGridWrapper {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding-bottom: 20px;
+        }
+        #navGrid { display: grid; grid-template-cols: repeat(2, 1fr); gap: 12px; }
+
+        /* SCORRIMENTO ORIZZONTALE FOTO */
         .scroll-row { 
             display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; 
             -webkit-overflow-scrolling: touch; scroll-behavior: smooth; min-height: 140px;
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
-        /* CARD & FOTO FIX */
+        /* CARD & FOTO */
         .item-card { flex: 0 0 26%; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
         .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; object-position: center !important; display: block !important; }
         
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         
-        /* TAG BLU (Come richiesto) */
-        .tag-pill { 
-            background-color: #2563eb !important; 
-            color: white !important; 
-            font-weight: 700; 
-            padding: 4px 10px; 
-            border-radius: 8px; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-        }
+        /* TAG BLU */
+        .tag-pill { background-color: #2563eb !important; color: white !important; font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; margin-right: 4px; margin-bottom: 4px; display: inline-block; }
 
-        /* SMART MENU */
+        /* SMART MENU UI */
         #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
         #smartMenu.active { visibility: visible; opacity: 1; }
-        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 90px 24px; transform: translateY(100%); transition: 0.4s; }
         #smartMenu.active #smartMenuContent { transform: translateY(0); }
         
         .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
         
-        /* UI FIX SCHEDA */
+        /* BOTTONI FISSI */
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
-        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .gallery-img { width: 70px; height: 70px; object-fit: cover !important; border-radius: 14px; }
-
-        /* FIX PLACEHOLDER POSIZIONE */
-        #pIn { min-width: 100%; }
+        #addButton { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+        
+        #nuovoSpazioBtnArea { padding: 10px 0; background: #F2F2F7; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="mainContainer">
-        <header class="flex justify-between items-center mb-5">
+        <header class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
                 <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Cloud Sync Mode</p>
@@ -74,15 +79,21 @@
             </div>
         </header>
 
-        <div id="homeNav" class="space-y-4">
-            <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0">
-            <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
+        <div id="homeNav" class="flex flex-col h-full overflow-hidden">
+            <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4">
+            
+            <div id="navGridWrapper">
+                <nav id="navGrid"></nav>
+            </div>
+
+            <div id="nuovoSpazioBtnArea">
+                <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs active:bg-white">+ Nuovo Spazio</button>
+            </div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-2 uppercase shadow-lg">← Home</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-2 uppercase">← Home</button>
         
-        <div class="mt-4 flex flex-col gap-3">
+        <div class="mt-2 flex flex-col gap-2">
             <div id="gridTop" class="scroll-row"></div>
             <div id="gridBottom" class="scroll-row"></div>
         </div>
