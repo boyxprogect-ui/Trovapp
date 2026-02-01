@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Classic Size</title>
+    <title>Trovapp Pro - No Selection</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,14 +13,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* Blocco totale della selezione testo e del menu contestuale di sistema */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Permetti la selezione solo dentro i campi di input */
+        input, textarea {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
+
         html, body { 
             height: 100%; margin: 0; overflow: hidden; position: fixed; width: 100%; 
             background-color: #F2F2F7; font-family: -apple-system, sans-serif;
             overscroll-behavior-y: none; 
         }
+
         #mainContainer { height: 100vh; display: flex; flex-direction: column; padding: 16px; }
-        
-        /* Ripristino misura originale delle card */
+
         .scroll-row {
             display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
             gap: 10px; padding: 5px 0; -webkit-overflow-scrolling: touch; min-height: 135px;
@@ -30,7 +44,7 @@
         .item-card {
             flex: 0 0 23%; scroll-snap-align: start; background: white;
             border-radius: 18px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            position: relative; transition: transform 0.1s;
+            position: relative;
         }
 
         .qty-badge { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.8); color: white; padding: 1px 5px; border-radius: 6px; font-size: 8px; font-weight: 900; z-index: 10; }
@@ -50,9 +64,7 @@
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 58px; height: 58px; border-radius: 9999px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px; }
     </style>
 </head>
-<body>
-
-    <div id="mainContainer">
+<body oncontextmenu="return false;"> <div id="mainContainer">
         <header class="flex justify-between items-center mb-4">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
@@ -79,7 +91,7 @@
 
         <div id="tipsSection" class="mt-auto mb-28 bg-white p-4 rounded-3xl border-l-4 border-blue-600 shadow-sm">
             <p class="text-[9px] font-black uppercase text-blue-600">Lo sapevi?</p>
-            <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Le foto piccole ti permettono di vedere più oggetti insieme.</p>
+            <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Tieni premuto su uno spazio per modificarlo.</p>
         </div>
     </div>
 
@@ -90,7 +102,7 @@
                 <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
                 <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
                 <button onclick="azioneSmart('colore')" class="smart-btn">Cambia Colore <i class="fa-solid fa-palette"></i></button>
-                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500 text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
+                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
             </div>
             <div id="menuRinomina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-4 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button></div>
             <div id="menuElimina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-2">Sì</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">No</button></div>
@@ -109,19 +121,19 @@
                     <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2"><span class="text-[10px] font-black uppercase">QTY</span><div class="flex gap-4 items-center"><button onclick="changeQty(-1)" class="font-bold text-lg">-</button><span id="qtyVal" class="text-sm font-black">1</span><button onclick="changeQty(1)" class="text-blue-400 font-bold text-lg">+</button></div></div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mb-4"><select id="cIn" class="bg-white p-4 rounded-2xl text-xs font-bold border-0 shadow-sm outline-none text-gray-800"></select><input id="pIn" type="text" placeholder="Dove?" class="bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 text-gray-800 uppercase"></div>
+            <div class="grid grid-cols-2 gap-3 mb-4"><select id="cIn" class="bg-white p-4 rounded-2xl text-xs font-bold border-0 shadow-sm outline-none"></select><input id="pIn" type="text" placeholder="Dove?" class="bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 uppercase"></div>
             <div class="bg-white p-3 rounded-2xl shadow-sm mb-6">
                 <div class="flex gap-2 mb-2"><input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-xs font-bold outline-none border-0"><button onclick="aggiungiTag()" class="bg-blue-600 text-white px-3 rounded-xl">+</button></div>
                 <div id="tagCloud" class="flex flex-wrap gap-1"></div>
             </div>
-            <button id="saveBtn" onclick="salva()" class="btn-salva shadow-xl">Salva</button>
+            <button id="saveBtn" onclick="salva()" class="btn-salva">Salva</button>
         </div>
     </div>
 
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const tips = ["Le foto piccole permettono di vedere più oggetti.", "La posizione indica dove cercare l'oggetto.", "Usa i Tag per ricerche veloci."];
+        const tips = ["Tieni premuto su uno spazio per modificarlo.", "Le foto piccole permettono di vedere più oggetti.", "La posizione indica dove cercare l'oggetto."];
         const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'ARMADI',colore:'bg-rose-600'},{nome:'BOX',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
@@ -135,8 +147,17 @@
                 btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
                 btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
-                btn.onpointerdown = () => btnTimer = setTimeout(() => apriSmartMenu(i), 800);
-                btn.onpointerup = () => clearTimeout(btnTimer);
+                
+                // Eventi per tocco lungo senza selezione testo
+                btn.addEventListener('touchstart', (e) => {
+                    btnTimer = setTimeout(() => {
+                        window.navigator.vibrate && window.navigator.vibrate(50);
+                        apriSmartMenu(i);
+                    }, 600);
+                });
+                btn.addEventListener('touchend', () => clearTimeout(btnTimer));
+                btn.addEventListener('touchmove', () => clearTimeout(btnTimer));
+
                 nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
@@ -147,7 +168,6 @@
             const q = document.getElementById('searchInput').value.toLowerCase();
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
-            
             const r = o => `
                 <div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
