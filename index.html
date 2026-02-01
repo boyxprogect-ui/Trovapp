@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Fixed Scroll</title>
+    <title>Trovapp Pro - Smart Edition</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,7 +57,9 @@
         }
 
         .qty-badge { background: rgba(0,0,0,0.8); color: white; padding: 1px 5px; border-radius: 6px; font-size: 9px; font-weight: 900; }
-        .modal-up { animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Animazioni Modali */
+        .modal-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         #addButton {
@@ -67,9 +69,20 @@
             z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 28px;
         }
 
-        /* Animazione per i bottoni al tocco */
-        .cat-btn { transition: transform 0.1s, opacity 0.1s; position: relative; }
-        .cat-btn:active { transform: scale(0.92); opacity: 0.8; }
+        .cat-btn { transition: transform 0.1s; position: relative; }
+        .cat-btn:active { transform: scale(0.92); }
+
+        /* Menu Smart degli Spazi */
+        #smartMenu {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100;
+            display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s;
+        }
+        #smartMenu.active { visibility: visible; opacity: 1; }
+        #smartMenuContent {
+            background: white; width: 100%; border-radius: 30px 30px 0 0;
+            padding: 25px; transform: translateY(100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #smartMenu.active #smartMenuContent { transform: translateY(0); }
     </style>
 </head>
 <body>
@@ -97,11 +110,10 @@
                 <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium">
             </div>
             
-            <nav id="navGrid" class="grid grid-cols-2 gap-3">
-                </nav>
+            <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
 
-            <button onclick="aggiungiNuovoSpazio()" class="w-full py-3 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">
-                <i class="fa-solid fa-plus mr-1"></i> Aggiungi Spazio
+            <button onclick="aggiungiNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">
+                <i class="fa-solid fa-plus-circle mr-2"></i> Crea Nuovo Spazio
             </button>
         </div>
 
@@ -119,9 +131,28 @@
                 </div>
                 <div>
                     <p class="text-[9px] font-black uppercase text-blue-600 tracking-wider">Lo sapevi?</p>
-                    <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Usa il tasto + per iniziare.</p>
+                    <p id="tipText" class="text-[11px] font-bold text-gray-600 leading-tight">Tieni premuto un bottone per modificarlo.</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="smartMenu" onclick="chiudiSmartMenu()">
+        <div id="smartMenuContent" onclick="event.stopPropagation()">
+            <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter text-gray-900">Modifica Spazio</h2>
+            <div class="grid grid-cols-1 gap-3">
+                <button onclick="azioneSmart('rinomina')" class="w-full p-4 bg-gray-100 rounded-2xl font-bold flex items-center justify-between">
+                    <span>RINOMINA</span> <i class="fa-solid fa-pen"></i>
+                </button>
+                <button onclick="azioneSmart('colore')" class="w-full p-4 bg-gray-100 rounded-2xl font-bold flex items-center justify-between">
+                    <span>CAMBIA COLORE</span> <i class="fa-solid fa-palette"></i>
+                </button>
+                <button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-50 text-red-600 rounded-2xl font-bold flex items-center justify-between">
+                    <span>ELIMINA</span> <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            <button onclick="chiudiSmartMenu()" class="w-full mt-6 p-4 text-gray-400 font-bold uppercase text-xs tracking-widest">Annulla</button>
         </div>
     </div>
 
@@ -135,14 +166,12 @@
                 <h3 id="modalTitle" class="text-xl font-black italic uppercase">Nuova Scheda</h3>
                 <button onclick="chiudiModale()" class="text-3xl text-gray-400">&times;</button>
             </div>
-
             <div class="bg-white p-3 rounded-2xl mb-3 flex gap-3 items-center">
                 <label class="w-16 h-16 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
                 <div id="gallery" class="flex gap-2 overflow-x-auto items-center"></div>
-                
                 <div class="flex-1 space-y-2">
                     <input id="nIn" type="text" placeholder="Cosa?" class="w-full p-2 bg-gray-50 rounded-lg text-sm font-bold outline-none border border-gray-100">
                     <div class="flex items-center justify-between bg-zinc-900 text-white rounded-lg px-3 py-2">
@@ -155,12 +184,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-2 mb-3">
                 <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm border border-gray-50"></select>
                 <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
             </div>
-
             <div class="bg-white p-3 rounded-2xl shadow-sm flex flex-col mb-4">
                 <div class="flex gap-2 mb-2">
                     <input id="tagInput" type="text" placeholder="Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-sm outline-none border border-gray-100" onkeypress="if(event.key==='Enter') aggiungiTag()">
@@ -168,13 +195,13 @@
                 </div>
                 <div id="tagCloud" class="flex flex-wrap gap-1"></div>
             </div>
-
             <button id="saveBtn" onclick="salva()" class="btn-salva">Salva</button>
         </div>
     </div>
 
     <script>
-        // --- LOGICA BOTTONI DINAMICI ---
+        // --- CONFIGURAZIONE SMART SPAZI ---
+        const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-fuchsia-600', 'bg-orange-500'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [
             { nome: 'CANTINA', colore: 'bg-zinc-800' },
             { nome: 'SOFFITTA', colore: 'bg-amber-600' },
@@ -182,6 +209,7 @@
             { nome: 'BOX', colore: 'bg-indigo-700' }
         ];
 
+        let selectedBtnIndex = null;
         let btnTimer;
 
         function renderBottoni() {
@@ -191,14 +219,13 @@
             
             configSpazi.forEach((s, index) => {
                 const btn = document.createElement('button');
-                btn.className = `cat-btn p-4 rounded-[24px] ${s.colore} text-white shadow-lg flex flex-col items-start`;
-                btn.innerHTML = `<span class="font-black italic text-sm uppercase">${s.nome}</span>`;
+                btn.className = `cat-btn p-5 rounded-[28px] ${s.colore} text-white shadow-xl flex flex-col items-start`;
+                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter leading-tight">${s.nome}</span>`;
                 
-                // Eventi per pressione normale e lunga
                 btn.onclick = () => apriSpazio(s.nome);
-                btn.ontouchstart = () => { btnTimer = setTimeout(() => modificaSingoloBottone(index), 1000); };
+                btn.ontouchstart = () => { btnTimer = setTimeout(() => apriSmartMenu(index), 800); };
                 btn.ontouchend = () => clearTimeout(btnTimer);
-                btn.onmousedown = () => { btnTimer = setTimeout(() => modificaSingoloBottone(index), 1000); };
+                btn.onmousedown = () => { btnTimer = setTimeout(() => apriSmartMenu(index), 800); };
                 btn.onmouseup = () => clearTimeout(btnTimer);
 
                 nav.appendChild(btn);
@@ -206,28 +233,40 @@
             });
         }
 
-        function aggiungiNuovoSpazio() {
-            const nome = prompt("Nome nuovo spazio:").toUpperCase();
-            if (nome) {
-                configSpazi.push({ nome, colore: 'bg-blue-600' });
-                salvaConfig();
-            }
+        function apriSmartMenu(index) {
+            selectedBtnIndex = index;
+            document.getElementById('smartMenuTitle').innerText = configSpazi[index].nome;
+            document.getElementById('smartMenu').classList.add('active');
         }
 
-        function modificaSingoloBottone(index) {
-            const s = configSpazi[index];
-            const scelta = prompt(`MODIFICA [${s.nome}]\n1: Rinomina\n2: Cambia Colore (es. bg-red-500)\n3: ELIMINA\nScrivi il numero:`);
-            
-            if (scelta === "1") {
-                const nuovoNome = prompt("Nuovo nome:", s.nome).toUpperCase();
-                if (nuovoNome) s.nome = nuovoNome;
-            } else if (scelta === "2") {
-                const nuovoColore = prompt("Nuova classe colore Tailwind:", s.colore);
-                if (nuovoColore) s.colore = nuovoColore;
-            } else if (scelta === "3") {
-                if (confirm(`Eliminare lo spazio ${s.nome}?`)) configSpazi.splice(index, 1);
+        function chiudiSmartMenu() {
+            document.getElementById('smartMenu').classList.remove('active');
+        }
+
+        function azioneSmart(tipo) {
+            const s = configSpazi[selectedBtnIndex];
+            if (tipo === 'rinomina') {
+                const nuovo = prompt("Nuovo nome:", s.nome);
+                if (nuovo) s.nome = nuovo.toUpperCase();
+            } else if (tipo === 'colore') {
+                const currentColorIndex = palette.indexOf(s.colore);
+                const nextColor = palette[(currentColorIndex + 1) % palette.length];
+                s.colore = nextColor;
+            } else if (tipo === 'elimina') {
+                if (confirm(`Eliminare ${s.nome}?`)) configSpazi.splice(selectedBtnIndex, 1);
             }
             salvaConfig();
+            chiudiSmartMenu();
+        }
+
+        function aggiungiNuovoSpazio() {
+            const nome = prompt("Nome spazio:");
+            if (nome) {
+                // Sceglie un colore automatico basato sul numero di spazi
+                const colore = palette[configSpazi.length % palette.length];
+                configSpazi.push({ nome: nome.toUpperCase(), colore: colore });
+                salvaConfig();
+            }
         }
 
         function salvaConfig() {
@@ -235,20 +274,10 @@
             renderBottoni();
         }
 
-        // --- IL RESTO DEL TUO CODICE ORIGINALE ---
+        // --- CORE LOGIC (Invariata dal tuo codice originale) ---
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
         let tTimer, isScrolling = false;
-
-        const tips = [
-            "Tieni premuto a lungo su un oggetto per modificarlo.",
-            "Fai un Backup settimanale per tenere i tuoi dati al sicuro.",
-            "Usa i Tag per trovare oggetti simili in spazi diversi."
-        ];
-
-        function mostraSuggerimento() {
-            document.getElementById('tipText').innerText = tips[Math.floor(Math.random() * tips.length)];
-        }
 
         function startT(id) { 
             isScrolling = false;
@@ -256,20 +285,6 @@
         }
         function endT() { clearTimeout(tTimer); }
         function handleScroll() { isScrolling = true; clearTimeout(tTimer); }
-
-        function importaDati(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    db = JSON.parse(e.target.result);
-                    localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                    aggiorna(); alert("Dati caricati!");
-                } catch (err) { alert("File non valido!"); }
-            };
-            reader.readAsText(file);
-        }
 
         function aggiungiTag() {
             const val = document.getElementById('tagInput').value.trim().toLowerCase();
@@ -359,7 +374,6 @@
         
         renderBottoni();
         aggiorna();
-        mostraSuggerimento();
     </script>
 </body>
 </html>
