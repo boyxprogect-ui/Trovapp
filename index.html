@@ -108,20 +108,11 @@
                 <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 pl-12 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium">
             </div>
             
-            <nav class="grid grid-cols-2 gap-3">
-                <button onclick="apriSpazio('CANTINA')" class="p-4 rounded-[24px] bg-zinc-800 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-sm uppercase">Cantina</span>
-                </button>
-                <button onclick="apriSpazio('SOFFITTA')" class="p-4 rounded-[24px] bg-amber-600 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-sm uppercase">Soffitta</span>
-                </button>
-                <button onclick="apriSpazio('ARMADI')" class="p-4 rounded-[24px] bg-rose-600 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-sm uppercase">Armadi</span>
-                </button>
-                <button onclick="apriSpazio('BOX')" class="p-4 rounded-[24px] bg-indigo-700 text-white shadow-lg flex flex-col items-start active:scale-95">
-                    <span class="font-black italic text-sm uppercase">Box</span>
-                </button>
-            </nav>
+            <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
+            
+            <button onclick="gestisciSpazi()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-xl text-[10px] font-bold text-gray-400 uppercase">
+                <i class="fa-solid fa-pen-to-square mr-1"></i> Modifica Spazi
+            </button>
         </div>
 
         <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-3 rounded-2xl font-black italic mb-2 uppercase">← Torna alla Home</button>
@@ -177,9 +168,7 @@
 
             <div class="grid grid-cols-2 gap-2 mb-3">
                 <select id="cIn" class="bg-white p-3 rounded-xl text-xs font-bold shadow-sm border border-gray-50">
-                    <option value="CANTINA">CANTINA</option><option value="SOFFITTA">SOFFITTA</option>
-                    <option value="ARMADI">ARMADI</option><option value="BOX">BOX</option>
-                </select>
+                    </select>
                 <input id="pIn" type="text" placeholder="Dove?" class="bg-white p-3 rounded-xl text-xs font-bold outline-none shadow-sm border border-gray-50">
             </div>
 
@@ -197,6 +186,45 @@
 
     <script>
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
+        
+        // --- LOGICA BOTTONI PERSONALIZZATI ---
+        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [
+            { nome: 'CANTINA', colore: 'bg-zinc-800' },
+            { nome: 'SOFFITTA', colore: 'bg-amber-600' },
+            { nome: 'ARMADI', colore: 'bg-rose-600' },
+            { nome: 'BOX', colore: 'bg-indigo-700' }
+        ];
+
+        function renderBottoni() {
+            const nav = document.getElementById('navGrid');
+            const select = document.getElementById('cIn');
+            nav.innerHTML = ''; select.innerHTML = '';
+            configSpazi.forEach(s => {
+                nav.innerHTML += `<button onclick="apriSpazio('${s.nome}')" class="p-4 rounded-[24px] ${s.colore} text-white shadow-lg flex flex-col items-start active:scale-95"><span class="font-black italic text-sm uppercase">${s.nome}</span></button>`;
+                select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
+            });
+        }
+
+        function gestisciSpazi() {
+            const azione = prompt("1: Aggiungi Spazio | 2: Rimuovi Spazio | 3: Modifica Colore\nScrivi il numero:");
+            if (azione === "1") {
+                const nome = prompt("Nome nuovo spazio:").toUpperCase();
+                if (nome) { configSpazi.push({ nome, colore: 'bg-blue-600' }); }
+            } else if (azione === "2") {
+                const nome = prompt("Nome spazio da eliminare:").toUpperCase();
+                configSpazi = configSpazi.filter(s => s.nome !== nome);
+            } else if (azione === "3") {
+                const nome = prompt("Nome spazio da colorare:").toUpperCase();
+                const colore = prompt("Classe Tailwind (es: bg-red-500, bg-green-600, bg-black):");
+                const index = configSpazi.findIndex(s => s.nome === nome);
+                if (index !== -1) configSpazi[index].colore = colore;
+            }
+            localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
+            renderBottoni();
+        }
+
+        // --- FINE LOGICA BOTTONI ---
+
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null;
         let tTimer, isScrolling = false;
 
@@ -211,10 +239,8 @@
             document.getElementById('tipText').innerText = tips[Math.floor(Math.random() * tips.length)];
         }
 
-        // --- GESTIONE PRESSIONE LUNGA MIGLIORATA ---
         function startT(id) { 
             isScrolling = false;
-            // Aumentato a 1200ms per sicurezza contro gli scorrimenti accidentali
             tTimer = setTimeout(() => {
                 if (!isScrolling) apriModale(id);
             }, 1200); 
@@ -286,7 +312,6 @@
             const filtrati = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(query) || o.tags.some(t => t.toLowerCase().includes(query))));
             const metà = Math.ceil(filtrati.length / 2);
             
-            // Aggiunto listener onscroll per annullare la pressione lunga
             const renderCard = o => `
                 <div class="item-card" 
                      ontouchstart="startT(${o.id})" 
@@ -349,6 +374,7 @@
             reader.readAsDataURL(file);
         }
         
+        renderBottoni();
         aggiorna();
         mostraSuggerimento();
     </script>
