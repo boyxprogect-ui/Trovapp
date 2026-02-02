@@ -16,10 +16,10 @@
         .item-card img { width: 100%; height: 85px; object-fit: cover; }
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 6px; font-weight: 900; text-transform: uppercase; color: white; padding: 1px 4px; border-radius: 4px; font-style: italic; display: inline-block; margin-bottom: 2px; }
-        .tag-pill { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 6px; font-size: 7px; font-weight: 800; text-transform: uppercase; font-style: italic; }
-        #paywallModal, #spaceModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .tag-pill { background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 8px; font-size: 9px; font-weight: 800; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 6px; }
+        #paywallModal, #spaceModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .paywall-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 30px; text-align: center; }
-        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
+        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 10px; }
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
     </style>
 </head>
@@ -45,7 +45,6 @@
             <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                 <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
-            <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center italic tracking-tighter">Sblocca Tutto & IA Market →</button>
         </div>
 
         <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA OGGETTO, SCATOLA O TAG..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 order-1 uppercase">
@@ -66,20 +65,20 @@
     <div id="spaceModal">
         <div class="paywall-content text-left">
             <h3 class="text-lg font-black italic uppercase mb-4" id="spaceModalTitle">Gestione Spazio</h3>
-            <input id="newSpaceName" type="text" placeholder="NOME (ES: GARAGE)" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
+            <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
             <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
             <div class="flex flex-col gap-2">
-                <button id="btnSalvaSpazio" onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva Modifiche</button>
+                <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva</button>
                 <div class="flex gap-2">
                     <button id="btnEliminaSpazio" onclick="confermaEliminaSpazio()" class="flex-1 bg-red-100 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
-                    <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
+                    <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
-        <div class="h-full flex flex-col p-6 overflow-y-auto">
+    <div id="modal" class="hidden fixed inset-0 z-[200] bg-[#F2F2F7] overflow-y-auto">
+        <div class="min-h-full flex flex-col p-6 pb-20">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-black italic uppercase tracking-tighter">SCHEDA OGGETTO</h3>
                 <div class="flex items-center gap-4">
@@ -93,32 +92,32 @@
                     <i class="fa-solid fa-camera fa-xl"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
-                <div id="gallery" class="flex gap-3 overflow-x-auto"></div>
-                <div class="flex-1 space-y-3">
-                    <input id="nIn" type="text" placeholder="NOME..." class="w-full p-3 bg-gray-100 rounded-xl text-xs font-black border-0 uppercase italic">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2">
-                        <span class="text-[9px] font-black uppercase italic">QTY</span>
-                        <div class="flex gap-4 items-center"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div>
+                <div id="gallery" class="flex gap-2 overflow-x-auto"></div>
+                <div class="flex-1">
+                    <input id="nIn" type="text" placeholder="NOME..." class="w-full p-3 bg-gray-100 rounded-xl text-xs font-black border-0 uppercase italic mb-2">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-3 py-2">
+                        <span class="text-[8px] font-black italic">QTY</span>
+                        <div class="flex gap-4 items-center font-bold"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div>
                     </div>
                 </div>
             </div>
             
-            <div class="space-y-4 mb-4">
-                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 italic uppercase"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 uppercase italic">
+            <div class="space-y-3 mb-4">
+                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm italic uppercase"></select>
+                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm uppercase italic">
                 
-                <div class="bg-white p-4 rounded-2xl shadow-sm">
-                    <div id="tagList" class="flex flex-wrap gap-2 mb-3"></div>
-                    <div class="flex gap-2">
-                        <input id="tIn" type="text" placeholder="AGGIUNGI TAG..." class="flex-1 outline-none text-xs font-black uppercase italic">
-                        <button onclick="aggiungiTagManuale()" class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex flex-col gap-3">
+                    <div id="tagList" class="flex flex-wrap gap-2 min-h-[20px]"></div>
+                    <div class="flex gap-2 border-t pt-2">
+                        <input id="tIn" type="text" placeholder="AGGIUNGI TAG..." class="flex-1 outline-none text-xs font-black uppercase italic bg-transparent">
+                        <button onclick="aggiungiTagManuale()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-md active:scale-90"><i class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
             </div>
 
-            <div class="flex gap-2 mb-4">
-                <button onclick="mostraPaywall()" class="flex-[1.5] bg-amber-400 text-amber-950 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic shadow-sm"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA PER VINTED & STORE</button>
-                <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync</button>
+            <div class="grid grid-cols-2 gap-2 mb-6">
+                <button onclick="mostraPaywall()" class="bg-amber-400 text-amber-950 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic shadow-sm"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA VINTED/STORE</button>
+                <button onclick="mostraPaywall()" class="bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-cloud fa-lg"></i> CLOUD SYNC</button>
             </div>
             
             <button onclick="salva()" class="btn-salva">SALVA OGGETTO</button>
@@ -129,8 +128,7 @@
         <div class="paywall-content" onclick="event.stopPropagation()">
             <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-2xl"></i></div>
             <h2 class="font-black italic text-2xl uppercase mb-2">Trovapp Premium</h2>
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-6 italic">Oggetti illimitati • Cloud Sync</p>
-            <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg mb-3">SBLOCCA ORA</button>
+            <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg">SBLOCCA TUTTO</button>
         </div>
     </div>
 
@@ -148,11 +146,9 @@
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
                 btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all`;
-                btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter pointer-events-none">${s.nome}</span>`;
-                
-                btn.onmousedown = btn.ontouchstart = (e) => { pressTimer = setTimeout(() => modificaSpazio(i), 800); };
+                btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
+                btn.onmousedown = btn.ontouchstart = () => { pressTimer = setTimeout(() => modificaSpazio(i), 800); };
                 btn.onmouseup = btn.ontouchend = btn.ontouchmove = () => { clearTimeout(pressTimer); };
-                
                 btn.onclick = () => { if(editSpaceIdx === null) apriSpazio(s.nome); };
                 nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
@@ -167,53 +163,20 @@
         }
 
         function removeTag(tag) { currentTags = currentTags.filter(t => t !== tag); renderTags(); }
-        function renderTags() { document.getElementById('tagList').innerHTML = currentTags.map(t => `<span class="tag-pill flex items-center gap-1">${t} <i onclick="removeTag('${t}')" class="fa-solid fa-circle-xmark opacity-50"></i></span>`).join(''); }
-
-        function modificaSpazio(i) {
-            editSpaceIdx = i;
-            const s = configSpazi[i];
-            document.getElementById('spaceModalTitle').innerText = "Modifica Spazio";
-            document.getElementById('newSpaceName').value = s.nome;
-            selectedColor = s.colore;
-            document.getElementById('btnEliminaSpazio').classList.remove('hidden');
-            document.getElementById('spaceModal').style.display = 'flex';
-            renderPicker();
+        
+        function renderTags() {
+            const list = document.getElementById('tagList');
+            list.innerHTML = currentTags.map(t => `
+                <span class="tag-pill">
+                    ${t} <i onclick="removeTag('${t}')" class="fa-solid fa-circle-xmark opacity-60 text-[12px]"></i>
+                </span>`).join('');
         }
-
-        function apriMenuNuovoSpazio() {
-            editSpaceIdx = null;
-            document.getElementById('spaceModalTitle').innerText = "Nuovo Spazio";
-            document.getElementById('newSpaceName').value = "";
-            document.getElementById('btnEliminaSpazio').classList.add('hidden');
-            document.getElementById('spaceModal').style.display = 'flex';
-            renderPicker();
-        }
-
-        function salvaNuovoSpazio() {
-            const nome = document.getElementById('newSpaceName').value.toUpperCase();
-            if(!nome) return;
-            if(editSpaceIdx !== null) { configSpazi[editSpaceIdx] = {nome, colore: selectedColor}; }
-            else { configSpazi.push({nome, colore: selectedColor}); }
-            localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
-            chiudiSpaceModal(); renderBottoni(); aggiorna();
-        }
-
-        function confermaEliminaSpazio() {
-            if(confirm("Eliminare lo spazio?")) {
-                configSpazi.splice(editSpaceIdx, 1);
-                localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
-                chiudiSpaceModal(); renderBottoni(); aggiorna();
-            }
-        }
-
-        function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
             const q = document.getElementById('searchInput').value.toLowerCase();
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
-            
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q)) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
             const r = o => {
@@ -222,8 +185,7 @@
                     <div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}">
                     <div class="p-2 overflow-hidden"><div class="space-tag ${sObj.colore}">${o.cat}</div>
                     <h4 class="font-black text-[9px] truncate uppercase italic leading-tight">${o.nome}</h4>
-                    <p class="text-[7px] font-bold text-blue-600 uppercase mt-0.5">${o.pos || 'Senza pos.'}</p>
-                    <div class="flex flex-wrap gap-1 mt-1">${(o.tags || []).map(t => `<span class="tag-pill">${t}</span>`).join(' ')}</div></div></div>`;
+                    <div class="flex flex-wrap gap-1 mt-1">${(o.tags || []).map(t => `<span class="tag-pill" style="font-size:6px; padding:1px 3px;">${t}</span>`).join('')}</div></div></div>`;
             };
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
@@ -253,15 +215,35 @@
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
 
-        function renderPicker() {
-            const picker = document.getElementById('colorPicker');
-            picker.innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-2 outline-blue-600' : 'border-transparent'}"></div>`).join('');
+        function modificaSpazio(i) {
+            editSpaceIdx = i; const s = configSpazi[i];
+            document.getElementById('newSpaceName').value = s.nome;
+            selectedColor = s.colore;
+            document.getElementById('btnEliminaSpazio').classList.remove('hidden');
+            document.getElementById('spaceModal').style.display = 'flex';
+            renderPicker();
         }
 
-        function eliminaOggetto() { if(confirm("Eliminare?")) { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); } }
+        function apriMenuNuovoSpazio() {
+            editSpaceIdx = null; document.getElementById('newSpaceName').value = "";
+            document.getElementById('btnEliminaSpazio').classList.add('hidden');
+            document.getElementById('spaceModal').style.display = 'flex';
+            renderPicker();
+        }
+
+        function salvaNuovoSpazio() {
+            const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return;
+            if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor};
+            else configSpazi.push({nome:n, colore:selectedColor});
+            localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni();
+        }
+
+        function confermaEliminaSpazio() { if(confirm("Eliminare?")) { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); } }
+        function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
+        function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-blue-600' : 'border-transparent'}"></div>`).join(''); }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-md">`).join(''); }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
