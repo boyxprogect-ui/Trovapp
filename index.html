@@ -12,10 +12,13 @@
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; overflow-y: auto; display: flex; flex-direction: column; }
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .item-card { flex: 0 0 26%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 145px; }
-        .item-card img { width: 100%; height: 80px; object-fit: cover; }
+        .item-card { flex: 0 0 28%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 155px; }
+        .item-card img { width: 100%; height: 85px; object-fit: cover; }
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
-        .space-label { position: absolute; top: 6px; right: 6px; padding: 2px 6px; border-radius: 6px; font-size: 6px; font-weight: 900; text-transform: uppercase; color: white; z-index: 10; font-style: italic; }
+        
+        /* NUOVO STILE ETICHETTA SPAZIO SOTTO LA FOTO */
+        .space-tag { font-size: 6px; font-weight: 900; text-transform: uppercase; color: white; padding: 1px 4px; border-radius: 4px; font-style: italic; display: inline-block; margin-bottom: 2px; }
+
         #paywallModal, #spaceModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .paywall-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 30px; text-align: center; }
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
@@ -201,11 +204,11 @@
                 const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
                 return `<div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
-                    <div class="space-label ${sObj.colore}">${o.cat}</div>
                     <img src="${o.foto[0] || ''}">
-                    <div class="p-2">
-                        <h4 class="font-black text-[9px] truncate uppercase italic">${o.nome}</h4>
-                        <p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || 'Senza pos.'}</p>
+                    <div class="p-2 overflow-hidden">
+                        <div class="space-tag ${sObj.colore}">${o.cat}</div>
+                        <h4 class="font-black text-[9px] truncate uppercase italic leading-tight">${o.nome}</h4>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase mt-0.5">${o.pos || 'Senza pos.'}</p>
                     </div>
                 </div>`;
             };
