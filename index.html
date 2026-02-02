@@ -28,18 +28,25 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .scroll-row { 
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; 
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth; min-height: 140px;
+        .search-row { 
+            display: flex; overflow-x: auto; gap: 12px; padding: 10px 4px; 
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
         }
-        .scroll-row::-webkit-scrollbar { display: none; }
+        .search-row::-webkit-scrollbar { display: none; }
         
-        .item-card { flex: 0 0 26%; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
-        .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; object-position: center !important; display: block !important; }
+        .item-card { 
+            flex: 0 0 140px; scroll-snap-align: start; background: white; 
+            border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex; flex-direction: column;
+        }
+        .item-card img { 
+            width: 100%; height: 100px; object-fit: contain; 
+            background: #f9f9f9; display: block;
+        }
         
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         
-        #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
+        #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
         #smartMenu.active { visibility: visible; opacity: 1; }
         #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #smartMenu.active #smartMenuContent { transform: translateY(0); }
@@ -53,7 +60,7 @@
 <body oncontextmenu="return false;">
 
     <div id="mainContainer">
-        <header class="flex justify-between items-center mb-5">
+        <header class="flex justify-between items-center mb-5 order-1">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
                 <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Cloud Sync Mode</p>
@@ -64,24 +71,29 @@
             </div>
         </header>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-2">
 
-        <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
-            <div id="gridTop" class="scroll-row"></div>
-            <div id="gridBottom" class="scroll-row"></div>
+        <div id="searchResults" class="order-5 mb-6">
+            <div id="gridSearch" class="search-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-2">← Home / Mostra Tutto</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-3">← Home / Mostra Tutto</button>
 
-        <div id="homeNav" class="space-y-4 mb-4 order-2">
+        <div id="homeNav" class="space-y-4 mb-4 order-4">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
             <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
+            
+            <button onclick="toggleSuggerimenti()" class="w-full py-3 bg-white rounded-2xl text-[10px] font-black uppercase text-gray-400 border border-gray-100 italic">Suggerimenti App 2026 ↓</button>
+            <div id="boxSuggerimenti" class="hidden bg-blue-50 p-4 rounded-2xl text-[11px] font-medium text-blue-800 space-y-2 border border-blue-100">
+                <p>• <b>Home:</b> Usa "Aggiungi a schermata home" per usarla come App.</p>
+                <p>• <b>Backup:</b> Esporta i dati una volta al mese per sicurezza.</p>
+                <p>• <b>Tag:</b> Usa i tag per date di scadenza o categorie extra.</p>
+            </div>
         </div>
     </div>
 
     <div id="smartMenu" onclick="chiudiSmartMenu()">
         <div id="smartMenuContent" onclick="event.stopPropagation()">
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
             <div id="menuPrincipale">
                 <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
                 <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
@@ -108,11 +120,7 @@
             </div>
             <div class="space-y-4 mb-4">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-bold border-0 shadow-sm outline-none"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ESEMPIO: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 uppercase">
-            </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm">
-                <div class="flex gap-3 mb-3"><input id="tagInput" type="text" placeholder="Aggiungi Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-xs font-bold outline-none border-0"><button onclick="aggiungiTag()" class="bg-blue-600 text-white px-4 rounded-xl font-bold">+</button></div>
-                <div id="tagCloud" class="flex flex-wrap gap-2"></div>
+                <input id="pIn" type="text" placeholder="POSIZIONE" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 uppercase">
             </div>
             <button id="saveBtn" onclick="salva()" class="btn-salva">SALVA SCHEDA</button>
         </div>
@@ -121,11 +129,12 @@
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
+        const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'ARMADI',colore:'bg-rose-600'},{nome:'BOX',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null, selectedBtnIndex = null, btnTimer;
 
+        function toggleSuggerimenti() { document.getElementById('boxSuggerimenti').classList.toggle('hidden'); }
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
@@ -134,72 +143,58 @@
                 btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
                 btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
-                btn.addEventListener('touchstart', (e) => { btnTimer = setTimeout(() => { window.navigator.vibrate && window.navigator.vibrate(50); apriSmartMenu(i); }, 600); });
+                btn.addEventListener('touchstart', (e) => { btnTimer = setTimeout(() => { apriSmartMenu(i); }, 600); });
                 btn.addEventListener('touchend', () => clearTimeout(btnTimer));
-                btn.addEventListener('touchmove', () => clearTimeout(btnTimer));
                 nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
         }
-
         function aggiorna() {
-            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
+            const gs = document.getElementById('gridSearch'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
-            
-            // SMART ORDER: Se scrivo, i risultati vanno in ordine 1 (sopra i bottoni)
-            if(q.length > 0) {
-                resDiv.classList.remove('order-3');
-                resDiv.classList.add('order-1');
-            } else {
-                resDiv.classList.remove('order-1');
-                resDiv.classList.add('order-3');
-            }
-
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
-            const m = Math.ceil(f.length / 2);
-            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
-            gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
-            gb.innerHTML = f.slice(m).reverse().map(r).join('');
+            resDiv.style.order = q.length > 0 ? "3" : "5";
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q)));
+            gs.innerHTML = f.reverse().map(o => `
+                <div class="item-card" onclick="apriModale(${o.id})">
+                    <div style="position:relative"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"></div>
+                    <div class="p-3">
+                        <p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p>
+                        <h4 class="font-black text-[9px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || '---'}</p>
+                    </div>
+                </div>
+            `).join('');
         }
-
         function apriSmartMenu(i) { selectedBtnIndex = i; resetMenu(); document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); }
         function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
         function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuNuovoSpazio').classList.add('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
-        function apriMenuNuovoSpazio() { resetMenu(); document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuNuovoSpazio').classList.remove('hidden'); document.getElementById('nuovoSpazioInput').value = ""; document.getElementById('smartMenu').classList.add('active'); }
+        function apriMenuNuovoSpazio() { resetMenu(); document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuNuovoSpazio').classList.remove('hidden'); document.getElementById('smartMenu').classList.add('active'); }
         function confermaNuovoSpazio() { const n = document.getElementById('nuovoSpazioInput').value.toUpperCase(); if(n) { configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]}); salvaConfig(); chiudiSmartMenu(); } }
         function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
         function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n) { configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
-        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); document.getElementById('eliminaTitolo').innerText = `ELIMINARE ${configSpazi[selectedBtnIndex].nome}?`; }
+        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); }
         function azioneSmart(t) { if (t === 'colore') { configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore) + 1) % palette.length]; salvaConfig(); } else if (t === 'elimina') { configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); } }
         function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); aggiorna(); }
-
         function apriModale(id = null) {
             editId = id;
-            if (id) {
-                const o = db.find(x => x.id === id);
-                document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; currentTags = [...(o.tags || [])];
-            } else { resetModale(); }
-            document.getElementById('qtyVal').innerText = tempQty; renderGallery(); renderTags();
-            document.getElementById('modal').classList.remove('hidden');
+            if (id) { const o = db.find(x => x.id === id); document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos; document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; } else { resetModale(); }
+            document.getElementById('qtyVal').innerText = tempQty; renderGallery(); document.getElementById('modal').classList.remove('hidden');
         }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
-            const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], tags: [...currentTags], qty: tempQty };
+            const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty };
             if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); }
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
-        function aggiungiTag() { const v = document.getElementById('tagInput').value.trim().toLowerCase(); if(v && !currentTags.includes(v)) { currentTags.push(v); document.getElementById('tagInput').value = ""; renderTags(); } }
-        function renderTags() { document.getElementById('tagCloud').innerHTML = currentTags.map((t, i) => `<div onclick="currentTags.splice(${i},1);renderTags()" class="tag-pill bg-blue-600 text-white font-bold px-3 py-1 rounded-lg text-[10px] uppercase">${t}</div>`).join(''); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
-        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; currentTags = []; }
+        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = "backup.json"; a.click(); }
         function importaDati(e) { const r = new FileReader(); r.onload = (ev) => { db = JSON.parse(ev.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(e.target.files[0]); }
-        function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
+        function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos = [c.toDataURL('image/jpeg', 0.6)]; renderGallery(); }; }; r.readAsDataURL(f); }
         renderBottoni(); aggiorna();
     </script>
 </body>
