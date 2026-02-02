@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Business Edition</title>
+    <title>Trovapp Pro - Definitive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -104,7 +104,7 @@
             
             <div class="space-y-3 mb-4">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm italic uppercase"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm uppercase italic">
+                <input id="pIn" type="text" placeholder="POSIZIONE" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm uppercase italic">
                 
                 <div class="bg-white p-4 rounded-2xl shadow-sm flex flex-col gap-3">
                     <div id="tagList" class="flex flex-wrap gap-2 min-h-[20px]"></div>
@@ -116,7 +116,7 @@
             </div>
 
             <div class="grid grid-cols-2 gap-2 mb-6">
-                <button onclick="mostraPaywall()" class="bg-amber-400 text-amber-950 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic shadow-sm"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA VINTED/STORE</button>
+                <button onclick="mostraPaywall()" class="bg-amber-400 text-amber-950 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic shadow-sm"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA PER VINTED & STORE</button>
                 <button onclick="mostraPaywall()" class="bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-cloud fa-lg"></i> CLOUD SYNC</button>
             </div>
             
@@ -163,14 +163,7 @@
         }
 
         function removeTag(tag) { currentTags = currentTags.filter(t => t !== tag); renderTags(); }
-        
-        function renderTags() {
-            const list = document.getElementById('tagList');
-            list.innerHTML = currentTags.map(t => `
-                <span class="tag-pill">
-                    ${t} <i onclick="removeTag('${t}')" class="fa-solid fa-circle-xmark opacity-60 text-[12px]"></i>
-                </span>`).join('');
-        }
+        function renderTags() { document.getElementById('tagList').innerHTML = currentTags.map(t => `<span class="tag-pill">${t} <i onclick="removeTag('${t}')" class="fa-solid fa-circle-xmark opacity-60"></i></span>`).join(''); }
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
@@ -215,29 +208,9 @@
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
 
-        function modificaSpazio(i) {
-            editSpaceIdx = i; const s = configSpazi[i];
-            document.getElementById('newSpaceName').value = s.nome;
-            selectedColor = s.colore;
-            document.getElementById('btnEliminaSpazio').classList.remove('hidden');
-            document.getElementById('spaceModal').style.display = 'flex';
-            renderPicker();
-        }
-
-        function apriMenuNuovoSpazio() {
-            editSpaceIdx = null; document.getElementById('newSpaceName').value = "";
-            document.getElementById('btnEliminaSpazio').classList.add('hidden');
-            document.getElementById('spaceModal').style.display = 'flex';
-            renderPicker();
-        }
-
-        function salvaNuovoSpazio() {
-            const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return;
-            if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor};
-            else configSpazi.push({nome:n, colore:selectedColor});
-            localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni();
-        }
-
+        function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
+        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
+        function salvaNuovoSpazio() { const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return; if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor}; else configSpazi.push({nome:n, colore:selectedColor}); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); }
         function confermaEliminaSpazio() { if(confirm("Eliminare?")) { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); } }
         function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
         function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-blue-600' : 'border-transparent'}"></div>`).join(''); }
