@@ -30,56 +30,54 @@
                 <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest italic">Cloud Sync Mode</p>
             </div>
             <div class="flex gap-2">
-                <label class="bg-zinc-200 text-zinc-700 p-2 px-3 rounded-lg text-[8px] font-black uppercase cursor-pointer">
-                    CARICA <input type="file" id="importFile" class="hidden" onchange="importaDati(this)">
-                </label>
-                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-3 rounded-lg text-[8px] font-black uppercase">BACKUP</button>
+                <label class="bg-zinc-200 text-zinc-700 p-2 px-3 rounded-lg text-[8px] font-black uppercase cursor-pointer italic">CARICA <input type="file" id="importFile" class="hidden" onchange="importaDati(this)"></label>
+                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-3 rounded-lg text-[8px] font-black uppercase italic">BACKUP</button>
             </div>
         </header>
 
         <div class="bg-white p-4 rounded-[28px] shadow-sm mb-4 border-l-4 border-blue-600">
             <div class="flex justify-between items-center mb-1">
                 <span class="text-[9px] font-black uppercase text-gray-400 italic">Capacità Piano Free</span>
-                <span class="text-[10px] font-black text-blue-600" id="objCount">0 / 20</span>
+                <span class="text-[10px] font-black text-blue-600 italic" id="objCount">0 / 20</span>
             </div>
             <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                 <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
-            <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center italic">Sblocca Tutto →</button>
+            <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center italic tracking-tighter">Sblocca Tutto & IA Market →</button>
         </div>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca oggetto o scatola..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA OGGETTO O SCATOLA..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 order-1 uppercase">
 
         <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
             <div id="gridTop" class="scroll-row"></div>
             <div id="gridBottom" class="scroll-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase order-2">← Torna alla Home</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase order-2 shadow-xl">← Torna alla Home</button>
 
         <div id="homeNav" class="space-y-4 mb-4 order-2">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-[10px]"> + Aggiungi/Modifica Spazio </button>
+            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-[9px]"> + Aggiungi Spazio </button>
         </div>
     </div>
 
     <div id="spaceModal">
         <div class="paywall-content text-left">
-            <h3 class="text-lg font-black italic uppercase mb-4">Gestione Spazi</h3>
-            <input id="newSpaceName" type="text" placeholder="Nome Spazio (es: GARAGE)" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-bold uppercase text-xs">
+            <h3 class="text-lg font-black italic uppercase mb-4" id="spaceModalTitle">Nuovo Spazio</h3>
+            <input id="newSpaceName" type="text" placeholder="NOME (ES: GARAGE)" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
             <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
             <div class="flex gap-2">
-                <button onclick="salvaNuovoSpazio()" class="flex-1 bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Aggiungi</button>
-                <button onclick="document.getElementById('spaceModal').style.display='none'" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
+                <button id="btnSalvaSpazio" onclick="salvaNuovoSpazio()" class="flex-1 bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva</button>
+                <button id="btnEliminaSpazio" onclick="confermaEliminaSpazio()" class="hidden flex-1 bg-red-100 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
+                <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
             </div>
-            <div id="listaSpaziModifica" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
         </div>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
         <div class="h-full flex flex-col p-6 overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3>
+                <h3 class="text-xl font-black italic uppercase tracking-tighter">SCHEDA OGGETTO</h3>
                 <div class="flex items-center gap-4">
                     <button id="delBtn" onclick="eliminaOggetto()" class="hidden text-red-500"><i class="fa-solid fa-trash-can fa-lg"></i></button>
                     <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
@@ -92,7 +90,7 @@
                 </label>
                 <div id="gallery" class="flex gap-3 overflow-x-auto"></div>
                 <div class="flex-1 space-y-3">
-                    <input id="nIn" type="text" placeholder="Nome..." class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold border-0">
+                    <input id="nIn" type="text" placeholder="NOME..." class="w-full p-3 bg-gray-100 rounded-xl text-xs font-black border-0 uppercase italic">
                     <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2">
                         <span class="text-[9px] font-black uppercase italic">QTY</span>
                         <div class="flex gap-4 items-center"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div>
@@ -100,12 +98,12 @@
                 </div>
             </div>
             <div class="flex gap-2 mb-4">
-                <button onclick="mostraPaywall()" class="flex-1 bg-amber-100 text-amber-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> Valuta (Vinted)</button>
-                <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1"><i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync</button>
+                <button onclick="mostraPaywall()" class="flex-1 bg-amber-100 text-amber-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> Valuta IA</button>
+                <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync</button>
             </div>
             <div class="space-y-4 mb-4">
-                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm border-0"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm border-0 uppercase">
+                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 italic uppercase"></select>
+                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 uppercase italic">
             </div>
             <button onclick="salva()" class="btn-salva">SALVA OGGETTO</button>
         </div>
@@ -127,42 +125,72 @@
         const palette = ['bg-zinc-800', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black', 'bg-purple-600'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-800'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, selectedColor = palette[0];
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
 
         function renderBottoni() {
-            const nav = document.getElementById('navGrid'), select = document.getElementById('cIn'), lista = document.getElementById('listaSpaziModifica');
-            nav.innerHTML = ''; select.innerHTML = ''; lista.innerHTML = '';
+            const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
+            nav.innerHTML = ''; select.innerHTML = '';
             configSpazi.forEach((s, i) => {
-                nav.innerHTML += `<button onclick="apriSpazio('${s.nome}')" class="p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all"><span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span></button>`;
+                const btn = document.createElement('button');
+                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all`;
+                btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter pointer-events-none">${s.nome}</span>`;
+                
+                // EVENTI PER LONG PRESS (Pressione prolungata)
+                btn.onmousedown = btn.ontouchstart = () => { pressTimer = setTimeout(() => modificaSpazio(i), 600); };
+                btn.onmouseup = btn.ontouchend = () => { clearTimeout(pressTimer); };
+                btn.onclick = () => { if(!editSpaceIdx) apriSpazio(s.nome); };
+                
+                nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
-                lista.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl"><span class="text-[10px] font-black uppercase">${s.nome}</span><button onclick="eliminaSpazio(${i})" class="text-red-500 text-xs"><i class="fa-solid fa-xmark"></i></button></div>`;
             });
         }
 
         function apriMenuNuovoSpazio() {
+            editSpaceIdx = null;
+            document.getElementById('spaceModalTitle').innerText = "Nuovo Spazio";
+            document.getElementById('newSpaceName').value = "";
+            document.getElementById('btnEliminaSpazio').classList.add('hidden');
             document.getElementById('spaceModal').style.display = 'flex';
+            renderPicker();
+        }
+
+        function modificaSpazio(i) {
+            editSpaceIdx = i;
+            const s = configSpazi[i];
+            document.getElementById('spaceModalTitle').innerText = "Modifica Spazio";
+            document.getElementById('newSpaceName').value = s.nome;
+            selectedColor = s.colore;
+            document.getElementById('btnEliminaSpazio').classList.remove('hidden');
+            document.getElementById('spaceModal').style.display = 'flex';
+            renderPicker();
+        }
+
+        function renderPicker() {
             const picker = document.getElementById('colorPicker');
             picker.innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-2 outline-blue-600' : 'border-transparent'}"></div>`).join('');
         }
 
-        function renderPicker() { apriMenuNuovoSpazio(); }
-
         function salvaNuovoSpazio() {
             const nome = document.getElementById('newSpaceName').value.toUpperCase();
             if(!nome) return;
-            configSpazi.push({nome, colore: selectedColor});
+            if(editSpaceIdx !== null) {
+                configSpazi[editSpaceIdx] = {nome, colore: selectedColor};
+            } else {
+                configSpazi.push({nome, colore: selectedColor});
+            }
             localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
-            document.getElementById('newSpaceName').value = '';
-            renderBottoni();
+            chiudiSpaceModal(); renderBottoni();
         }
 
-        function eliminaSpazio(i) {
-            if(confirm("Eliminare questo spazio? Gli oggetti rimarranno ma senza categoria.")) {
-                configSpazi.splice(i, 1);
+        function confermaEliminaSpazio() {
+            if(confirm("Eliminare definitivamente questo spazio?")) {
+                configSpazi.splice(editSpaceIdx, 1);
                 localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
-                renderBottoni();
+                chiudiSpaceModal(); renderBottoni();
             }
         }
+
+        function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
