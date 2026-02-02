@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Smart Search</title>
+    <title>Trovapp Pro - Business Edition</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,54 +18,24 @@
 
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         
-        #mainContainer { 
-            min-height: 100vh; 
-            padding: 16px; 
-            padding-bottom: 120px; 
-            overflow-y: auto; 
-            display: flex;
-            flex-direction: column;
-            -webkit-overflow-scrolling: touch;
-        }
+        #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; overflow-y: auto; display: flex; flex-direction: column; }
 
-        .scroll-row { 
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; 
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth; min-height: 140px;
-        }
+        .scroll-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
         .scroll-row::-webkit-scrollbar { display: none; }
         
         .item-card { flex: 0 0 26%; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
-        .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; object-position: center !important; display: block !important; }
+        .item-card img { width: 100%; height: 80px; object-fit: cover; }
         
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         
-        #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
-        #smartMenu.active { visibility: visible; opacity: 1; }
-        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        #smartMenu.active #smartMenuContent { transform: translateY(0); }
-        
+        /* MODALE PAYWALL */
+        #paywallModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .paywall-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 30px; text-align: center; }
+
         .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        
-        /* OMBREGGIATURA BOTTONE SALVA */
-        .btn-salva { 
-            width: 100%; 
-            background-color: #2563eb; 
-            color: white; 
-            padding: 20px; 
-            border-radius: 26px; 
-            font-weight: 900; 
-            font-size: 18px; 
-            font-style: italic; 
-            text-transform: uppercase; 
-            margin-top: 20px; 
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-            transition: all 0.2s;
-        }
-        .btn-salva:active { transform: translateY(2px); box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2); }
+        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        
-        #tipText { transition: opacity 0.5s ease-in-out; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -74,70 +44,82 @@
         <header class="flex justify-between items-center mb-5">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Cloud Sync Mode</p>
+                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Business Mode 2026</p>
             </div>
             <div class="flex gap-2">
-                <label class="bg-blue-600 text-white p-2 rounded-lg text-[8px] font-black uppercase cursor-pointer">CARICA <input type="file" class="hidden" onchange="importaDati(event)"></label>
-                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black uppercase">BACKUP</button>
+                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-4 rounded-lg text-[8px] font-black uppercase">BACKUP</button>
             </div>
         </header>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto o una scatola..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
+        <div class="bg-white p-4 rounded-[28px] shadow-sm mb-4 border-l-4 border-blue-600">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[9px] font-black uppercase text-gray-400 italic">Capacità Piano Free</span>
+                <span class="text-[10px] font-black text-blue-600" id="objCount">0 / 20</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center tracking-tighter italic">Sblocca Oggetti Illimitati & IA →</button>
+        </div>
+
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca oggetto o scatola..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
 
         <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
             <div id="gridTop" class="scroll-row"></div>
             <div id="gridBottom" class="scroll-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-2">← Home / Mostra Tutto</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-2">← Torna alla Home</button>
 
         <div id="homeNav" class="space-y-4 mb-4 order-2">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
-            
-            <div class="mt-8 p-5 bg-white rounded-[32px] shadow-sm border border-gray-100">
-                <h3 class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic">Lo sapevi che?</h3>
-                <p id="tipText" class="text-xs font-bold text-gray-500 leading-relaxed uppercase italic">Caricamento suggerimenti...</p>
-            </div>
+            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Aggiungi Spazio</button>
         </div>
     </div>
 
-    <div id="smartMenu" onclick="chiudiSmartMenu()">
-        <div id="smartMenuContent" onclick="event.stopPropagation()">
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
-            <div id="menuPrincipale">
-                <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
-                <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
-                <button onclick="azioneSmart('colore')" class="smart-btn">Cambia Colore <i class="fa-solid fa-palette"></i></button>
-                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
+    <div id="paywallModal" onclick="this.style.display='none'">
+        <div class="paywall-content" onclick="event.stopPropagation()">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-crown fa-2xl"></i>
             </div>
-            <div id="menuNuovoSpazio" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">NOME NUOVO SPAZIO</h2><input type="text" id="nuovoSpazioInput" placeholder="ES: GARAGE" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-6 outline-none font-bold uppercase text-center"><button onclick="confermaNuovoSpazio()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Crea Spazio</button></div>
-            <div id="menuRinomina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-6 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button></div>
-            <div id="menuElimina" class="hidden text-center"><h2 id="eliminaTitolo" class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-3 shadow-lg">Sì, elimina</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">Annulla</button></div>
-            <button onclick="chiudiSmartMenu()" class="w-full mt-12 py-2 text-gray-400 font-bold uppercase text-[12px] tracking-widest">CHIUDI</button>
+            <h2 class="font-black italic text-2xl uppercase tracking-tighter mb-2">Passa a Premium</h2>
+            <p class="text-xs font-bold text-gray-500 uppercase mb-6 leading-relaxed">Sblocca oggetti illimitati, stima il valore dei tuoi oggetti per Vinted e attiva il Cloud Sync.</p>
+            <div class="space-y-3">
+                <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg">19,99€ / ANNO</button>
+                <button class="w-full p-4 bg-zinc-100 text-zinc-900 rounded-2xl font-black italic uppercase">2,99€ / MESE</button>
+            </div>
+            <button onclick="document.getElementById('paywallModal').style.display='none'" class="mt-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Continua con limiti</button>
         </div>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
         <div class="h-full flex flex-col p-6 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6"><h3 id="modalTitle" class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3><button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button></div>
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3><button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button></div>
+            
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
                 <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600"><i class="fa-solid fa-camera fa-xl"></i><input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()"></label>
-                <div id="gallery" class="flex gap-3 overflow-x-auto items-center"></div>
+                <div id="gallery" class="flex gap-3 overflow-x-auto"></div>
                 <div class="flex-1 space-y-3">
-                    <input id="nIn" type="text" placeholder="Nome oggetto" class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none border-0">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2.5"><span class="text-[10px] font-black uppercase">QTY</span><div class="flex gap-5 items-center"><button onclick="changeQty(-1)" class="font-bold text-xl">-</button><span id="qtyVal" class="text-sm font-black">1</span><button onclick="changeQty(1)" class="text-blue-400 font-bold text-xl">+</button></div></div>
+                    <input id="nIn" type="text" placeholder="Nome..." class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold border-0">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2"><span class="text-[9px] font-black uppercase italic">QTY</span><div class="flex gap-4 items-center"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div></div>
                 </div>
             </div>
+
+            <div class="flex gap-2 mb-4">
+                <button onclick="mostraPaywall()" class="flex-1 bg-amber-100 text-amber-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> Valuta (Vinted)
+                </button>
+                <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync
+                </button>
+            </div>
+
             <div class="space-y-4 mb-4">
-                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-bold border-0 shadow-sm outline-none"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ESEMPIO: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 uppercase">
+                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm border-0"></select>
+                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm border-0 uppercase">
             </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm">
-                <div class="flex gap-3 mb-3"><input id="tagInput" type="text" placeholder="Aggiungi Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-xs font-bold outline-none border-0"><button onclick="aggiungiTag()" class="bg-blue-600 text-white px-4 rounded-xl font-bold">+</button></div>
-                <div id="tagCloud" class="flex flex-wrap gap-2"></div>
-            </div>
-            <button id="saveBtn" onclick="salva()" class="btn-salva">SALVA SCHEDA</button>
+
+            <button id="saveBtn" onclick="salva()" class="btn-salva">SALVA OGGETTO</button>
         </div>
     </div>
 
@@ -145,95 +127,67 @@
 
     <script>
         const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
-        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'ARMADI',colore:'bg-rose-600'},{nome:'BOX',colore:'bg-indigo-700'}];
+        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'BOX',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null, selectedBtnIndex = null, btnTimer;
-
-        const suggerimenti = [
-            "FAI UN BACKUP UNA VOLTA AL MESE PER NON PERDERE MAI I TUOI DATI SE CAMBI TELEFONO.",
-            "PUOI CARICARE IL FILE DI BACKUP SU QUALSIASI DISPOSITIVO PER SINCRONIZZARE L'INVENTARIO.",
-            "TIENI PREMUTO SUI BOTTONI DEGLI SPAZI PER CAMBIARE IL LORO COLORE O IL NOME.",
-            "LA RICERCA FUNZIONA ANCHE PER POSIZIONE: SCRIVI 'SCATOLA 1' PER VEDERE COSA CONTIENE."
-        ];
-        let tipIndex = 0;
-        function ruotaSuggerimenti() {
-            const el = document.getElementById('tipText');
-            if(!el) return;
-            el.style.opacity = 0;
-            setTimeout(() => {
-                el.innerText = suggerimenti[tipIndex];
-                el.style.opacity = 1;
-                tipIndex = (tipIndex + 1) % suggerimenti.length;
-            }, 500);
-        }
-        setInterval(ruotaSuggerimenti, 10000);
-        ruotaSuggerimenti();
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null;
 
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
-                // OMBREGGIATURA AGGIUNTA QUI (shadow-xl e active:shadow-inner)
-                btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 active:shadow-inner transition-all duration-150`;
-                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
+                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all`;
+                btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
-                btn.addEventListener('touchstart', (e) => { btnTimer = setTimeout(() => { window.navigator.vibrate && window.navigator.vibrate(50); apriSmartMenu(i); }, 600); });
-                btn.addEventListener('touchend', () => clearTimeout(btnTimer));
-                btn.addEventListener('touchmove', () => clearTimeout(btnTimer));
                 nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
         }
 
         function aggiorna() {
-            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
+            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
             const q = document.getElementById('searchInput').value.toLowerCase();
-            if(q.length > 0) { resDiv.classList.remove('order-3'); resDiv.classList.add('order-1'); } else { resDiv.classList.remove('order-1'); resDiv.classList.add('order-3'); }
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q))) || (o.pos && o.pos.toLowerCase().includes(q))));
+            
+            // AGGIORNA BARRA LIMITE
+            const count = db.length;
+            document.getElementById('objCount').innerText = `${count} / 20`;
+            document.getElementById('progressBar').style.width = (count / 20 * 100) + '%';
+            if(count >= 20) document.getElementById('progressBar').classList.replace('bg-blue-600', 'bg-red-500');
+
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
-            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
+            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><h4 class="font-black text-[9px] truncate uppercase italic">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || 'Senza pos.'}</p></div></div>`;
+            
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        function apriSmartMenu(i) { selectedBtnIndex = i; resetMenu(); document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); }
-        function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
-        function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuNuovoSpazio').classList.add('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
-        function apriMenuNuovoSpazio() { resetMenu(); document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuNuovoSpazio').classList.remove('hidden'); document.getElementById('nuovoSpazioInput').value = ""; document.getElementById('smartMenu').classList.add('active'); }
-        function confermaNuovoSpazio() { const n = document.getElementById('nuovoSpazioInput').value.toUpperCase(); if(n) { configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]}); salvaConfig(); chiudiSmartMenu(); } }
-        function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
-        function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n) { configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
-        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); document.getElementById('eliminaTitolo').innerText = `ELIMINARE ${configSpazi[selectedBtnIndex].nome}?`; }
-        function azioneSmart(t) { if (t === 'colore') { configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore) + 1) % palette.length]; salvaConfig(); } else if (t === 'elimina') { configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); } }
-        function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); aggiorna(); }
-
+        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function apriModale(id = null) {
             editId = id;
             if (id) {
                 const o = db.find(x => x.id === id);
                 document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; currentTags = [...(o.tags || [])];
-            } else { resetModale(); }
-            document.getElementById('qtyVal').innerText = tempQty; renderGallery(); renderTags();
+                document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto];
+            } else {
+                if(db.length >= 20) { mostraPaywall(); return; }
+                document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1;
+            }
+            document.getElementById('qtyVal').innerText = tempQty; renderGallery();
             document.getElementById('modal').classList.remove('hidden');
         }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
-            const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], tags: [...currentTags], qty: tempQty };
+            const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty };
             if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); }
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
-        function aggiungiTag() { const v = document.getElementById('tagInput').value.trim().toLowerCase(); if(v && !currentTags.includes(v)) { currentTags.push(v); document.getElementById('tagInput').value = ""; renderTags(); } }
-        function renderTags() { document.getElementById('tagCloud').innerHTML = currentTags.map((t, i) => `<div onclick="currentTags.splice(${i},1);renderTags()" class="tag-pill bg-blue-600 text-white font-bold px-3 py-1 rounded-lg text-[10px] uppercase">${t}</div>`).join(''); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
-        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; currentTags = []; }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-md">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = "backup.json"; a.click(); }
-        function importaDati(e) { const r = new FileReader(); r.onload = (ev) => { db = JSON.parse(ev.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(e.target.files[0]); }
+        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = "backup_trovapp.json"; a.click(); }
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
         renderBottoni(); aggiorna();
     </script>
