@@ -44,8 +44,24 @@
         #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #smartMenu.active #smartMenuContent { transform: translateY(0); }
         
-        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
-        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
+        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        /* OMBREGGIATURA BOTTONE SALVA */
+        .btn-salva { 
+            width: 100%; 
+            background-color: #2563eb; 
+            color: white; 
+            padding: 20px; 
+            border-radius: 26px; 
+            font-weight: 900; 
+            font-size: 18px; 
+            font-style: italic; 
+            text-transform: uppercase; 
+            margin-top: 20px; 
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s;
+        }
+        .btn-salva:active { transform: translateY(2px); box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2); }
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
         
@@ -158,7 +174,8 @@
             nav.innerHTML = ''; select.innerHTML = '';
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
-                btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
+                // OMBREGGIATURA AGGIUNTA QUI (shadow-xl e active:shadow-inner)
+                btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 active:shadow-inner transition-all duration-150`;
                 btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
                 btn.addEventListener('touchstart', (e) => { btnTimer = setTimeout(() => { window.navigator.vibrate && window.navigator.vibrate(50); apriSmartMenu(i); }, 600); });
@@ -169,32 +186,13 @@
             });
         }
 
-        // --- FUNZIONE AGGIORNATA CON RICERCA PER POSIZIONE ---
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
-            
-            if(q.length > 0) { 
-                resDiv.classList.remove('order-3'); 
-                resDiv.classList.add('order-1'); 
-            } else { 
-                resDiv.classList.remove('order-1'); 
-                resDiv.classList.add('order-3'); 
-            }
-
-            const f = db.filter(o => {
-                const matchesCat = (activeCat === 'TUTTI' || o.cat === activeCat);
-                const matchesQuery = (
-                    o.nome.toLowerCase().includes(q) || 
-                    (o.tags && o.tags.some(t => t.toLowerCase().includes(q))) ||
-                    (o.pos && o.pos.toLowerCase().includes(q)) // <--- Cerca anche nella posizione
-                );
-                return matchesCat && matchesQuery;
-            });
-
+            if(q.length > 0) { resDiv.classList.remove('order-3'); resDiv.classList.add('order-1'); } else { resDiv.classList.remove('order-1'); resDiv.classList.add('order-3'); }
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q))) || (o.pos && o.pos.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
             const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
-            
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
