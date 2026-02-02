@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Full Image Search</title>
+    <title>Trovapp Pro - Full Fix</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,35 +11,25 @@
     <style>
         * { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
         input { user-select: text !important; -webkit-user-select: text !important; }
-
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         
-        #mainContainer { 
-            min-height: 100vh; padding: 16px; padding-bottom: 120px; 
-            display: flex; flex-direction: column; overflow-y: auto;
-        }
+        #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; overflow-y: auto; }
 
-        /* ROW DI RICERCA: Una affianco all'altra con scorrimento */
-        .search-row { 
-            display: flex; overflow-x: auto; gap: 12px; padding: 10px 4px;
-            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-        }
+        /* ROW DI RICERCA: Orizzontale */
+        .search-row { display: flex; overflow-x: auto; gap: 12px; padding: 10px 4px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .search-row::-webkit-scrollbar { display: none; }
         
-        /* SCHEDA: Proporzionata per il layout orizzontale */
-        .item-card { 
-            flex: 0 0 140px; scroll-snap-align: start; background: white; 
-            border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            display: flex; flex-direction: column;
-        }
-
-        /* FOTO: Non tagliata (contain) e proporzionata */
-        .item-card img { 
-            width: 100%; height: 100px; object-fit: contain; 
-            background: #f9f9f9; display: block;
-        }
+        .item-card { flex: 0 0 140px; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .item-card img { width: 100%; height: 100px; object-fit: contain; background: #f9f9f9; }
         
-        .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; }
+        .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
+
+        /* Smart Menu Style */
+        #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
+        #smartMenu.active { visibility: visible; opacity: 1; }
+        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 80px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #smartMenu.active #smartMenuContent { transform: translateY(0); }
+        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -47,7 +37,10 @@
     <div id="mainContainer">
         <header class="flex justify-between items-center mb-5 order-1">
             <h1 class="text-2xl font-black italic uppercase tracking-tighter">TROVAPP</h1>
-            <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black">BACKUP</button>
+            <div class="flex gap-2">
+                <label class="bg-blue-600 text-white p-2 rounded-lg text-[8px] font-black cursor-pointer">CARICA <input type="file" class="hidden" onchange="importaDati(event)"></label>
+                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black">BACKUP</button>
+            </div>
         </header>
 
         <div class="order-2">
@@ -58,58 +51,144 @@
             <div id="gridSearch" class="search-row"></div>
         </div>
 
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase order-3">← HOME</button>
+
         <div id="homeNav" class="space-y-4 mb-4 order-4">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
             <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ NUOVO SPAZIO</button>
         </div>
     </div>
 
-    <button id="addButton" style="position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#2563eb; color:white; width:60px; height:60px; border-radius:50%; z-index:100; font-size:24px;" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
+    <div id="smartMenu" onclick="chiudiSmartMenu()">
+        <div id="smartMenuContent" onclick="event.stopPropagation()">
+            <div id="menuPrincipale">
+                <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6">SPAZIO</h2>
+                <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
+                <button onclick="azioneSmart('colore')" class="smart-btn">Colore <i class="fa-solid fa-palette"></i></button>
+                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
+            </div>
+            <div id="menuRinomina" class="hidden text-center">
+                <input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white mb-6 outline-none font-bold uppercase text-center">
+                <button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black uppercase">Conferma</button>
+            </div>
+            <div id="menuElimina" class="hidden text-center">
+                <button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black uppercase">Sì, elimina</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7] p-6 overflow-y-auto">
+        <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3><button onclick="chiudiModale()" class="text-3xl">&times;</button></div>
+        <div class="bg-white p-5 rounded-[32px] mb-4 flex gap-4 items-center">
+            <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                <i class="fa-solid fa-camera fa-xl"></i>
+                <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
+            </label>
+            <div id="gallery" class="flex gap-2 overflow-x-auto"></div>
+            <input id="nIn" type="text" placeholder="Cosa?" class="flex-1 p-3 bg-gray-50 rounded-xl font-bold outline-none border-0">
+        </div>
+        <div class="flex gap-4 mb-4">
+            <select id="cIn" class="flex-1 bg-white p-4 rounded-2xl font-bold border-0 outline-none"></select>
+            <input id="pIn" type="text" placeholder="POSIZIONE" class="flex-1 bg-white p-4 rounded-2xl font-bold border-0 outline-none uppercase">
+        </div>
+        <div class="flex items-center justify-between bg-zinc-900 text-white rounded-2xl p-4 mb-4">
+            <span class="font-black uppercase">QUANTITÀ</span>
+            <div class="flex gap-6 items-center">
+                <button onclick="changeQty(-1)" class="text-2xl font-bold">-</button>
+                <span id="qtyVal" class="text-xl font-black">1</span>
+                <button onclick="changeQty(1)" class="text-blue-400 text-2xl font-bold">+</button>
+            </div>
+        </div>
+        <button onclick="salva()" class="w-full bg-blue-600 text-white p-5 rounded-[26px] font-black text-lg uppercase shadow-lg">SALVA SCHEDA</button>
+    </div>
+
+    <button id="addButton" style="position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#2563eb; color:white; width:62px; height:62px; border-radius:50%; z-index:100; font-size:28px;" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
+        const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'}];
+        let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", selectedBtnIndex = null, btnTimer;
 
         function renderBottoni() {
-            const nav = document.getElementById('navGrid');
-            nav.innerHTML = configSpazi.map(s => `
-                <button onclick="apriSpazio('${s.nome}')" class="p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform">
-                    <span class="font-black italic text-[13px] uppercase">${s.nome}</span>
-                </button>
-            `).join('');
+            const nav = document.getElementById('navGrid'); nav.innerHTML = '';
+            configSpazi.forEach((s, i) => {
+                const btn = document.createElement('button');
+                btn.className = `p-6 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
+                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase">${s.nome}</span>`;
+                btn.onclick = () => apriSpazio(s.nome);
+                btn.oncontextmenu = (e) => { e.preventDefault(); apriSmartMenu(i); }; // Per PC
+                btn.ontouchstart = () => { btnTimer = setTimeout(() => { apriSmartMenu(i); }, 600); };
+                btn.ontouchend = () => clearTimeout(btnTimer);
+                nav.appendChild(btn);
+            });
+            const sel = document.getElementById('cIn'); sel.innerHTML = configSpazi.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
         }
 
         function aggiorna() {
             const gs = document.getElementById('gridSearch'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
-            
-            // Logica di spostamento: Se scrivi, i risultati salgono sopra i bottoni
-            if(q.length > 0) {
-                resDiv.style.order = "3";
-            } else {
-                resDiv.style.order = "5";
-            }
-
-            const f = db.filter(o => o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q))));
-            
-            // Render delle schede una affianco all'altra
+            resDiv.style.order = q.length > 0 ? "3" : "5";
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q)));
             gs.innerHTML = f.reverse().map(o => `
                 <div class="item-card" onclick="apriModale(${o.id})">
-                    <div style="position:relative">
-                        <div class="qty-badge">x${o.qty}</div>
-                        <img src="${o.foto[0] || ''}">
-                    </div>
-                    <div class="p-2">
+                    <div style="position:relative"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"></div>
+                    <div class="p-3">
                         <p class="text-[6px] font-black text-gray-400 uppercase">${o.cat}</p>
-                        <h4 class="font-black text-[9px] truncate uppercase italic text-gray-800">${o.nome}</h4>
-                        <p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || 'Senza pos.'}</p>
+                        <h4 class="font-black text-[9px] truncate uppercase italic">${o.nome}</h4>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || '---'}</p>
                     </div>
                 </div>
             `).join('');
         }
 
-        renderBottoni();
-        aggiorna();
+        // Funzioni Smart Menu
+        function apriSmartMenu(i) { selectedBtnIndex = i; document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); resetMenu(); }
+        function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
+        function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
+        function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
+        function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n){ configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
+        function azioneSmart(t) { 
+            if(t==='colore'){ configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore)+1)%palette.length]; salvaConfig(); }
+            else if(t==='elimina'){ configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); }
+        }
+        function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); }
+
+        // Funzioni Scheda
+        function apriModale(id = null) {
+            if(id) { 
+                const o = db.find(x => x.id === id); 
+                document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos; tempQty = o.qty; tempPhotos = o.foto;
+            } else { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempQty = 1; tempPhotos = []; }
+            document.getElementById('qtyVal').innerText = tempQty; renderGallery();
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
+        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
+        function salva() {
+            const n = document.getElementById('nIn').value; if(!n) return;
+            db.push({ id: Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: tempPhotos, qty: tempQty });
+            localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
+        }
+        function comprimeECarica() {
+            const f = document.getElementById('fIn').files[0]; const r = new FileReader();
+            r.onload = (e) => {
+                const i = new Image(); i.src = e.target.result;
+                i.onload = () => {
+                    const c = document.createElement('canvas'); c.width = 400; c.height = 300;
+                    c.getContext('2d').drawImage(i, 0, 0, 400, 300);
+                    tempPhotos = [c.toDataURL('image/jpeg', 0.6)]; renderGallery();
+                };
+            }; r.readAsDataURL(f);
+        }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
+        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
+        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
+        
+        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = "backup.json"; a.click(); }
+        function importaDati(e) { const r = new FileReader(); r.onload = (ev) => { db = JSON.parse(ev.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(e.target.files[0]); }
+
+        renderBottoni(); aggiorna();
     </script>
 </body>
 </html>
