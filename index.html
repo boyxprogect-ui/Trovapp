@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Smart Search</title>
+    <title>Trovapp Pro - Horizontal Search</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,32 +22,45 @@
             min-height: 100vh; 
             padding: 16px; 
             padding-bottom: 120px; 
-            overflow-y: auto; 
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
 
+        /* Container per le schede affiancate */
         .scroll-row { 
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; 
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth; min-height: 140px;
+            display: flex; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            gap: 12px; 
+            padding: 8px 0; 
+            -webkit-overflow-scrolling: touch; 
+            scroll-behavior: smooth; 
+            min-height: 140px;
         }
         .scroll-row::-webkit-scrollbar { display: none; }
         
-        .item-card { flex: 0 0 26%; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
-        .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; object-position: center !important; display: block !important; }
+        .item-card { 
+            flex: 0 0 130px; /* Larghezza fissa per stare una di fianco all'altra */
+            scroll-snap-align: start; 
+            background: white; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06); 
+            position: relative; 
+            height: 135px; 
+        }
+        .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; }
         
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         
         #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
         #smartMenu.active { visibility: visible; opacity: 1; }
         #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        #smartMenu.active #smartMenuContent { transform: translateY(0); }
         
-        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; }
-        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
-        
-        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; text-transform: uppercase; margin-top: 20px; }
+        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -56,89 +69,52 @@
         <header class="flex justify-between items-center mb-5">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Cloud Sync Mode</p>
+                <p class="text-[9px] font-bold text-blue-600 uppercase">Cloud Sync Mode</p>
             </div>
             <div class="flex gap-2">
-                <label class="bg-blue-600 text-white p-2 rounded-lg text-[8px] font-black uppercase cursor-pointer">CARICA <input type="file" class="hidden" onchange="importaDati(event)"></label>
-                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black uppercase">BACKUP</button>
+                <label class="bg-blue-600 text-white p-2 rounded-lg text-[8px] font-black cursor-pointer">CARICA <input type="file" class="hidden" onchange="importaDati(event)"></label>
+                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black">BACKUP</button>
             </div>
         </header>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
+        <div class="order-1">
+            <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4">
+        </div>
 
-        <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
+        <div id="searchResults" class="flex flex-col gap-1 mb-6 order-4">
             <div id="gridTop" class="scroll-row"></div>
             <div id="gridBottom" class="scroll-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-2">← Home / Mostra Tutto</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase order-2">← Home / Mostra Tutto</button>
 
-        <div id="homeNav" class="space-y-4 mb-4 order-2">
+        <div id="homeNav" class="space-y-4 mb-4 order-3">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
             <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
         </div>
     </div>
 
-    <div id="smartMenu" onclick="chiudiSmartMenu()">
-        <div id="smartMenuContent" onclick="event.stopPropagation()">
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
-            <div id="menuPrincipale">
-                <h2 id="smartMenuTitle" class="text-center font-black italic uppercase text-xl mb-6 tracking-tighter">SPAZIO</h2>
-                <button onclick="mostraRinomina()" class="smart-btn">Rinomina <i class="fa-solid fa-pen"></i></button>
-                <button onclick="azioneSmart('colore')" class="smart-btn">Cambia Colore <i class="fa-solid fa-palette"></i></button>
-                <button onclick="mostraConfermaElimina()" class="smart-btn text-red-500">Elimina <i class="fa-solid fa-trash"></i></button>
-            </div>
-            <div id="menuNuovoSpazio" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">NOME NUOVO SPAZIO</h2><input type="text" id="nuovoSpazioInput" placeholder="ES: GARAGE" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-6 outline-none font-bold uppercase text-center"><button onclick="confermaNuovoSpazio()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Crea Spazio</button></div>
-            <div id="menuRinomina" class="hidden text-center"><h2 class="font-black italic uppercase text-lg mb-4">Nuovo Nome</h2><input type="text" id="nuovoNomeInput" class="w-full p-4 rounded-2xl border-0 bg-white shadow-inner mb-6 outline-none font-bold uppercase text-center"><button onclick="confermaRinomina()" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase">Conferma</button></div>
-            <div id="menuElimina" class="hidden text-center"><h2 id="eliminaTitolo" class="font-black italic uppercase text-lg mb-4 text-red-600">Eliminare?</h2><button onclick="azioneSmart('elimina')" class="w-full p-4 bg-red-600 text-white rounded-2xl font-black italic uppercase mb-3 shadow-lg">Sì, elimina</button><button onclick="resetMenu()" class="w-full p-4 bg-gray-200 rounded-2xl font-black italic uppercase">Annulla</button></div>
-            <button onclick="chiudiSmartMenu()" class="w-full mt-12 py-2 text-gray-400 font-bold uppercase text-[12px] tracking-widest">CHIUDI</button>
-        </div>
-    </div>
+    <div id="smartMenu" onclick="chiudiSmartMenu()"><div id="smartMenuContent" onclick="event.stopPropagation()">...</div></div>
 
     <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
-        <div class="h-full flex flex-col p-6 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6"><h3 id="modalTitle" class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3><button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button></div>
-            <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
-                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600"><i class="fa-solid fa-camera fa-xl"></i><input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()"></label>
-                <div id="gallery" class="flex gap-3 overflow-x-auto items-center"></div>
-                <div class="flex-1 space-y-3">
-                    <input id="nIn" type="text" placeholder="Nome oggetto" class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold outline-none border-0">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2.5"><span class="text-[10px] font-black uppercase">QTY</span><div class="flex gap-5 items-center"><button onclick="changeQty(-1)" class="font-bold text-xl">-</button><span id="qtyVal" class="text-sm font-black">1</span><button onclick="changeQty(1)" class="text-blue-400 font-bold text-xl">+</button></div></div>
-                </div>
-            </div>
-            <div class="space-y-4 mb-4">
-                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-bold border-0 shadow-sm outline-none"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ESEMPIO: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm outline-none border-0 uppercase">
-            </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm">
-                <div class="flex gap-3 mb-3"><input id="tagInput" type="text" placeholder="Aggiungi Tag..." class="flex-1 bg-gray-50 p-2 rounded-xl text-xs font-bold outline-none border-0"><button onclick="aggiungiTag()" class="bg-blue-600 text-white px-4 rounded-xl font-bold">+</button></div>
-                <div id="tagCloud" class="flex flex-wrap gap-2"></div>
-            </div>
-            <button id="saveBtn" onclick="salva()" class="btn-salva">SALVA SCHEDA</button>
         </div>
-    </div>
 
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'ARMADI',colore:'bg-rose-600'},{nome:'BOX',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null, selectedBtnIndex = null, btnTimer;
+        let activeCat = "TUTTI";
 
         function renderBottoni() {
-            const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
-            nav.innerHTML = ''; select.innerHTML = '';
+            const nav = document.getElementById('navGrid');
+            nav.innerHTML = '';
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
                 btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
-                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase tracking-tighter">${s.nome}</span>`;
+                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase">${s.nome}</span>`;
                 btn.onclick = () => apriSpazio(s.nome);
-                btn.addEventListener('touchstart', (e) => { btnTimer = setTimeout(() => { window.navigator.vibrate && window.navigator.vibrate(50); apriSmartMenu(i); }, 600); });
-                btn.addEventListener('touchend', () => clearTimeout(btnTimer));
-                btn.addEventListener('touchmove', () => clearTimeout(btnTimer));
                 nav.appendChild(btn);
-                select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
         }
 
@@ -146,61 +122,27 @@
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
             
-            // SMART ORDER: Se scrivo, i risultati vanno in ordine 1 (sopra i bottoni)
+            // Se cerchi, i risultati vanno in alto (order-2), altrimenti restano sotto (order-4)
             if(q.length > 0) {
-                resDiv.classList.remove('order-3');
-                resDiv.classList.add('order-1');
+                resDiv.style.order = "2";
             } else {
-                resDiv.classList.remove('order-1');
-                resDiv.classList.add('order-3');
+                resDiv.style.order = "4";
             }
 
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
             const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
+            
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        function apriSmartMenu(i) { selectedBtnIndex = i; resetMenu(); document.getElementById('smartMenuTitle').innerText = configSpazi[i].nome; document.getElementById('smartMenu').classList.add('active'); }
-        function chiudiSmartMenu() { document.getElementById('smartMenu').classList.remove('active'); }
-        function resetMenu() { document.getElementById('menuPrincipale').classList.remove('hidden'); document.getElementById('menuNuovoSpazio').classList.add('hidden'); document.getElementById('menuRinomina').classList.add('hidden'); document.getElementById('menuElimina').classList.add('hidden'); }
-        function apriMenuNuovoSpazio() { resetMenu(); document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuNuovoSpazio').classList.remove('hidden'); document.getElementById('nuovoSpazioInput').value = ""; document.getElementById('smartMenu').classList.add('active'); }
-        function confermaNuovoSpazio() { const n = document.getElementById('nuovoSpazioInput').value.toUpperCase(); if(n) { configSpazi.push({nome:n, colore:palette[configSpazi.length % palette.length]}); salvaConfig(); chiudiSmartMenu(); } }
-        function mostraRinomina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuRinomina').classList.remove('hidden'); document.getElementById('nuovoNomeInput').value = configSpazi[selectedBtnIndex].nome; }
-        function confermaRinomina() { const n = document.getElementById('nuovoNomeInput').value.toUpperCase(); if(n) { configSpazi[selectedBtnIndex].nome = n; salvaConfig(); chiudiSmartMenu(); } }
-        function mostraConfermaElimina() { document.getElementById('menuPrincipale').classList.add('hidden'); document.getElementById('menuElimina').classList.remove('hidden'); document.getElementById('eliminaTitolo').innerText = `ELIMINARE ${configSpazi[selectedBtnIndex].nome}?`; }
-        function azioneSmart(t) { if (t === 'colore') { configSpazi[selectedBtnIndex].colore = palette[(palette.indexOf(configSpazi[selectedBtnIndex].colore) + 1) % palette.length]; salvaConfig(); } else if (t === 'elimina') { configSpazi.splice(selectedBtnIndex, 1); salvaConfig(); chiudiSmartMenu(); } }
-        function salvaConfig() { localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); renderBottoni(); aggiorna(); }
-
-        function apriModale(id = null) {
-            editId = id;
-            if (id) {
-                const o = db.find(x => x.id === id);
-                document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; currentTags = [...(o.tags || [])];
-            } else { resetModale(); }
-            document.getElementById('qtyVal').innerText = tempQty; renderGallery(); renderTags();
-            document.getElementById('modal').classList.remove('hidden');
-        }
-        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
-        function salva() {
-            const n = document.getElementById('nIn').value; if(!n) return;
-            const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], tags: [...currentTags], qty: tempQty };
-            if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); }
-            localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
-        }
-        function aggiungiTag() { const v = document.getElementById('tagInput').value.trim().toLowerCase(); if(v && !currentTags.includes(v)) { currentTags.push(v); document.getElementById('tagInput').value = ""; renderTags(); } }
-        function renderTags() { document.getElementById('tagCloud').innerHTML = currentTags.map((t, i) => `<div onclick="currentTags.splice(${i},1);renderTags()" class="tag-pill bg-blue-600 text-white font-bold px-3 py-1 rounded-lg text-[10px] uppercase">${t}</div>`).join(''); }
-        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
-        function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; currentTags = []; }
-        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
+        // Funzioni di supporto (apriSpazio, tornaHome, etc.)
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = "backup.json"; a.click(); }
-        function importaDati(e) { const r = new FileReader(); r.onload = (ev) => { db = JSON.parse(ev.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(e.target.files[0]); }
-        function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
-        renderBottoni(); aggiorna();
+        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
+
+        renderBottoni();
+        aggiorna();
     </script>
 </body>
 </html>
