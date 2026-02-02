@@ -66,7 +66,7 @@
             </div>
         </header>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto o una scatola..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
 
         <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
             <div id="gridTop" class="scroll-row"></div>
@@ -133,7 +133,6 @@
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null, selectedBtnIndex = null, btnTimer;
 
-        // SUGGERIMENTI AGGIORNATI (ELIMINATI QUELLI RICHIESTI)
         const suggerimenti = [
             "FAI UN BACKUP UNA VOLTA AL MESE PER NON PERDERE MAI I TUOI DATI SE CAMBI TELEFONO.",
             "PUOI CARICARE IL FILE DI BACKUP SU QUALSIASI DISPOSITIVO PER SINCRONIZZARE L'INVENTARIO.",
@@ -170,13 +169,32 @@
             });
         }
 
+        // --- FUNZIONE AGGIORNATA CON RICERCA PER POSIZIONE ---
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
-            if(q.length > 0) { resDiv.classList.remove('order-3'); resDiv.classList.add('order-1'); } else { resDiv.classList.remove('order-1'); resDiv.classList.add('order-3'); }
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
+            
+            if(q.length > 0) { 
+                resDiv.classList.remove('order-3'); 
+                resDiv.classList.add('order-1'); 
+            } else { 
+                resDiv.classList.remove('order-1'); 
+                resDiv.classList.add('order-3'); 
+            }
+
+            const f = db.filter(o => {
+                const matchesCat = (activeCat === 'TUTTI' || o.cat === activeCat);
+                const matchesQuery = (
+                    o.nome.toLowerCase().includes(q) || 
+                    (o.tags && o.tags.some(t => t.toLowerCase().includes(q))) ||
+                    (o.pos && o.pos.toLowerCase().includes(q)) // <--- Cerca anche nella posizione
+                );
+                return matchesCat && matchesQuery;
+            });
+
             const m = Math.ceil(f.length / 2);
             const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
+            
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
