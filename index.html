@@ -49,7 +49,6 @@
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
         
-        /* Animazione dissolvenza suggerimenti */
         #tipText { transition: opacity 0.5s ease-in-out; }
     </style>
 </head>
@@ -134,11 +133,9 @@
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", currentTags = [], editId = null, selectedBtnIndex = null, btnTimer;
 
-        // LOGICA SUGGERIMENTI AUTOMATICI
+        // SUGGERIMENTI AGGIORNATI (ELIMINATI QUELLI RICHIESTI)
         const suggerimenti = [
-            "PUOI TRASFORMARE QUESTA PAGINA IN UN'APP USANDO IL TASTO 'AGGIUNGI A HOME' DEL BROWSER.",
             "FAI UN BACKUP UNA VOLTA AL MESE PER NON PERDERE MAI I TUOI DATI SE CAMBI TELEFONO.",
-            "USA I TAG PER SEGNARE LE SCADENZE: CERCA '2027' PER VEDERE COSA SCADE IN QUELL'ANNO.",
             "PUOI CARICARE IL FILE DI BACKUP SU QUALSIASI DISPOSITIVO PER SINCRONIZZARE L'INVENTARIO.",
             "TIENI PREMUTO SUI BOTTONI DEGLI SPAZI PER CAMBIARE IL LORO COLORE O IL NOME.",
             "LA RICERCA FUNZIONA ANCHE PER POSIZIONE: SCRIVI 'SCATOLA 1' PER VEDERE COSA CONTIENE."
@@ -146,6 +143,7 @@
         let tipIndex = 0;
         function ruotaSuggerimenti() {
             const el = document.getElementById('tipText');
+            if(!el) return;
             el.style.opacity = 0;
             setTimeout(() => {
                 el.innerText = suggerimenti[tipIndex];
@@ -153,10 +151,9 @@
                 tipIndex = (tipIndex + 1) % suggerimenti.length;
             }, 500);
         }
-        setInterval(ruotaSuggerimenti, 10000); // Cambia ogni 10 secondi
+        setInterval(ruotaSuggerimenti, 10000);
         ruotaSuggerimenti();
 
-        // FUNZIONI CORE (RIMASTE INVARIATE)
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
