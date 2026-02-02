@@ -3,143 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Horizontal Search</title>
-    
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Trovapp Pro - Full Image Search</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
-        input, textarea { user-select: text !important; -webkit-user-select: text !important; }
+        * { -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+        input { user-select: text !important; -webkit-user-select: text !important; }
 
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         
         #mainContainer { 
-            min-height: 100vh; 
-            padding: 16px; 
-            padding-bottom: 120px; 
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            min-height: 100vh; padding: 16px; padding-bottom: 120px; 
+            display: flex; flex-direction: column; overflow-y: auto;
         }
 
-        /* Container per le schede affiancate */
-        .scroll-row { 
-            display: flex; 
-            overflow-x: auto; 
-            scroll-snap-type: x mandatory; 
-            gap: 12px; 
-            padding: 8px 0; 
-            -webkit-overflow-scrolling: touch; 
-            scroll-behavior: smooth; 
-            min-height: 140px;
+        /* ROW DI RICERCA: Una affianco all'altra con scorrimento */
+        .search-row { 
+            display: flex; overflow-x: auto; gap: 12px; padding: 10px 4px;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
         }
-        .scroll-row::-webkit-scrollbar { display: none; }
+        .search-row::-webkit-scrollbar { display: none; }
         
+        /* SCHEDA: Proporzionata per il layout orizzontale */
         .item-card { 
-            flex: 0 0 130px; /* Larghezza fissa per stare una di fianco all'altra */
-            scroll-snap-align: start; 
-            background: white; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06); 
-            position: relative; 
-            height: 135px; 
+            flex: 0 0 140px; scroll-snap-align: start; background: white; 
+            border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex; flex-direction: column;
         }
-        .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; }
+
+        /* FOTO: Non tagliata (contain) e proporzionata */
+        .item-card img { 
+            width: 100%; height: 100px; object-fit: contain; 
+            background: #f9f9f9; display: block;
+        }
         
-        .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
-        
-        #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
-        #smartMenu.active { visibility: visible; opacity: 1; }
-        #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        
-        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; text-transform: uppercase; margin-top: 20px; }
-        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div id="mainContainer">
-        <header class="flex justify-between items-center mb-5">
-            <div>
-                <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase">Cloud Sync Mode</p>
-            </div>
-            <div class="flex gap-2">
-                <label class="bg-blue-600 text-white p-2 rounded-lg text-[8px] font-black cursor-pointer">CARICA <input type="file" class="hidden" onchange="importaDati(event)"></label>
-                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black">BACKUP</button>
-            </div>
+        <header class="flex justify-between items-center mb-5 order-1">
+            <h1 class="text-2xl font-black italic uppercase tracking-tighter">TROVAPP</h1>
+            <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 rounded-lg text-[8px] font-black">BACKUP</button>
         </header>
 
-        <div class="order-1">
+        <div class="order-2">
             <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4">
         </div>
 
-        <div id="searchResults" class="flex flex-col gap-1 mb-6 order-4">
-            <div id="gridTop" class="scroll-row"></div>
-            <div id="gridBottom" class="scroll-row"></div>
+        <div id="searchResults" class="order-5 mb-6">
+            <div id="gridSearch" class="search-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase order-2">← Home / Mostra Tutto</button>
-
-        <div id="homeNav" class="space-y-4 mb-4 order-3">
+        <div id="homeNav" class="space-y-4 mb-4 order-4">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
+            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ NUOVO SPAZIO</button>
         </div>
     </div>
 
-    <div id="smartMenu" onclick="chiudiSmartMenu()"><div id="smartMenuContent" onclick="event.stopPropagation()">...</div></div>
-
-    <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
-        </div>
-
-    <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
+    <button id="addButton" style="position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#2563eb; color:white; width:60px; height:60px; border-radius:50%; z-index:100; font-size:24px;" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'ARMADI',colore:'bg-rose-600'},{nome:'BOX',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let activeCat = "TUTTI";
+        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'}];
 
         function renderBottoni() {
             const nav = document.getElementById('navGrid');
-            nav.innerHTML = '';
-            configSpazi.forEach((s, i) => {
-                const btn = document.createElement('button');
-                btn.className = `p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform`;
-                btn.innerHTML = `<span class="font-black italic text-[13px] uppercase">${s.nome}</span>`;
-                btn.onclick = () => apriSpazio(s.nome);
-                nav.appendChild(btn);
-            });
+            nav.innerHTML = configSpazi.map(s => `
+                <button onclick="apriSpazio('${s.nome}')" class="p-5 rounded-[28px] ${s.colore} text-white shadow-lg flex flex-col active:scale-95 transition-transform">
+                    <span class="font-black italic text-[13px] uppercase">${s.nome}</span>
+                </button>
+            `).join('');
         }
 
         function aggiorna() {
-            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
+            const gs = document.getElementById('gridSearch'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
             
-            // Se cerchi, i risultati vanno in alto (order-2), altrimenti restano sotto (order-4)
+            // Logica di spostamento: Se scrivi, i risultati salgono sopra i bottoni
             if(q.length > 0) {
-                resDiv.style.order = "2";
+                resDiv.style.order = "3";
             } else {
-                resDiv.style.order = "4";
+                resDiv.style.order = "5";
             }
 
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
-            const m = Math.ceil(f.length / 2);
-            const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
+            const f = db.filter(o => o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q))));
             
-            gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
-            gb.innerHTML = f.slice(m).reverse().map(r).join('');
+            // Render delle schede una affianco all'altra
+            gs.innerHTML = f.reverse().map(o => `
+                <div class="item-card" onclick="apriModale(${o.id})">
+                    <div style="position:relative">
+                        <div class="qty-badge">x${o.qty}</div>
+                        <img src="${o.foto[0] || ''}">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-[6px] font-black text-gray-400 uppercase">${o.cat}</p>
+                        <h4 class="font-black text-[9px] truncate uppercase italic text-gray-800">${o.nome}</h4>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || 'Senza pos.'}</p>
+                    </div>
+                </div>
+            `).join('');
         }
-
-        // Funzioni di supporto (apriSpazio, tornaHome, etc.)
-        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
 
         renderBottoni();
         aggiorna();
