@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Search Top Fix</title>
+    <title>Trovapp Pro - Smart Search</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,6 +23,8 @@
             padding: 16px; 
             padding-bottom: 120px; 
             overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -36,8 +38,7 @@
         .item-card img { width: 100% !important; height: 80px !important; object-fit: cover !important; object-position: center !important; display: block !important; }
         
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
-        .tag-pill { background-color: #2563eb !important; color: white !important; font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 10px; text-transform: uppercase; }
-
+        
         #smartMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; backdrop-filter: blur(4px); }
         #smartMenu.active { visibility: visible; opacity: 1; }
         #smartMenuContent { background: #F2F2F7; width: 100%; border-radius: 32px 32px 0 0; padding: 24px 24px 85px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -63,18 +64,18 @@
             </div>
         </header>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca un oggetto..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
 
-        <div id="searchResults" class="flex flex-col gap-3 mb-6">
+        <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
             <div id="gridTop" class="scroll-row"></div>
             <div id="gridBottom" class="scroll-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg">← Home / Mostra Tutto</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-2">← Home / Mostra Tutto</button>
 
-        <div id="homeNav" class="space-y-4">
+        <div id="homeNav" class="space-y-4 mb-4 order-2">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
+            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Nuovo Spazio</button>
         </div>
     </div>
 
@@ -142,8 +143,18 @@
         }
 
         function aggiorna() {
-            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
+            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), resDiv = document.getElementById('searchResults');
             const q = document.getElementById('searchInput').value.toLowerCase();
+            
+            // SMART ORDER: Se scrivo, i risultati vanno in ordine 1 (sopra i bottoni)
+            if(q.length > 0) {
+                resDiv.classList.remove('order-3');
+                resDiv.classList.add('order-1');
+            } else {
+                resDiv.classList.remove('order-1');
+                resDiv.classList.add('order-3');
+            }
+
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
             const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><p class="text-[6px] font-black text-gray-400 uppercase mb-0.5">${o.cat}</p><h4 class="font-black text-[8px] truncate uppercase italic text-gray-800 leading-none mb-1">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase tracking-tight">${o.pos || 'Senza pos.'}</p></div></div>`;
@@ -180,9 +191,9 @@
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
         function aggiungiTag() { const v = document.getElementById('tagInput').value.trim().toLowerCase(); if(v && !currentTags.includes(v)) { currentTags.push(v); document.getElementById('tagInput').value = ""; renderTags(); } }
-        function renderTags() { document.getElementById('tagCloud').innerHTML = currentTags.map((t, i) => `<div onclick="currentTags.splice(${i},1);renderTags()" class="tag-pill">${t}</div>`).join(''); }
+        function renderTags() { document.getElementById('tagCloud').innerHTML = currentTags.map((t, i) => `<div onclick="currentTags.splice(${i},1);renderTags()" class="tag-pill bg-blue-600 text-white font-bold px-3 py-1 rounded-lg text-[10px] uppercase">${t}</div>`).join(''); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="gallery-img">`).join(''); }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
         function resetModale() { document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; currentTags = []; }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
