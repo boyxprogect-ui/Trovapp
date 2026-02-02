@@ -5,36 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Trovapp Pro - Business Edition</title>
     
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
         input, textarea { user-select: text !important; -webkit-user-select: text !important; }
-
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
-        
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; overflow-y: auto; display: flex; flex-direction: column; }
-
-        .scroll-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .scroll-row::-webkit-scrollbar { display: none; }
-        
-        .item-card { flex: 0 0 26%; scroll-snap-align: start; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
+        .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
+        .item-card { flex: 0 0 26%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
         .item-card img { width: 100%; height: 80px; object-fit: cover; }
-        
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
-        
-        /* MODALE PAYWALL */
         #paywallModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .paywall-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 30px; text-align: center; }
-
-        .smart-btn { width: 100%; background: white; padding: 18px; border-radius: 22px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
-        
+        .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
     </style>
 </head>
@@ -44,10 +29,13 @@
         <header class="flex justify-between items-center mb-5">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Business Mode 2026</p>
+                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest italic">Cloud Sync Mode</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-4 rounded-lg text-[8px] font-black uppercase">BACKUP</button>
+                <label class="bg-zinc-200 text-zinc-700 p-2 px-3 rounded-lg text-[8px] font-black uppercase cursor-pointer">
+                    CARICA <input type="file" id="importFile" class="hidden" onchange="importaDati(this)">
+                </label>
+                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-3 rounded-lg text-[8px] font-black uppercase">BACKUP</button>
             </div>
         </header>
 
@@ -59,7 +47,7 @@
             <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                 <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
-            <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center tracking-tighter italic">Sblocca Oggetti Illimitati & IA →</button>
+            <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center italic">Sblocca Tutto →</button>
         </div>
 
         <input type="text" id="searchInput" oninput="aggiorna()" placeholder="Cerca oggetto o scatola..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-sm font-medium border-0 mb-4 order-1">
@@ -69,39 +57,35 @@
             <div id="gridBottom" class="scroll-row"></div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-lg order-2">← Torna alla Home</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase order-2">← Torna alla Home</button>
 
         <div id="homeNav" class="space-y-4 mb-4 order-2">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
-            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-200 rounded-[24px] text-gray-400 font-black italic uppercase text-xs">+ Aggiungi Spazio</button>
-        </div>
-    </div>
-
-    <div id="paywallModal" onclick="this.style.display='none'">
-        <div class="paywall-content" onclick="event.stopPropagation()">
-            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-crown fa-2xl"></i>
-            </div>
-            <h2 class="font-black italic text-2xl uppercase tracking-tighter mb-2">Passa a Premium</h2>
-            <p class="text-xs font-bold text-gray-500 uppercase mb-6 leading-relaxed">Sblocca oggetti illimitati, stima il valore dei tuoi oggetti per Vinted e attiva il Cloud Sync.</p>
-            <div class="space-y-3">
-                <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg">19,99€ / ANNO</button>
-                <button class="w-full p-4 bg-zinc-100 text-zinc-900 rounded-2xl font-black italic uppercase">2,99€ / MESE</button>
-            </div>
-            <button onclick="document.getElementById('paywallModal').style.display='none'" class="mt-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Continua con limiti</button>
         </div>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[150] bg-[#F2F2F7]">
         <div class="h-full flex flex-col p-6 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3><button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black italic uppercase">SCHEDA OGGETTO</h3>
+                <div class="flex items-center gap-4">
+                    <button id="delBtn" onclick="eliminaOggetto()" class="hidden text-red-500"><i class="fa-solid fa-trash-can fa-lg"></i></button>
+                    <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
+                </div>
+            </div>
             
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
-                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600"><i class="fa-solid fa-camera fa-xl"></i><input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()"></label>
+                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-camera fa-xl"></i>
+                    <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
+                </label>
                 <div id="gallery" class="flex gap-3 overflow-x-auto"></div>
                 <div class="flex-1 space-y-3">
                     <input id="nIn" type="text" placeholder="Nome..." class="w-full p-3 bg-gray-50 rounded-xl text-sm font-bold border-0">
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2"><span class="text-[9px] font-black uppercase italic">QTY</span><div class="flex gap-4 items-center"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div></div>
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-4 py-2">
+                        <span class="text-[9px] font-black uppercase italic">QTY</span>
+                        <div class="flex gap-4 items-center"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div>
+                    </div>
                 </div>
             </div>
 
@@ -123,18 +107,29 @@
         </div>
     </div>
 
+    <div id="paywallModal" onclick="this.style.display='none'">
+        <div class="paywall-content" onclick="event.stopPropagation()">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-crown fa-2xl"></i>
+            </div>
+            <h2 class="font-black italic text-2xl uppercase mb-2 italic">Trovapp Premium</h2>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-6 italic">Oggetti illimitati • Valutazione Vinted • Cloud Sync</p>
+            <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg mb-3">19,99€ / ANNO</button>
+            <button class="w-full p-4 bg-zinc-100 text-zinc-900 rounded-2xl font-black italic uppercase">2,99€ / MESE</button>
+        </div>
+    </div>
+
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const palette = ['bg-zinc-800', 'bg-amber-600', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black'];
-        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'},{nome:'SOFFITTA',colore:'bg-amber-600'},{nome:'BOX',colore:'bg-indigo-700'}];
+        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-800'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null;
 
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
-            configSpazi.forEach((s, i) => {
+            configSpazi.forEach(s => {
                 const btn = document.createElement('button');
                 btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all`;
                 btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
@@ -147,35 +142,62 @@
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
             const q = document.getElementById('searchInput').value.toLowerCase();
-            
-            // AGGIORNA BARRA LIMITE
             const count = db.length;
             document.getElementById('objCount').innerText = `${count} / 20`;
-            document.getElementById('progressBar').style.width = (count / 20 * 100) + '%';
-            if(count >= 20) document.getElementById('progressBar').classList.replace('bg-blue-600', 'bg-red-500');
-
+            document.getElementById('progressBar').style.width = (Math.min(count, 20) / 20 * 100) + '%';
+            
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
             const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><h4 class="font-black text-[9px] truncate uppercase italic">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || 'Senza pos.'}</p></div></div>`;
-            
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function apriModale(id = null) {
             editId = id;
+            const delBtn = document.getElementById('delBtn');
             if (id) {
                 const o = db.find(x => x.id === id);
                 document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
                 document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto];
+                delBtn.classList.remove('hidden');
             } else {
                 if(db.length >= 20) { mostraPaywall(); return; }
                 document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1;
+                delBtn.classList.add('hidden');
             }
             document.getElementById('qtyVal').innerText = tempQty; renderGallery();
             document.getElementById('modal').classList.remove('hidden');
         }
+
+        function eliminaOggetto() {
+            if(confirm("Eliminare definitivamente questo oggetto?")) {
+                db = db.filter(x => x.id !== editId);
+                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                chiudiModale(); aggiorna();
+            }
+        }
+
+        function importaDati(input) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                db = JSON.parse(e.target.result);
+                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                aggiorna();
+                alert("Backup caricato con successo!");
+            };
+            reader.readAsText(input.files[0]);
+        }
+
+        function esportaDati() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "trovapp_backup.json");
+            a.click();
+        }
+
+        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
@@ -187,7 +209,6 @@
         function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-md">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = "backup_trovapp.json"; a.click(); }
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
         renderBottoni(); aggiorna();
     </script>
