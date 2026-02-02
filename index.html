@@ -12,10 +12,11 @@
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; overflow-y: auto; display: flex; flex-direction: column; }
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .item-card { flex: 0 0 28%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 155px; }
+        .item-card { flex: 0 0 28%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 165px; }
         .item-card img { width: 100%; height: 85px; object-fit: cover; }
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 6px; font-weight: 900; text-transform: uppercase; color: white; padding: 1px 4px; border-radius: 4px; font-style: italic; display: inline-block; margin-bottom: 2px; }
+        .tag-pill { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 6px; font-size: 7px; font-weight: 800; text-transform: uppercase; font-style: italic; }
         #paywallModal, #spaceModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .paywall-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 30px; text-align: center; }
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
@@ -47,7 +48,7 @@
             <button onclick="mostraPaywall()" class="w-full mt-2 text-[8px] font-black text-blue-600 uppercase text-center italic tracking-tighter">Sblocca Tutto & IA Market →</button>
         </div>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA OGGETTO O SCATOLA..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 order-1 uppercase">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA OGGETTO, SCATOLA O TAG..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 order-1 uppercase">
 
         <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
             <div id="gridTop" class="scroll-row"></div>
@@ -98,14 +99,18 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="space-y-4 mb-4">
+                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 italic uppercase"></select>
+                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 uppercase italic">
+                <input id="tIn" type="text" placeholder="TAG (ES: NATALE, LUCI, ESTERNO)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 uppercase italic">
+            </div>
+
             <div class="flex gap-2 mb-4">
                 <button onclick="mostraPaywall()" class="flex-1 bg-amber-100 text-amber-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> Valuta IA</button>
                 <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1 italic"><i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync</button>
             </div>
-            <div class="space-y-4 mb-4">
-                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 italic uppercase"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm border-0 uppercase italic">
-            </div>
+            
             <button onclick="salva()" class="btn-salva">SALVA OGGETTO</button>
         </div>
     </div>
@@ -191,15 +196,15 @@
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
             const q = document.getElementById('searchInput').value.toLowerCase();
             const count = db.length;
-            // AGGIORNATO LIMITE A 40
             document.getElementById('objCount').innerText = `${count} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(count, 40) / 40 * 100) + '%';
             
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q)) || (o.tags && o.tags.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
             
             const r = o => {
                 const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
+                const tagsHtml = o.tags ? o.tags.split(',').map(t => `<span class="tag-pill">${t.trim()}</span>`).join(' ') : '';
                 return `<div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
                     <img src="${o.foto[0] || ''}">
@@ -207,6 +212,7 @@
                         <div class="space-tag ${sObj.colore}">${o.cat}</div>
                         <h4 class="font-black text-[9px] truncate uppercase italic leading-tight">${o.nome}</h4>
                         <p class="text-[7px] font-bold text-blue-600 uppercase mt-0.5">${o.pos || 'Senza pos.'}</p>
+                        <div class="flex flex-wrap gap-1 mt-1">${tagsHtml}</div>
                     </div>
                 </div>`;
             };
@@ -220,12 +226,13 @@
             if (id) {
                 const o = db.find(x => x.id === id);
                 document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto];
+                document.getElementById('cIn').value = o.cat; document.getElementById('tIn').value = o.tags || "";
+                tempQty = o.qty; tempPhotos = [...o.foto];
                 document.getElementById('delBtn').classList.remove('hidden');
             } else {
-                // AGGIORNATO LIMITE A 40
                 if(db.length >= 40) { mostraPaywall(); return; }
-                document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1;
+                document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; document.getElementById('tIn').value = "";
+                tempPhotos = []; tempQty = 1;
                 document.getElementById('delBtn').classList.add('hidden');
             }
             document.getElementById('qtyVal').innerText = tempQty; renderGallery();
@@ -234,7 +241,15 @@
 
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
-            const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty };
+            const d = { 
+                id: editId || Date.now(), 
+                nome: n, 
+                cat: document.getElementById('cIn').value, 
+                pos: document.getElementById('pIn').value.toUpperCase(), 
+                tags: document.getElementById('tIn').value.toUpperCase(),
+                foto: [...tempPhotos], 
+                qty: tempQty 
+            };
             if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); }
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
