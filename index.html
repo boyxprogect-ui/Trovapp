@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Trovapp Pro - Business Edition</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
-        input, textarea { user-select: text !important; -webkit-user-select: text !important; }
+        input, textarea, select { user-select: text !important; -webkit-user-select: text !important; }
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; overflow-y: auto; display: flex; flex-direction: column; }
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
         .item-card { flex: 0 0 26%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; height: 135px; }
         .item-card img { width: 100%; height: 80px; object-fit: cover; }
         .qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 8px; font-size: 8px; font-weight: 900; z-index: 10; }
-        #paywallModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        #paywallModal, #spaceModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .paywall-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 30px; text-align: center; }
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 20px; }
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 62px; height: 62px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
@@ -61,6 +59,20 @@
 
         <div id="homeNav" class="space-y-4 mb-4 order-2">
             <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
+            <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-[10px]"> + Aggiungi/Modifica Spazio </button>
+        </div>
+    </div>
+
+    <div id="spaceModal">
+        <div class="paywall-content text-left">
+            <h3 class="text-lg font-black italic uppercase mb-4">Gestione Spazi</h3>
+            <input id="newSpaceName" type="text" placeholder="Nome Spazio (es: GARAGE)" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-bold uppercase text-xs">
+            <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
+            <div class="flex gap-2">
+                <button onclick="salvaNuovoSpazio()" class="flex-1 bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Aggiungi</button>
+                <button onclick="document.getElementById('spaceModal').style.display='none'" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
+            </div>
+            <div id="listaSpaziModifica" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
         </div>
     </div>
 
@@ -73,7 +85,6 @@
                     <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
                 </div>
             </div>
-            
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
                 <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera fa-xl"></i>
@@ -88,31 +99,22 @@
                     </div>
                 </div>
             </div>
-
             <div class="flex gap-2 mb-4">
-                <button onclick="mostraPaywall()" class="flex-1 bg-amber-100 text-amber-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> Valuta (Vinted)
-                </button>
-                <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync
-                </button>
+                <button onclick="mostraPaywall()" class="flex-1 bg-amber-100 text-amber-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> Valuta (Vinted)</button>
+                <button onclick="mostraPaywall()" class="flex-1 bg-indigo-100 text-indigo-700 p-4 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-1"><i class="fa-solid fa-cloud fa-lg"></i> Cloud Sync</button>
             </div>
-
             <div class="space-y-4 mb-4">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm border-0"></select>
                 <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCATOLA 1)" class="w-full bg-white p-4 rounded-2xl text-xs font-bold shadow-sm border-0 uppercase">
             </div>
-
-            <button id="saveBtn" onclick="salva()" class="btn-salva">SALVA OGGETTO</button>
+            <button onclick="salva()" class="btn-salva">SALVA OGGETTO</button>
         </div>
     </div>
 
     <div id="paywallModal" onclick="this.style.display='none'">
         <div class="paywall-content" onclick="event.stopPropagation()">
-            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-crown fa-2xl"></i>
-            </div>
-            <h2 class="font-black italic text-2xl uppercase mb-2 italic">Trovapp Premium</h2>
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-2xl"></i></div>
+            <h2 class="font-black italic text-2xl uppercase mb-2">Trovapp Premium</h2>
             <p class="text-[10px] font-bold text-gray-500 uppercase mb-6 italic">Oggetti illimitati • Valutazione Vinted • Cloud Sync</p>
             <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg mb-3">19,99€ / ANNO</button>
             <button class="w-full p-4 bg-zinc-100 text-zinc-900 rounded-2xl font-black italic uppercase">2,99€ / MESE</button>
@@ -122,21 +124,44 @@
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
+        const palette = ['bg-zinc-800', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black', 'bg-purple-600'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-800'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null;
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, selectedColor = palette[0];
 
         function renderBottoni() {
-            const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
-            nav.innerHTML = ''; select.innerHTML = '';
-            configSpazi.forEach(s => {
-                const btn = document.createElement('button');
-                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all`;
-                btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
-                btn.onclick = () => apriSpazio(s.nome);
-                nav.appendChild(btn);
+            const nav = document.getElementById('navGrid'), select = document.getElementById('cIn'), lista = document.getElementById('listaSpaziModifica');
+            nav.innerHTML = ''; select.innerHTML = ''; lista.innerHTML = '';
+            configSpazi.forEach((s, i) => {
+                nav.innerHTML += `<button onclick="apriSpazio('${s.nome}')" class="p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all"><span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span></button>`;
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
+                lista.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl"><span class="text-[10px] font-black uppercase">${s.nome}</span><button onclick="eliminaSpazio(${i})" class="text-red-500 text-xs"><i class="fa-solid fa-xmark"></i></button></div>`;
             });
+        }
+
+        function apriMenuNuovoSpazio() {
+            document.getElementById('spaceModal').style.display = 'flex';
+            const picker = document.getElementById('colorPicker');
+            picker.innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-2 outline-blue-600' : 'border-transparent'}"></div>`).join('');
+        }
+
+        function renderPicker() { apriMenuNuovoSpazio(); }
+
+        function salvaNuovoSpazio() {
+            const nome = document.getElementById('newSpaceName').value.toUpperCase();
+            if(!nome) return;
+            configSpazi.push({nome, colore: selectedColor});
+            localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
+            document.getElementById('newSpaceName').value = '';
+            renderBottoni();
+        }
+
+        function eliminaSpazio(i) {
+            if(confirm("Eliminare questo spazio? Gli oggetti rimarranno ma senza categoria.")) {
+                configSpazi.splice(i, 1);
+                localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
+                renderBottoni();
+            }
         }
 
         function aggiorna() {
@@ -145,7 +170,6 @@
             const count = db.length;
             document.getElementById('objCount').innerText = `${count} / 20`;
             document.getElementById('progressBar').style.width = (Math.min(count, 20) / 20 * 100) + '%';
-            
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
             const r = o => `<div class="item-card" onclick="apriModale(${o.id})"><div class="qty-badge">x${o.qty}</div><img src="${o.foto[0] || ''}"><div class="p-2"><h4 class="font-black text-[9px] truncate uppercase italic">${o.nome}</h4><p class="text-[7px] font-bold text-blue-600 uppercase">${o.pos || 'Senza pos.'}</p></div></div>`;
@@ -155,56 +179,32 @@
 
         function apriModale(id = null) {
             editId = id;
-            const delBtn = document.getElementById('delBtn');
             if (id) {
                 const o = db.find(x => x.id === id);
                 document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos;
                 document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto];
-                delBtn.classList.remove('hidden');
+                document.getElementById('delBtn').classList.remove('hidden');
             } else {
                 if(db.length >= 20) { mostraPaywall(); return; }
                 document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1;
-                delBtn.classList.add('hidden');
+                document.getElementById('delBtn').classList.add('hidden');
             }
             document.getElementById('qtyVal').innerText = tempQty; renderGallery();
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        function eliminaOggetto() {
-            if(confirm("Eliminare definitivamente questo oggetto?")) {
-                db = db.filter(x => x.id !== editId);
-                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                chiudiModale(); aggiorna();
-            }
-        }
-
-        function importaDati(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                db = JSON.parse(e.target.result);
-                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                aggiorna();
-                alert("Backup caricato con successo!");
-            };
-            reader.readAsText(input.files[0]);
-        }
-
-        function esportaDati() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-            a.setAttribute("download", "trovapp_backup.json");
-            a.click();
-        }
-
-        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
-        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
             const d = { id: editId || Date.now(), nome: n, cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty };
             if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); }
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
+
+        function eliminaOggetto() { if(confirm("Eliminare?")) { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); } }
+        function importaDati(i) { const r = new FileReader(); r.onload = (e) => { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(i.files[0]); }
+        function esportaDati() { const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db)); a.download = "trovapp_backup.json"; a.click(); }
+        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
+        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-md">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
