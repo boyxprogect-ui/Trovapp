@@ -75,18 +75,18 @@
     <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
         <div class="ui-content" onclick="event.stopPropagation()">
             <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
-            <h2 class="font-black italic text-xl uppercase mb-1">Scegli il Piano</h2>
+            <h2 class="font-black italic text-xl uppercase mb-1 tracking-tighter">Scegli il Piano</h2>
             <div class="space-y-3">
-                <div class="plan-card active border-blue-600 bg-blue-50">
+                <div class="plan-card active border-blue-600 bg-blue-50 ring-2 ring-blue-600/20">
                     <div class="ai-badge bg-green-500">-47% RISPARMIO</div>
-                    <div class="flex justify-between items-center">
-                        <div class="text-left"><h4 class="font-black italic uppercase text-xs">Piano Annuale</h4><p class="text-[8px] font-bold text-blue-600 italic">€19.00 / anno</p></div>
+                    <div class="flex justify-between items-center text-left">
+                        <div><h4 class="font-black italic uppercase text-xs">Piano Annuale</h4><p class="text-[10px] font-black text-blue-700 italic">€19.00 / anno</p></div>
                     </div>
                 </div>
                 <div class="plan-card border-gray-200">
                     <div class="ai-badge bg-gray-400">Mensile</div>
-                    <div class="flex justify-between items-center">
-                        <div class="text-left"><h4 class="font-black italic uppercase text-xs">Piano Standard</h4><p class="text-[8px] font-bold text-gray-500 italic">€2.99 / mese</p></div>
+                    <div class="flex justify-between items-center text-left">
+                        <div><h4 class="font-black italic uppercase text-xs">Piano Standard</h4><p class="text-[10px] font-black text-gray-900 italic">€2.99 / mese</p></div>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                 </div>
             </div>
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
-                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600 cursor-pointer">
                     <i class="fa-solid fa-camera fa-xl"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
@@ -180,18 +180,14 @@
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
-            const searchInput = document.getElementById('searchInput');
-            const searchResults = document.getElementById('searchResults');
-            const homeNav = document.getElementById('homeNav');
+            const searchInput = document.getElementById('searchInput'), searchResults = document.getElementById('searchResults'), homeNav = document.getElementById('homeNav');
             const q = searchInput.value.toLowerCase();
 
-            // LOGICA DI SPOSTAMENTO REALE
             if (q.length > 0) {
-                // Durante la ricerca: Risultati sopra, Spazi sotto
+                homeNav.style.display = "none";
                 searchResults.style.order = "1";
-                homeNav.style.order = "2";
             } else {
-                // Senza ricerca: Spazi sopra, Risultati sotto
+                homeNav.style.display = "block";
                 homeNav.style.order = "1";
                 searchResults.style.order = "2";
             }
@@ -218,7 +214,6 @@
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        // Funzioni di sistema
         function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
         function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
         function chiediEliminaSpazio() { document.getElementById('spaceModal').style.opacity = "0.3"; document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
@@ -231,7 +226,7 @@
         function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-blue-600' : 'border-transparent'}"></div>`).join(''); }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-sm">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); document.getElementById('searchInput').value = ""; aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
