@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Definitive Edition</title>
+    <title>Trovapp Pro - Clean Card</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,7 +12,7 @@
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; overflow-y: auto; display: flex; flex-direction: column; }
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 195px; }
+        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 180px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
         .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
@@ -66,7 +66,6 @@
         <div class="ui-content">
             <div class="text-red-500 mb-4"><i class="fa-solid fa-trash-can fa-3xl"></i></div>
             <h3 class="font-black italic uppercase text-lg mb-2">Eliminare definitivamente?</h3>
-            <p class="text-[10px] font-bold text-gray-400 uppercase mb-6 italic">I dati andranno persi per sempre.</p>
             <div class="flex gap-3">
                 <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                 <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
@@ -122,7 +121,7 @@
                     <div id="tagList" class="flex flex-wrap gap-2 min-h-[20px]"></div>
                     <div class="flex gap-2 border-t pt-2">
                         <input id="tIn" type="text" placeholder="AGGIUNGI TAG..." class="flex-1 outline-none text-xs font-black uppercase italic bg-transparent">
-                        <button onclick="aggiungiTagManuale()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-md active:scale-90"><i class="fa-solid fa-plus"></i></button>
+                        <button onclick="aggiungiTagManuale()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
             </div>
@@ -140,7 +139,6 @@
         <div class="ui-content" onclick="event.stopPropagation()">
             <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-2xl"></i></div>
             <h2 class="font-black italic text-2xl uppercase mb-2">Trovapp Premium</h2>
-            <p class="text-[10px] font-bold text-gray-400 uppercase mb-6 italic">Sblocca spazio infinito e Cloud Sync</p>
             <button class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase shadow-lg">SBLOCCA ORA</button>
         </div>
     </div>
@@ -195,8 +193,7 @@
                     <div class="p-3 overflow-hidden">
                         <div class="space-tag ${sObj.colore}">${o.cat}</div>
                         <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
-                        <p class="text-[7px] font-bold text-blue-600 uppercase italic truncate mb-1">${o.pos || 'POSIZIONE NON SPEC.'}</p>
-                        <div class="flex flex-wrap gap-1">${(o.tags || []).slice(0,2).map(t => `<span class="tag-pill" style="font-size:6px; padding:1px 4px;">${t}</span>`).join('')}</div>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase italic truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
                     </div>
                 </div>`;
             };
@@ -260,16 +257,14 @@
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function importaDati(i) { const r = new FileReader(); r.onload = (e) => { try { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } catch(err) { alert("File non valido"); } }; r.readAsText(i.files[0]); }
-        
         function esportaDati() { 
             const blob = new Blob([JSON.stringify(db)], {type: 'application/json'});
             const a = document.createElement('a'); 
             const d = new Date();
             a.href = URL.createObjectURL(blob); 
-            a.download = `inventario_${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}.json`; 
+            a.download = `backup_${d.getDate()}-${d.getMonth()+1}.json`; 
             a.click(); 
         }
-
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
         renderBottoni(); aggiorna();
     </script>
