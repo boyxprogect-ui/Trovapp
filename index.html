@@ -11,25 +11,21 @@
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overflow-x: hidden; }
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
         
-        /* Cards e UI Elements */
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
         .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 180px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
         .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
 
-        /* Modali */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         
-        /* Bottoni */
         .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; transition: transform 0.1s; border: none; }
         .btn-main:active { transform: scale(0.96); }
         .btn-utility { flex: 1; padding: 12px; border-radius: 18px; font-size: 9px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; flex-direction: column; align-items: center; gap: 4px; border: none; }
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
-        /* Paywall Style */
         .plan-card { border: 2px solid #e5e7eb; border-radius: 20px; padding: 15px; text-align: left; transition: all 0.2s; position: relative; overflow: hidden; margin-bottom: 10px; }
         .plan-card.active { border-color: #2563eb; background: #eff6ff; }
         .ai-badge { position: absolute; top: 0; right: 0; color: white; font-size: 7px; font-weight: 900; padding: 4px 8px; border-bottom-left-radius: 10px; text-transform: uppercase; }
@@ -78,8 +74,6 @@
         <div class="ui-content" onclick="event.stopPropagation()">
             <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200"><i class="fa-solid fa-crown fa-xl"></i></div>
             <h2 class="font-black italic text-xl uppercase mb-1 tracking-tighter">Scegli il Piano</h2>
-            <p class="text-[9px] font-bold text-gray-400 uppercase mb-5 italic">Sblocca IA Vision e Cloud Illimitato</p>
-            
             <div class="space-y-3">
                 <div class="plan-card active border-blue-600 bg-blue-50 ring-2 ring-blue-600/20">
                     <div class="ai-badge bg-green-500">-47% RISPARMIO</div>
@@ -94,7 +88,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="plan-card border-gray-200">
                     <div class="ai-badge bg-gray-400">Mensile</div>
                     <div class="flex justify-between items-center">
@@ -109,13 +102,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="grid grid-cols-2 gap-2 my-5">
-                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl text-[7px] font-black uppercase italic"><i class="fa-solid fa-robot text-blue-600"></i> IA Vision</div>
-                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl text-[7px] font-black uppercase italic"><i class="fa-solid fa-cloud text-blue-600"></i> Cloud Sync</div>
-            </div>
-
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main">ATTIVA ORA</button>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">ATTIVA ORA</button>
         </div>
     </div>
 
@@ -128,7 +115,6 @@
                     <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
                 </div>
             </div>
-            
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
                 <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera fa-xl"></i>
@@ -143,23 +129,14 @@
                     </div>
                 </div>
             </div>
-
             <div class="space-y-3 mb-4">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm italic uppercase border-0"></select>
                 <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black shadow-sm uppercase italic border-0">
             </div>
-
             <div class="flex gap-3 mb-6">
-                <button onclick="mostraPaywall()" class="btn-utility bg-amber-400 text-amber-950">
-                    <i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i>
-                    VALUTA VINTED/STORE
-                </button>
-                <button onclick="mostraPaywall()" class="btn-utility bg-indigo-100 text-indigo-700">
-                    <i class="fa-solid fa-cloud-arrow-up fa-lg"></i>
-                    CLOUD SYNC
-                </button>
+                <button onclick="mostraPaywall()" class="btn-utility bg-amber-400 text-amber-950"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA VINTED</button>
+                <button onclick="mostraPaywall()" class="btn-utility bg-indigo-100 text-indigo-700"><i class="fa-solid fa-cloud-arrow-up fa-lg"></i> CLOUD SYNC</button>
             </div>
-
             <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA OGGETTO</button>
         </div>
     </div>
@@ -215,11 +192,24 @@
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
-            const q = document.getElementById('searchInput').value.toLowerCase();
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const homeNav = document.getElementById('homeNav');
+            const q = searchInput.value.toLowerCase();
+
+            // SPOSTAMENTO DINAMICO: Risultati sopra Spazi durante la ricerca
+            if (q.length > 0) {
+                searchResults.parentNode.insertBefore(searchResults, homeNav);
+            } else {
+                homeNav.parentNode.insertBefore(homeNav, searchResults);
+            }
+
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
+            
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
+            
             const r = o => {
                 const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
                 return `<div class="item-card" onclick="apriModale(${o.id})">
@@ -239,7 +229,6 @@
         function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
         function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
         function chiediEliminaSpazio() { document.getElementById('spaceModal').style.opacity = "0.3"; document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
-        
         function apriModale(id = null) { editId = id; if (id) { const o = db.find(x => x.id === id); document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos; document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; document.getElementById('delBtn').classList.remove('hidden'); } else { if(db.length >= 40) { mostraPaywall(); return; } document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('delBtn').classList.add('hidden'); } document.getElementById('qtyVal').innerText = tempQty; renderGallery(); document.getElementById('modal').classList.remove('hidden'); }
         function salva() { const n = document.getElementById('nIn').value; if(!n) return; const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty }; if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); } localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); }
         function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
