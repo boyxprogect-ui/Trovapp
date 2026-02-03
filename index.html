@@ -11,174 +11,145 @@
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overflow-x: hidden; }
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
         
-        /* Stile Scroll Risultati */
-        .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 2px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-        .scroll-row::-webkit-scrollbar { display: none; }
+        .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
+        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 180px; }
+        .item-card img { width: 100%; height: 95px; object-fit: cover; }
+        .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
+        .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
 
-        /* Card Oggetto Style Pro */
-        .item-card { flex: 0 0 42%; background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 210px; transition: transform 0.1s; }
-        .item-card:active { transform: scale(0.95); }
-        .item-card img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid #f0f0f0; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         
-        .qty-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.85); color: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 900; z-index: 10; font-style: italic; }
-        .space-tag { font-size: 8px; font-weight: 900; text-transform: uppercase; color: white; padding: 3px 8px; border-radius: 8px; font-style: italic; display: inline-block; margin-bottom: 4px; }
+        .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; transition: transform 0.1s; border: none; }
+        .btn-main:active { transform: scale(0.96); }
+        .btn-utility { flex: 1; padding: 12px; border-radius: 18px; font-size: 9px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; flex-direction: column; align-items: center; gap: 4px; border: none; }
+        
+        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
-        /* Modali e UI */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
-        .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
-        
-        .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 24px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; transition: all 0.2s; border: none; cursor: pointer; }
-        .btn-main:active { transform: scale(0.96); opacity: 0.9; }
-        
-        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 70px; height: 70px; border-radius: 9999px; box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 32px; border: none; }
-
-        /* Tags Style */
-        .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 12px; font-size: 9px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 5px; border: 1px solid #dbeafe; }
-        
-        /* Picker Colori Spazi */
-        .color-dot { width: 100%; aspect-ratio: 1; border-radius: 14px; cursor: pointer; border: 4px solid transparent; transition: all 0.2s; }
-        .color-dot.active { border-color: white; outline: 3px solid #2563eb; transform: scale(0.9); }
+        .plan-card { border: 2px solid #e5e7eb; border-radius: 20px; padding: 15px; text-align: left; transition: all 0.2s; position: relative; overflow: hidden; margin-bottom: 10px; }
+        .plan-card.active { border-color: #2563eb; background: #eff6ff; }
+        .ai-badge { position: absolute; top: 0; right: 0; color: white; font-size: 7px; font-weight: 900; padding: 4px 8px; border-bottom-left-radius: 10px; text-transform: uppercase; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="mainContainer">
-        <header class="flex justify-between items-center mb-6 pt-4">
+        <header class="flex justify-between items-center mb-5">
             <div>
-                <h1 class="text-3xl font-black italic uppercase text-gray-900 tracking-tighter leading-none">TROVAPP</h1>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest italic">Professional Vault</p>
+                <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
+                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest italic">AI Powered System</p>
             </div>
             <div class="flex gap-2">
-                <label class="bg-zinc-200 text-zinc-800 p-2 px-4 rounded-xl text-[9px] font-black uppercase cursor-pointer italic">IMPORT <input type="file" id="importFile" class="hidden" onchange="importaDati(this)"></label>
-                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-4 rounded-xl text-[9px] font-black uppercase italic">BACKUP</button>
+                <label class="bg-zinc-200 text-zinc-700 p-2 px-3 rounded-lg text-[8px] font-black uppercase cursor-pointer italic">CARICA <input type="file" id="importFile" class="hidden" onchange="importaDati(this)"></label>
+                <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-3 rounded-lg text-[8px] font-black uppercase italic">BACKUP</button>
             </div>
         </header>
 
-        <div onclick="mostraPaywall()" class="bg-white p-5 rounded-[30px] shadow-sm mb-5 border-l-[6px] border-blue-600 cursor-pointer">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-[10px] font-black uppercase text-gray-400 italic">Capacità Piano Free</span>
-                <span class="text-[11px] font-black text-blue-600 italic" id="objCount">0 / 40</span>
+        <div onclick="mostraPaywall()" class="bg-white p-4 rounded-[28px] shadow-sm mb-4 border-l-4 border-blue-600 cursor-pointer">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[9px] font-black uppercase text-gray-400 italic">Capacità Piano Free</span>
+                <span class="text-[10px] font-black text-blue-600 italic" id="objCount">0 / 40</span>
             </div>
-            <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-blue-600 h-full transition-all duration-700" style="width: 0%"></div>
+            <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
         </div>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA OGGETTO O TAG..." class="w-full p-5 bg-white rounded-[24px] shadow-sm outline-none text-xs font-black italic border-0 mb-5 uppercase placeholder:text-gray-300">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA CON IA O FILTRA..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 uppercase">
 
         <div id="dynamicWrapper" class="flex flex-col">
-            <div id="homeNav" class="space-y-4 mb-6 order-1">
-                <nav id="navGrid" class="grid grid-cols-2 gap-4"></nav>
-                <button onclick="apriMenuNuovoSpazio()" class="w-full py-5 border-2 border-dashed border-gray-300 rounded-[28px] text-gray-400 font-black italic uppercase text-[10px] hover:bg-gray-50"> 
-                    <i class="fa-solid fa-plus mr-2"></i> Crea Nuovo Spazio 
-                </button>
+            <div id="homeNav" class="space-y-4 mb-4 order-1">
+                <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
+                <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-[9px]"> + Aggiungi Spazio </button>
             </div>
 
-            <div id="searchResults" class="flex flex-col gap-2 mb-8 order-2">
+            <div id="searchResults" class="flex flex-col gap-3 mb-6 order-2">
                 <div id="gridTop" class="scroll-row"></div>
                 <div id="gridBottom" class="scroll-row"></div>
             </div>
         </div>
 
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-5 rounded-[24px] font-black italic mb-6 uppercase shadow-2xl">← Torna alla Home</button>
-    </div>
-
-    <div id="modal" class="hidden fixed inset-0 z-[600] bg-[#F2F2F7] overflow-y-auto">
-        <div class="min-h-full flex flex-col p-6 pb-32">
-            <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl font-black italic uppercase tracking-tighter">SCHEDA OGGETTO</h3>
-                <div class="flex items-center gap-5">
-                    <button id="delBtn" onclick="chiediEliminaOggetto()" class="hidden text-red-500"><i class="fa-solid fa-trash-can fa-xl"></i></button>
-                    <button onclick="chiudiModale()" class="text-5xl text-gray-300 font-light">&times;</button>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-[35px] shadow-sm mb-5">
-                <div class="flex gap-4 items-start mb-6">
-                    <label class="w-24 h-24 shrink-0 bg-blue-50 border-2 border-dashed border-blue-200 rounded-[24px] flex flex-col items-center justify-center text-blue-600 cursor-pointer active:scale-90 transition-transform">
-                        <i class="fa-solid fa-camera fa-2xl mb-2"></i>
-                        <span class="text-[8px] font-black uppercase">Aggiungi</span>
-                        <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
-                    </label>
-                    <div id="gallery" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                        </div>
-                </div>
-
-                <div class="space-y-4">
-                    <input id="nIn" type="text" placeholder="NOME OGGETTO..." class="w-full p-4 bg-gray-50 rounded-2xl text-sm font-black border-0 uppercase italic">
-                    
-                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-2xl px-5 py-3">
-                        <span class="text-[10px] font-black italic uppercase">Quantità</span>
-                        <div class="flex gap-6 items-center font-black text-lg">
-                            <button onclick="changeQty(-1)" class="w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-full">-</button>
-                            <span id="qtyVal">1</span>
-                            <button onclick="changeQty(1)" class="w-8 h-8 flex items-center justify-center bg-zinc-800 rounded-full">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-[35px] shadow-sm mb-6 space-y-4">
-                <div>
-                    <label class="text-[9px] font-black uppercase text-gray-400 ml-2 mb-1 block italic">Spazio di Archiviazione</label>
-                    <select id="cIn" class="w-full bg-gray-50 p-4 rounded-2xl text-xs font-black italic uppercase border-0 appearance-none"></select>
-                </div>
-                
-                <div>
-                    <label class="text-[9px] font-black uppercase text-gray-400 ml-2 mb-1 block italic">Posizione Specifica</label>
-                    <input id="pIn" type="text" placeholder="ES: TERZO CASSETTO A DESTRA" class="w-full bg-gray-50 p-4 rounded-2xl text-xs font-black uppercase italic border-0">
-                </div>
-
-                <div>
-                    <label class="text-[9px] font-black uppercase text-gray-400 ml-2 mb-2 block italic">Tag Personalizzati</label>
-                    <div id="tagsList" class="flex flex-wrap gap-2 mb-3"></div>
-                    <div class="relative">
-                        <input id="tagIn" type="text" placeholder="AGGIUNGI TAG..." class="w-full bg-gray-50 p-4 rounded-2xl text-[10px] font-black uppercase italic border-0" onkeydown="if(event.key==='Enter') aggiungiTag()">
-                        <button onclick="aggiungiTag()" class="absolute right-4 top-1/2 -translate-y-1/2 text-blue-600"><i class="fa-solid fa-plus-circle fa-lg"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="salva()" class="btn-main shadow-xl shadow-blue-100">SALVA NEL VAULT</button>
-        </div>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-xl">← Torna alla Home</button>
     </div>
 
     <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
         <div class="ui-content" onclick="event.stopPropagation()">
-            <div class="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-200"><i class="fa-solid fa-crown fa-2xl"></i></div>
-            <h2 class="font-black italic text-2xl uppercase mb-2 leading-none">Sblocca il Limite</h2>
-            <p class="text-gray-500 text-[11px] font-bold uppercase italic mb-6">Hai raggiunto i 40 oggetti gratuiti</p>
-            <div class="space-y-3 mb-6">
-                <div class="p-4 border-2 border-blue-600 bg-blue-50 rounded-[22px] relative text-left">
-                    <span class="absolute top-0 right-0 bg-green-500 text-white text-[8px] font-black px-3 py-1 rounded-bl-xl uppercase italic">Best Choice</span>
-                    <h4 class="font-black italic uppercase text-xs">Piano Unlimited</h4>
-                    <p class="text-[10px] font-black text-blue-700 italic">€19.99 / UNA TANTUM</p>
+            <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
+            <h2 class="font-black italic text-xl uppercase mb-1">Scegli il Piano</h2>
+            <div class="space-y-3">
+                <div class="plan-card active border-blue-600 bg-blue-50">
+                    <div class="ai-badge bg-green-500">-47% RISPARMIO</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-left"><h4 class="font-black italic uppercase text-xs">Piano Annuale</h4><p class="text-[8px] font-bold text-blue-600 italic">€19.00 / anno</p></div>
+                    </div>
+                </div>
+                <div class="plan-card border-gray-200">
+                    <div class="ai-badge bg-gray-400">Mensile</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-left"><h4 class="font-black italic uppercase text-xs">Piano Standard</h4><p class="text-[8px] font-bold text-gray-500 italic">€2.99 / mese</p></div>
+                    </div>
                 </div>
             </div>
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main">ATTIVA ORA</button>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">ATTIVA ORA</button>
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 2000;">
+    <div id="modal" class="hidden fixed inset-0 z-[200] bg-[#F2F2F7] overflow-y-auto">
+        <div class="min-h-full flex flex-col p-6 pb-20">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black italic uppercase tracking-tighter">SCHEDA OGGETTO</h3>
+                <div class="flex items-center gap-4">
+                    <button id="delBtn" onclick="chiediEliminaOggetto()" class="hidden text-red-500"><i class="fa-solid fa-trash-can fa-lg"></i></button>
+                    <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
+                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-camera fa-xl"></i>
+                    <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
+                </label>
+                <div id="gallery" class="flex gap-2 overflow-x-auto"></div>
+                <div class="flex-1">
+                    <input id="nIn" type="text" placeholder="NOME OGGETTO..." class="w-full p-3 bg-gray-100 rounded-xl text-xs font-black border-0 uppercase italic mb-2">
+                    <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-3 py-2">
+                        <span class="text-[8px] font-black italic">QTY</span>
+                        <div class="flex gap-4 items-center font-bold"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3 mb-4">
+                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0"></select>
+                <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black uppercase italic border-0">
+            </div>
+            <div class="flex gap-3 mb-6">
+                <button onclick="mostraPaywall()" class="btn-utility bg-amber-400 text-amber-950"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA VINTED</button>
+                <button onclick="mostraPaywall()" class="btn-utility bg-indigo-100 text-indigo-700"><i class="fa-solid fa-cloud-arrow-up fa-lg"></i> CLOUD SYNC</button>
+            </div>
+            <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA OGGETTO</button>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
         <div class="ui-content scale-90">
-            <h3 class="font-black italic uppercase text-xl mb-6">Sei sicuro di voler eliminare?</h3>
-            <div class="flex gap-4">
-                <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-5 rounded-2xl font-black italic uppercase text-xs">ELIMINA</button>
-                <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-5 rounded-2xl font-black italic uppercase text-xs">ANNULLA</button>
+            <div class="text-red-500 mb-4"><i class="fa-solid fa-triangle-exclamation fa-3xl"></i></div>
+            <h3 class="font-black italic uppercase text-lg mb-2">Sei sicuro?</h3>
+            <div class="flex gap-3">
+                <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
+                <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
             </div>
         </div>
     </div>
 
     <div id="spaceModal" class="modal-overlay">
         <div class="ui-content text-left">
-            <h3 class="text-xl font-black italic uppercase mb-6 tracking-tighter">Gestione Spazio</h3>
-            <input id="newSpaceName" type="text" placeholder="NOME SPAZIO (ES. GARAGE)" class="w-full p-5 bg-gray-100 rounded-2xl mb-5 font-black uppercase text-xs italic border-0">
-            <div class="grid grid-cols-4 gap-3 mb-8" id="colorPicker"></div>
-            <div class="flex flex-col gap-3">
-                <button onclick="salvaNuovoSpazio()" class="btn-main py-4 text-xs">SALVA SPAZIO</button>
-                <div class="flex gap-3">
-                    <button id="btnEliminaSpazio" onclick="chiediEliminaSpazio()" class="flex-1 bg-red-50 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">ELIMINA</button>
-                    <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">CHIUDI</button>
+            <h3 class="text-lg font-black italic uppercase mb-4">Gestione Spazio</h3>
+            <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
+            <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
+            <div class="flex flex-col gap-2">
+                <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva</button>
+                <div class="flex gap-2">
+                    <button id="btnEliminaSpazio" onclick="chiediEliminaSpazio()" class="flex-1 bg-red-100 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
+                    <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
                 </div>
             </div>
         </div>
@@ -187,21 +158,18 @@
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
-        const palette = ['bg-zinc-900', 'bg-rose-600', 'bg-indigo-600', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-purple-600', 'bg-pink-500'];
-        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-900'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-600'}];
+        const palette = ['bg-zinc-800', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black', 'bg-purple-600'];
+        let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-800'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        
-        let tempPhotos = [], tempTags = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
 
-        // --- CORE FUNCTIONS ---
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
-                btn.className = `p-8 rounded-[35px] ${s.colore} text-white shadow-xl flex flex-col items-start active:scale-95 transition-all border-none relative overflow-hidden`;
-                btn.innerHTML = `<span class="font-black italic text-[16px] uppercase tracking-tighter z-10">${s.nome}</span>
-                                 <i class="fa-solid fa-folder-open absolute -bottom-2 -right-2 text-white/10 text-5xl"></i>`;
+                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all border-none`;
+                btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
                 btn.onmousedown = btn.ontouchstart = () => { pressTimer = setTimeout(() => modificaSpazio(i), 800); };
                 btn.onmouseup = btn.ontouchend = btn.ontouchmove = () => { clearTimeout(pressTimer); };
                 btn.onclick = () => { if(editSpaceIdx === null) apriSpazio(s.nome); };
@@ -213,173 +181,64 @@
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
             const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
             const homeNav = document.getElementById('homeNav');
             const q = searchInput.value.toLowerCase();
 
-            if (q.length > 0) { homeNav.style.display = "none"; } else { homeNav.style.display = "block"; }
+            // LOGICA DI SPOSTAMENTO REALE
+            if (q.length > 0) {
+                // Durante la ricerca: Risultati sopra, Spazi sotto
+                searchResults.style.order = "1";
+                homeNav.style.order = "2";
+            } else {
+                // Senza ricerca: Spazi sopra, Risultati sotto
+                homeNav.style.order = "1";
+                searchResults.style.order = "2";
+            }
 
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
             
-            const f = db.filter(o => {
-                const matchCat = (activeCat === 'TUTTI' || o.cat === activeCat);
-                const matchSearch = (o.nome.toLowerCase().includes(q) || 
-                                     (o.pos && o.pos.toLowerCase().includes(q)) ||
-                                     (o.tags && o.tags.some(t => t.toLowerCase().includes(q))));
-                return matchCat && matchSearch;
-            });
-
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
             const m = Math.ceil(f.length / 2);
-            const renderCard = o => {
+            
+            const r = o => {
                 const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
-                const tagsHtml = (o.tags || []).map(t => `<span class="text-[6px] text-gray-400 mr-1 font-black italic">#${t}</span>`).join('');
-                return `
-                <div class="item-card" onclick="apriModale(${o.id})">
-                    <div class="qty-badge">X${o.qty}</div>
-                    <img src="${o.foto[0] || 'https://via.placeholder.com/400x300?text=NO+IMAGE'}">
-                    <div class="p-4">
+                return `<div class="item-card" onclick="apriModale(${o.id})">
+                    <div class="qty-badge">x${o.qty}</div>
+                    <img src="${o.foto[0] || ''}">
+                    <div class="p-3 overflow-hidden">
                         <div class="space-tag ${sObj.colore}">${o.cat}</div>
-                        <h4 class="font-black text-[11px] truncate uppercase italic leading-tight mb-1 text-gray-900">${o.nome}</h4>
-                        <p class="text-[7px] font-bold text-blue-600 uppercase italic truncate mb-1">${o.pos || 'POSIZIONE NON SPEC.'}</p>
-                        <div class="flex flex-wrap overflow-hidden h-3">${tagsHtml}</div>
+                        <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
+                        <p class="text-[7px] font-bold text-blue-600 uppercase italic truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
                     </div>
                 </div>`;
             };
-            
-            gt.innerHTML = f.slice(0, m).reverse().map(renderCard).join('');
-            gb.innerHTML = f.slice(m).reverse().map(renderCard).join('');
+            gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
+            gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        // --- GESTIONE OGGETTI ---
-        function apriModale(id = null) {
-            editId = id;
-            if (id) {
-                const o = db.find(x => x.id === id);
-                document.getElementById('nIn').value = o.nome;
-                document.getElementById('pIn').value = o.pos;
-                document.getElementById('cIn').value = o.cat;
-                tempQty = o.qty;
-                tempPhotos = [...o.foto];
-                tempTags = [...(o.tags || [])];
-                document.getElementById('delBtn').classList.remove('hidden');
-            } else {
-                if(db.length >= 40) { mostraPaywall(); return; }
-                document.getElementById('nIn').value = "";
-                document.getElementById('pIn').value = "";
-                tempPhotos = [];
-                tempTags = [];
-                tempQty = 1;
-                document.getElementById('delBtn').classList.add('hidden');
-            }
-            document.getElementById('qtyVal').innerText = tempQty;
-            renderGallery();
-            renderTags();
-            document.getElementById('modal').classList.remove('hidden');
-        }
-
-        function salva() {
-            const n = document.getElementById('nIn').value;
-            if(!n) return;
-            const d = {
-                id: editId || Date.now(),
-                nome: n.toUpperCase(),
-                cat: document.getElementById('cIn').value,
-                pos: document.getElementById('pIn').value.toUpperCase(),
-                foto: [...tempPhotos],
-                tags: [...tempTags],
-                qty: tempQty
-            };
-            if(editId) db[db.findIndex(x => x.id === editId)] = d;
-            else db.push(d);
-            
-            localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-            chiudiModale();
-            aggiorna();
-        }
-
-        // --- GESTIONE TAGS ---
-        function aggiungiTag() {
-            const el = document.getElementById('tagIn');
-            const val = el.value.trim().toUpperCase();
-            if(val && !tempTags.includes(val)) {
-                tempTags.push(val);
-                el.value = '';
-                renderTags();
-            }
-        }
-
-        function rimuoviTag(idx) {
-            tempTags.splice(idx, 1);
-            renderTags();
-        }
-
-        function renderTags() {
-            const cont = document.getElementById('tagsList');
-            cont.innerHTML = tempTags.map((t, i) => `
-                <div class="tag-pill">
-                    #${t} <i class="fa-solid fa-xmark ml-1 text-blue-300" onclick="rimuoviTag(${i})"></i>
-                </div>
-            `).join('');
-        }
-
-        // --- GESTIONE FOTO ---
-        function comprimeECarica() {
-            const f = document.getElementById('fIn').files[0];
-            if(!f) return;
-            const r = new FileReader();
-            r.onload = (e) => {
-                const i = new Image();
-                i.src = e.target.result;
-                i.onload = () => {
-                    const c = document.createElement('canvas');
-                    const MAX_W = 600;
-                    const scale = MAX_W / i.width;
-                    c.width = MAX_W;
-                    c.height = i.height * scale;
-                    const ctx = c.getContext('2d');
-                    ctx.drawImage(i, 0, 0, c.width, c.height);
-                    tempPhotos.push(c.toDataURL('image/jpeg', 0.7));
-                    renderGallery();
-                };
-            };
-            r.readAsDataURL(f);
-        }
-
-        function renderGallery() {
-            const gallery = document.getElementById('gallery');
-            gallery.innerHTML = tempPhotos.map((f, i) => `
-                <div class="relative w-24 h-24 shrink-0">
-                    <img src="${f}" class="w-full h-full object-cover rounded-[20px] shadow-md border border-gray-100">
-                    <button onclick="tempPhotos.splice(${i},1); renderGallery()" class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shadow-lg">
-                        &times;
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        // --- ALTRE UTILITY ---
-        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
-        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
+        // Funzioni di sistema
         function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
         function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
-        
+        function chiediEliminaSpazio() { document.getElementById('spaceModal').style.opacity = "0.3"; document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
+        function apriModale(id = null) { editId = id; if (id) { const o = db.find(x => x.id === id); document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos; document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; document.getElementById('delBtn').classList.remove('hidden'); } else { if(db.length >= 40) { mostraPaywall(); return; } document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('delBtn').classList.add('hidden'); } document.getElementById('qtyVal').innerText = tempQty; renderGallery(); document.getElementById('modal').classList.remove('hidden'); }
+        function salva() { const n = document.getElementById('nIn').value; if(!n) return; const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty }; if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); } localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); }
         function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
-        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; selectedColor = palette[0]; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
+        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
         function salvaNuovoSpazio() { const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return; if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor}; else configSpazi.push({nome:n, colore:selectedColor}); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); }
         function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
-        function chiediEliminaSpazio() { document.getElementById('spaceModal').style.opacity = "0.3"; document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
-        function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="color-dot ${c} ${selectedColor === c ? 'active' : ''}"></div>`).join(''); }
-
-        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').style.display = 'none'; document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').style.display = 'block'; document.getElementById('backBtn').classList.add('hidden'); document.getElementById('searchInput').value = ""; aggiorna(); }
-
-        function esportaDati() { const blob = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `trovapp_backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+        function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-blue-600' : 'border-transparent'}"></div>`).join(''); }
+        function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
+        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
+        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); document.getElementById('searchInput').value = ""; aggiorna(); }
+        function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
+        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function importaDati(i) { const r = new FileReader(); r.onload = (e) => { try { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } catch(err) { alert("File non valido"); } }; r.readAsText(i.files[0]); }
-
-        // Avvio
-        renderBottoni(); 
-        aggiorna();
+        function esportaDati() { const blob = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); const d = new Date(); a.href = URL.createObjectURL(blob); a.download = `backup_${d.getDate()}-${d.getMonth()+1}.json`; a.click(); }
+        function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
+        renderBottoni(); aggiorna();
     </script>
 </body>
 </html>
