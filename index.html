@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Subscription Update</title>
+    <title>Trovapp Pro - AI Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -16,12 +16,13 @@
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
         .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
-        .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         .btn-salva { width: 100%; background-color: #2563eb; color: white; padding: 20px; border-radius: 26px; font-weight: 900; font-size: 18px; font-style: italic; text-transform: uppercase; margin-top: 10px; }
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .plan-card { border: 2px solid #e5e7eb; border-radius: 20px; padding: 15px; margin-bottom: 12px; text-align: left; transition: all 0.2s; }
+        .plan-card { border: 2px solid #e5e7eb; border-radius: 20px; padding: 15px; margin-bottom: 12px; text-align: left; transition: all 0.2s; position: relative; overflow: hidden; }
         .plan-card.active { border-color: #2563eb; background: #eff6ff; }
+        .ai-badge { position: absolute; top: 0; right: 0; background: #2563eb; color: white; font-size: 6px; font-weight: 900; padding: 4px 8px; border-bottom-left-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -30,7 +31,7 @@
         <header class="flex justify-between items-center mb-5">
             <div>
                 <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest italic">Cloud Sync Mode</p>
+                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest italic">AI Powered System</p>
             </div>
             <div class="flex gap-2">
                 <label class="bg-zinc-200 text-zinc-700 p-2 px-3 rounded-lg text-[8px] font-black uppercase cursor-pointer italic">CARICA <input type="file" id="importFile" class="hidden" onchange="importaDati(this)"></label>
@@ -48,7 +49,7 @@
             </div>
         </div>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA OGGETTO, POSIZIONE O TAG..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 order-1 uppercase">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA CON IA O FILTRA..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 order-1 uppercase">
 
         <div id="searchResults" class="flex flex-col gap-3 mb-6 order-3">
             <div id="gridTop" class="scroll-row"></div>
@@ -65,41 +66,40 @@
 
     <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
         <div class="ui-content" onclick="event.stopPropagation()">
-            <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
-            <h2 class="font-black italic text-xl uppercase mb-1 tracking-tighter">Scegli il tuo Piano</h2>
-            <p class="text-[9px] font-bold text-gray-400 uppercase mb-5 italic">Sblocca il massimo potenziale</p>
-            
+            <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200"><i class="fa-solid fa-microchip fa-xl"></i></div>
+            <h2 class="font-black italic text-xl uppercase mb-1 tracking-tighter">Sblocca l'IA</h2>
             <div class="space-y-3">
                 <div class="plan-card active">
+                    <div class="ai-badge">Incluso</div>
                     <div class="flex justify-between items-start">
                         <div>
                             <h4 class="font-black italic uppercase text-xs">Trovapp Pro</h4>
-                            <p class="text-[8px] font-bold text-gray-500 uppercase italic">Oggetti illimitati + Cloud Sync</p>
+                            <p class="text-[8px] font-bold text-gray-500 uppercase italic">IA Vision + Illimitati + Cloud</p>
                         </div>
-                        <span class="font-black italic text-blue-600 text-sm">€2.99<small class="text-[8px]">/mese</small></span>
+                        <span class="font-black italic text-blue-600 text-sm">€2.99<small class="text-[8px]">/ms</small></span>
                     </div>
                 </div>
-
                 <div class="plan-card">
+                    <div class="ai-badge">Incluso</div>
                     <div class="flex justify-between items-start">
                         <div>
                             <h4 class="font-black italic uppercase text-xs">Trovapp Family</h4>
-                            <p class="text-[8px] font-bold text-gray-500 uppercase italic">Fino a 5 account condivisi</p>
+                            <p class="text-[8px] font-bold text-gray-500 uppercase italic">IA per 5 Membri + Condivisione</p>
                         </div>
-                        <span class="font-black italic text-gray-900 text-sm">€4.99<small class="text-[8px]">/mese</small></span>
+                        <span class="font-black italic text-gray-900 text-sm">€4.99<small class="text-[8px]">/ms</small></span>
                     </div>
                 </div>
             </div>
-
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="w-full p-4 bg-zinc-900 text-white rounded-2xl font-black italic uppercase text-xs mt-4 shadow-lg active:scale-95 transition-all">ATTIVA ORA</button>
-            <p class="text-[7px] text-gray-400 mt-3 uppercase font-bold italic">Cancella quando vuoi dalle impostazioni</p>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="w-full p-4 bg-blue-600 text-white rounded-2xl font-black italic uppercase text-xs mt-4 shadow-lg active:scale-95 transition-all">ATTIVA POTENZIAMENTI</button>
+            <p class="text-[7px] text-gray-400 mt-3 uppercase font-bold italic tracking-widest opacity-60">Tecnologia IA basata su Gemini 1.5</p>
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay">
-        <div class="ui-content">
-            <div class="text-red-500 mb-4"><i class="fa-solid fa-trash-can fa-3xl"></i></div>
-            <h3 class="font-black italic uppercase text-lg mb-2 tracking-tighter">Eliminare?</h3>
+    <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
+        <div class="ui-content scale-90">
+            <div class="text-red-500 mb-4"><i class="fa-solid fa-triangle-exclamation fa-3xl"></i></div>
+            <h3 class="font-black italic uppercase text-lg mb-2">Sei sicuro?</h3>
+            <p class="text-[10px] font-bold text-gray-400 uppercase mb-6 italic">L'azione non è reversibile.</p>
             <div class="flex gap-3">
                 <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                 <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
@@ -109,7 +109,7 @@
 
     <div id="spaceModal" class="modal-overlay">
         <div class="ui-content text-left">
-            <h3 class="text-lg font-black italic uppercase mb-4 tracking-tighter">Gestione Spazio</h3>
+            <h3 class="text-lg font-black italic uppercase mb-4">Gestione Spazio</h3>
             <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
             <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
             <div class="flex flex-col gap-2">
@@ -159,7 +159,7 @@
         const palette = ['bg-zinc-800', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black', 'bg-purple-600'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-800'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0];
+        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
 
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
@@ -199,13 +199,41 @@
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; }
-        function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
-        function chiediEliminaSpazio() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
+        function chiudiConfirm() { 
+            document.getElementById('confirmModal').style.display = 'none'; 
+        }
+        
+        function chiediEliminaOggetto() { 
+            document.getElementById('confirmModal').style.display = 'flex'; 
+            document.getElementById('btnConfirmAction').onclick = () => { 
+                db = db.filter(x => x.id !== editId); 
+                localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); 
+                chiudiConfirm(); chiudiModale(); aggiorna(); 
+            }; 
+        }
+
+        function chiediEliminaSpazio() { 
+            // Invece di sovrapporre il nero, rendiamo la modale sotto quasi invisibile o chiudiamola temporaneamente
+            document.getElementById('spaceModal').style.opacity = "0.3";
+            document.getElementById('confirmModal').style.display = 'flex'; 
+            document.getElementById('btnConfirmAction').onclick = () => { 
+                configSpazi.splice(editSpaceIdx, 1); 
+                localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); 
+                document.getElementById('spaceModal').style.opacity = "1";
+                chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); 
+            }; 
+            // Ripristina opacità se annulla
+            const oldAnnulla = document.querySelector('#confirmModal onclick');
+            document.querySelector('#confirmModal button[onclick*="chiudiConfirm"]').onclick = () => {
+                document.getElementById('spaceModal').style.opacity = "1";
+                chiudiConfirm();
+            };
+        }
+
         function apriModale(id = null) { editId = id; if (id) { const o = db.find(x => x.id === id); document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos; document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; document.getElementById('delBtn').classList.remove('hidden'); } else { if(db.length >= 40) { mostraPaywall(); return; } document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('delBtn').classList.add('hidden'); } document.getElementById('qtyVal').innerText = tempQty; renderGallery(); document.getElementById('modal').classList.remove('hidden'); }
         function salva() { const n = document.getElementById('nIn').value; if(!n) return; const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty }; if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); } localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); }
-        function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
-        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
+        function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; document.getElementById('spaceModal').style.opacity = "1"; renderPicker(); }
+        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; document.getElementById('spaceModal').style.opacity = "1"; renderPicker(); }
         function salvaNuovoSpazio() { const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return; if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor}; else configSpazi.push({nome:n, colore:selectedColor}); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); }
         function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
         function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-blue-600' : 'border-transparent'}"></div>`).join(''); }
