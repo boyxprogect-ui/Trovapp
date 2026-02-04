@@ -12,7 +12,7 @@
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
         
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 180px; }
+        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 190px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
         .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
@@ -22,18 +22,16 @@
         
         .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; transition: transform 0.1s; border: none; }
         .btn-main:active { transform: scale(0.96); }
-        .btn-utility { flex: 1; padding: 12px; border-radius: 18px; font-size: 9px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; flex-direction: column; align-items: center; gap: 4px; border: none; }
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
-        .plan-card { border: 2px solid #e5e7eb; border-radius: 20px; padding: 15px; text-align: left; transition: all 0.2s; position: relative; overflow: hidden; margin-bottom: 10px; }
-        .plan-card.active { border-color: #2563eb; background: #eff6ff; }
-        .ai-badge { position: absolute; top: 0; right: 0; color: white; font-size: 7px; font-weight: 900; padding: 4px 8px; border-bottom-left-radius: 10px; text-transform: uppercase; }
-
-        /* Stile Tag e Suggerimenti */
-        .tag-pill { background: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 8px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 4px; }
-        #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 15px; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); display: none; z-index: 100; max-height: 120px; overflow-y: auto; }
-        .suggestion-item { padding: 10px 15px; font-size: 10px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #f9f9f9; }
+        /* NUOVO STILE TAG BLU PRO */
+        .tag-pill { background: #eff6ff; color: #2563eb; padding: 3px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 5px; border: 1px solid #dbeafe; }
+        .tag-pill i { color: #93c5fd; font-size: 10px; }
+        
+        #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: none; z-index: 100; max-height: 150px; overflow-y: auto; border: 1px solid #f0f0f0; }
+        .suggestion-item { padding: 12px 18px; font-size: 10px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #2563eb; border-bottom: 1px solid #f8fafc; }
+        .suggestion-item:active { background: #f0f7ff; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -77,28 +75,6 @@
         <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-xl">← Torna alla Home</button>
     </div>
 
-    <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
-        <div class="ui-content" onclick="event.stopPropagation()">
-            <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
-            <h2 class="font-black italic text-xl uppercase mb-1">Scegli il Piano</h2>
-            <div class="space-y-3">
-                <div class="plan-card active border-blue-600 bg-blue-50">
-                    <div class="ai-badge bg-green-500">-47% RISPARMIO</div>
-                    <div class="flex justify-between items-center text-left">
-                        <div><h4 class="font-black italic uppercase text-xs">Piano Annuale</h4><p class="text-[10px] font-black text-blue-700 italic">€19.00 / anno</p></div>
-                    </div>
-                </div>
-                <div class="plan-card border-gray-200">
-                    <div class="ai-badge bg-gray-400">Mensile</div>
-                    <div class="flex justify-between items-center text-left">
-                        <div><h4 class="font-black italic uppercase text-xs">Piano Standard</h4><p class="text-[10px] font-black text-gray-900 italic">€2.99 / mese</p></div>
-                    </div>
-                </div>
-            </div>
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">ATTIVA ORA</button>
-        </div>
-    </div>
-
     <div id="modal" class="hidden fixed inset-0 z-[200] bg-[#F2F2F7] overflow-y-auto">
         <div class="min-h-full flex flex-col p-6 pb-20">
             <div class="flex justify-between items-center mb-6">
@@ -108,6 +84,7 @@
                     <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
                 </div>
             </div>
+            
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
                 <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600 cursor-pointer">
                     <i class="fa-solid fa-camera fa-xl"></i>
@@ -122,28 +99,36 @@
                     </div>
                 </div>
             </div>
-            <div class="space-y-3 mb-4">
+
+            <div class="space-y-3 mb-6">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0"></select>
                 <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black uppercase italic border-0">
                 
-                <div class="bg-white p-4 rounded-2xl relative">
-                    <div id="tagList" class="flex flex-wrap gap-2 mb-2"></div>
+                <div class="bg-white p-5 rounded-[24px] relative">
+                    <label class="text-[8px] font-black uppercase text-gray-400 mb-2 block italic">Tag Personalizzati</label>
+                    <div id="tagList" class="flex flex-wrap gap-2 mb-3"></div>
                     <div id="tagSuggestions"></div>
-                    <input id="tagIn" type="text" placeholder="AGGIUNGI TAG E PREMI INVIO..." class="w-full text-[10px] font-black uppercase italic outline-none border-b border-gray-100 pb-1" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
+                    <div class="relative">
+                        <input id="tagIn" type="text" placeholder="SCRIVI E PREMI INVIO..." class="w-full text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2 focus:border-blue-600 transition-colors" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
+                    </div>
                 </div>
             </div>
-            <div class="flex gap-3 mb-6">
-                <button onclick="mostraPaywall()" class="btn-utility bg-amber-400 text-amber-950"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA VINTED</button>
-                <button onclick="mostraPaywall()" class="btn-utility bg-indigo-100 text-indigo-700"><i class="fa-solid fa-cloud-arrow-up fa-lg"></i> CLOUD SYNC</button>
-            </div>
+
             <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA OGGETTO</button>
+        </div>
+    </div>
+
+    <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
+        <div class="ui-content" onclick="event.stopPropagation()">
+            <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
+            <h2 class="font-black italic text-xl uppercase mb-1">Scegli il Piano</h2>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">ATTIVA ORA</button>
         </div>
     </div>
 
     <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
         <div class="ui-content scale-90">
-            <div class="text-red-500 mb-4"><i class="fa-solid fa-triangle-exclamation fa-3xl"></i></div>
-            <h3 class="font-black italic uppercase text-lg mb-2">Sei sicuro?</h3>
+            <h3 class="font-black italic uppercase text-lg mb-4">Eliminare l'oggetto?</h3>
             <div class="flex gap-3">
                 <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                 <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
@@ -156,13 +141,8 @@
             <h3 class="text-lg font-black italic uppercase mb-4">Gestione Spazio</h3>
             <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
             <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
-            <div class="flex flex-col gap-2">
-                <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva</button>
-                <div class="flex gap-2">
-                    <button id="btnEliminaSpazio" onclick="chiediEliminaSpazio()" class="flex-1 bg-red-100 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
-                    <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
-                </div>
-            </div>
+            <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva</button>
+            <button onclick="chiudiSpaceModal()" class="w-full mt-2 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
         </div>
     </div>
 
@@ -196,13 +176,8 @@
             const homeNav = document.getElementById('homeNav');
             const q = searchInput.value.toLowerCase();
 
-            if (q.length > 0) {
-                searchResults.style.order = "1";
-                homeNav.style.order = "2";
-            } else {
-                homeNav.style.order = "1";
-                searchResults.style.order = "2";
-            }
+            if (q.length > 0) { searchResults.style.order = "1"; homeNav.style.order = "2"; } 
+            else { homeNav.style.order = "1"; searchResults.style.order = "2"; }
 
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
@@ -212,15 +187,15 @@
             
             const r = o => {
                 const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
-                const tagsView = (o.tags || []).map(t => `<span class="text-[6px] text-gray-400 mr-1">#${t}</span>`).join('');
+                const tagsView = (o.tags || []).map(t => `<span class="text-[7px] text-blue-500 font-black italic mr-1">#${t}</span>`).join('');
                 return `<div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
                     <img src="${o.foto[0] || ''}">
                     <div class="p-3 overflow-hidden">
                         <div class="space-tag ${sObj.colore}">${o.cat}</div>
                         <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
-                        <p class="text-[7px] font-bold text-blue-600 uppercase italic truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
-                        <div class="flex flex-wrap mt-1">${tagsView}</div>
+                        <p class="text-[7px] font-bold text-gray-400 uppercase italic truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
+                        <div class="flex flex-wrap mt-1 h-4 overflow-hidden">${tagsView}</div>
                     </div>
                 </div>`;
             };
@@ -228,40 +203,30 @@
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        // GESTIONE TAG E SUGGERIMENTI
         function aggiungiTag(v = null) {
             const inp = document.getElementById('tagIn');
             const val = (v || inp.value).trim().toUpperCase();
-            if(val && !tempTags.includes(val)) {
-                tempTags.push(val);
-                renderTags();
-            }
-            inp.value = "";
-            document.getElementById('tagSuggestions').style.display = 'none';
+            if(val && !tempTags.includes(val)) { tempTags.push(val); renderTags(); }
+            inp.value = ""; document.getElementById('tagSuggestions').style.display = 'none';
         }
         function renderTags() {
-            document.getElementById('tagList').innerHTML = tempTags.map((t, i) => `<div class="tag-pill">#${t} <i class="fa-solid fa-xmark" onclick="tempTags.splice(${i},1);renderTags()"></i></div>`).join('');
+            document.getElementById('tagList').innerHTML = tempTags.map((t, i) => `
+                <div class="tag-pill">
+                    #${t} <i class="fa-solid fa-circle-xmark" onclick="tempTags.splice(${i},1);renderTags()"></i>
+                </div>`).join('');
         }
         function cercaSuggerimenti() {
             const val = document.getElementById('tagIn').value.trim().toUpperCase();
             const suggDiv = document.getElementById('tagSuggestions');
             if(!val) { suggDiv.style.display = 'none'; return; }
-            
             const allTags = [...new Set(db.flatMap(o => o.tags || []))];
             const filtered = allTags.filter(t => t.includes(val) && !tempTags.includes(t));
-            
             if(filtered.length > 0) {
                 suggDiv.innerHTML = filtered.map(t => `<div class="suggestion-item" onclick="aggiungiTag('${t}')">${t}</div>`).join('');
                 suggDiv.style.display = 'block';
-            } else {
-                suggDiv.style.display = 'none';
-            }
+            } else { suggDiv.style.display = 'none'; }
         }
 
-        function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
-        function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
-        function chiediEliminaSpazio() { document.getElementById('spaceModal').style.opacity = "0.3"; document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
-        
         function apriModale(id = null) { 
             editId = id; 
             if (id) { 
@@ -269,49 +234,35 @@
                 document.getElementById('nIn').value = o.nome; 
                 document.getElementById('pIn').value = o.pos; 
                 document.getElementById('cIn').value = o.cat; 
-                tempQty = o.qty; 
-                tempPhotos = [...o.foto]; 
-                tempTags = [...(o.tags || [])];
+                tempQty = o.qty; tempPhotos = [...o.foto]; tempTags = [...(o.tags || [])];
                 document.getElementById('delBtn').classList.remove('hidden'); 
             } else { 
                 if(db.length >= 40) { mostraPaywall(); return; } 
-                document.getElementById('nIn').value = ""; 
-                document.getElementById('pIn').value = ""; 
-                tempPhotos = []; 
-                tempTags = [];
-                tempQty = 1; 
+                document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; 
+                tempPhotos = []; tempTags = []; tempQty = 1; 
                 document.getElementById('delBtn').classList.add('hidden'); 
             } 
-            document.getElementById('qtyVal').innerText = tempQty; 
-            renderGallery(); 
-            renderTags();
+            document.getElementById('qtyVal').innerText = tempQty; renderGallery(); renderTags();
             document.getElementById('modal').classList.remove('hidden'); 
         }
 
         function salva() { 
-            const n = document.getElementById('nIn').value; 
-            if(!n) return; 
+            const n = document.getElementById('nIn').value; if(!n) return; 
             const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], tags: [...tempTags], qty: tempQty }; 
-            if(editId) { db[db.findIndex(x => x.id === editId)] = d; } 
-            else { db.push(d); } 
-            localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); 
-            chiudiModale(); 
-            aggiorna(); 
+            if(editId) db[db.findIndex(x => x.id === editId)] = d; else db.push(d); 
+            localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); 
         }
 
-        function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
-        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
-        function salvaNuovoSpazio() { const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return; if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor}; else configSpazi.push({nome:n, colore:selectedColor}); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); }
-        function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
-        function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-8 rounded-lg ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white outline outline-blue-600' : 'border-transparent'}"></div>`).join(''); }
+        function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; }
+        function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-sm border border-gray-100">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); document.getElementById('searchInput').value = ""; aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
-        function importaDati(i) { const r = new FileReader(); r.onload = (e) => { try { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); } catch(err) { alert("File non valido"); } }; r.readAsText(i.files[0]); }
-        function esportaDati() { const blob = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); const d = new Date(); a.href = URL.createObjectURL(blob); a.download = `backup_${d.getDate()}-${d.getMonth()+1}.json`; a.click(); }
+        function importaDati(i) { const r = new FileReader(); r.onload = (e) => { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(i.files[0]); }
+        function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `backup_pro.json`; a.click(); }
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
         renderBottoni(); aggiorna();
     </script>
