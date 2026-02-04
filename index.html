@@ -7,20 +7,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none !important; -webkit-user-select: none !important; user-select: none !important; outline: none; }
-        input, textarea { -webkit-user-select: text !important; user-select: text !important; }
-        html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overflow-x: hidden; overscroll-behavior-y: contain; }
-        #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
-        .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 195px; }
+        * { -webkit-tap-highlight-color: transparent; outline: none; }
+        html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; }
+        
+        #mainContainer { padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
+        .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; }
+        
+        /* Bottoni Spazi Uniformi come da foto */
+        .space-btn { 
+            height: 80px; 
+            border-radius: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+        .space-btn span { font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 13px; letter-spacing: -0.5px; padding: 0 10px; }
+
+        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; height: 195px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
-        .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
-        .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 14px; border: none; }
-        .btn-vinted { width: 100%; background-color: #09B1BA; color: white; padding: 14px; border-radius: 18px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; }
-        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
-        .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 6px; border: 1px solid #dbeafe; }
+        .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; }
+        
+        .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; border: 1px solid #dbeafe; }
+        
+        #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; z-index: 100; }
     </style>
 </head>
 <body>
@@ -28,26 +40,25 @@
     <div id="mainContainer">
         <header class="flex justify-between items-center mb-5">
             <div>
-                <h1 class="text-2xl font-black italic uppercase text-gray-900 tracking-tighter">TROVAPP</h1>
-                <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest italic">AI Powered System</p>
+                <h1 class="text-2xl font-black italic uppercase tracking-tighter">TROVAPP</h1>
+                <p class="text-[9px] font-bold text-blue-600 uppercase italic">AI Powered System</p>
             </div>
             <div class="flex gap-2">
-                <label class="bg-zinc-200 text-zinc-700 p-2 px-3 rounded-lg text-[8px] font-black uppercase cursor-pointer italic">CARICA <input type="file" id="importFile" class="hidden" onchange="importaDati(this)"></label>
                 <button onclick="esportaDati()" class="bg-zinc-900 text-white p-2 px-3 rounded-lg text-[8px] font-black uppercase italic">BACKUP</button>
             </div>
         </header>
 
-        <div class="bg-white p-4 rounded-[28px] shadow-sm mb-4 border-l-4 border-blue-600">
+        <div class="bg-white p-4 rounded-[28px] mb-4 border-l-4 border-blue-600 shadow-sm">
             <div class="flex justify-between items-center mb-1">
                 <span class="text-[9px] font-black uppercase text-gray-400 italic">Capacità Piano Free</span>
                 <span class="text-[10px] font-black text-blue-600 italic" id="objCount">0 / 40</span>
             </div>
             <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-blue-600 h-full transition-all duration-500" style="width: 0%"></div>
+                <div id="progressBar" class="bg-blue-600 h-full transition-all" style="width: 0%"></div>
             </div>
         </div>
 
-        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA CON IA O FILTRA..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic border-0 mb-4 uppercase">
+        <input type="text" id="searchInput" oninput="aggiorna()" placeholder="CERCA CON IA O FILTRA..." class="w-full p-4 bg-white rounded-2xl shadow-sm outline-none text-xs font-black italic mb-4 uppercase">
 
         <div id="dynamicWrapper" class="flex flex-col">
             <div id="homeNav" class="space-y-4 mb-4 order-1">
@@ -59,7 +70,7 @@
                 <div id="gridBottom" class="scroll-row"></div>
             </div>
         </div>
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-xl">← Torna alla Home</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase">← Torna alla Home</button>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[200] bg-[#F2F2F7] overflow-y-auto">
@@ -73,13 +84,13 @@
             </div>
             
             <div class="bg-white p-5 rounded-[32px] mb-4 flex gap-4 items-center shadow-sm">
-                <label class="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600 cursor-pointer">
+                <label class="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
                     <i class="fa-solid fa-camera fa-xl"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
                 <div id="gallery" class="flex gap-2 overflow-x-auto"></div>
                 <div class="flex-1">
-                    <input id="nIn" type="text" placeholder="NOME..." class="w-full p-3 bg-gray-100 rounded-xl text-xs font-black uppercase italic mb-2">
+                    <input id="nIn" type="text" placeholder="NOME OGGETTO..." class="w-full p-3 bg-gray-100 rounded-xl text-xs font-black uppercase italic mb-2">
                     <div class="flex items-center justify-between bg-zinc-900 text-white rounded-xl px-3 py-2">
                         <span class="text-[8px] font-black italic">QTY</span>
                         <div class="flex gap-4 items-center font-bold"><button onclick="changeQty(-1)">-</button><span id="qtyVal">1</span><button onclick="changeQty(1)">+</button></div>
@@ -87,28 +98,23 @@
                 </div>
             </div>
 
-            <button onclick="vaiSuVinted()" class="btn-vinted mb-4"><i class="fa-solid fa-shirt"></i> Analisi Prezzi Vinted</button>
+            <button onclick="vaiSuVinted()" class="w-full bg-[#09B1BA] color-white p-4 rounded-2xl text-white font-black italic uppercase text-xs mb-4">Analisi Prezzi Vinted</button>
 
             <div class="space-y-3 mb-6">
-                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0 shadow-sm"></select>
-                <input id="pIn" type="text" placeholder="POSIZIONE" class="w-full bg-white p-4 rounded-2xl text-xs font-black uppercase italic border-0 shadow-sm">
+                <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0"></select>
+                
+                <div class="bg-white p-4 rounded-2xl shadow-sm">
+                    <p class="text-[8px] font-black text-gray-400 uppercase italic mb-1">Inserito in (es. Scatola, Ripiano):</p>
+                    <input id="pIn" type="text" placeholder="SPECIFICA POSIZIONE..." class="w-full text-xs font-black uppercase italic outline-none">
+                </div>
+
                 <div class="bg-white p-5 rounded-[24px] shadow-sm">
                     <div id="tagList" class="flex flex-wrap gap-2 mb-3"></div>
                     <input id="tagIn" type="text" onkeydown="if(event.key==='Enter') aggiungiTag()" placeholder="AGGIUNGI TAG..." class="w-full text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2">
                 </div>
             </div>
             
-            <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA</button>
-        </div>
-    </div>
-
-    <div id="spaceModal" class="modal-overlay">
-        <div class="bg-white w-full max-w-sm rounded-[35px] p-6">
-            <h3 class="font-black italic uppercase mb-4 text-center">GESTIONE SPAZIO</h3>
-            <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
-            <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
-            <button onclick="salvaNuovoSpazio()" class="btn-main mb-2">Salva</button>
-            <button onclick="chiudiSpaceModal()" class="w-full p-4 text-[10px] font-black uppercase italic text-gray-400">Annulla</button>
+            <button onclick="salva()" class="w-full bg-blue-600 text-white p-5 rounded-3xl font-black italic uppercase shadow-xl">Salva Oggetto</button>
         </div>
     </div>
 
@@ -117,38 +123,29 @@
     <script>
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'CANTINA',colore:'bg-zinc-800'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        const palette = ['bg-zinc-800', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black', 'bg-purple-600'];
-        let tempPhotos = [], tempTags = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
-
-        function vaiSuVinted() {
-            const n = document.getElementById('nIn').value.trim();
-            if(!n) return;
-            // Query ottimizzata per trovare prezzi reali
-            const url = `https://www.vinted.it/catalog?search_text=${encodeURIComponent(n)}&order=relevance`;
-            const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        }
+        let tempPhotos = [], tempTags = [], tempQty = 1, activeCat = "TUTTI", editId = null;
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), q = document.getElementById('searchInput').value.toLowerCase();
             const hNav = document.getElementById('homeNav'), sRes = document.getElementById('searchResults');
+            
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
+            
             if(q) { sRes.style.order = "1"; hNav.style.order = "2"; } else { sRes.style.order = "2"; hNav.style.order = "1"; }
+
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
-            const r = o => {
-                const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-blue-600'};
-                return `<div class="item-card" onclick="apriModale(${o.id})">
+            const r = o => `
+                <div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
                     <img src="${o.foto[0] || ''}">
                     <div class="p-3">
-                        <div class="space-tag ${sObj.colore}">${o.cat}</div>
+                        <div class="text-[7px] font-black uppercase text-blue-600 mb-1">${o.pos || 'POSIZIONE N.D.'}</div>
                         <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
-                        <div class="flex flex-wrap mt-1 h-4 overflow-hidden">${(o.tags || []).map(t => `<span class="text-[7px] text-blue-500 font-black italic mr-1">#${t}</span>`).join('')}</div>
+                        <div class="flex flex-wrap mt-1 overflow-hidden h-4">${(o.tags || []).map(t => `<span class="text-[7px] text-blue-400 font-bold mr-1">#${t}</span>`).join('')}</div>
                     </div>
                 </div>`;
-            };
             gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
@@ -156,13 +153,11 @@
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), sel = document.getElementById('cIn');
             nav.innerHTML = ''; sel.innerHTML = '';
-            configSpazi.forEach((s, i) => {
+            configSpazi.forEach((s) => {
                 const btn = document.createElement('button');
-                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl font-black italic uppercase text-[14px] active:scale-95`;
-                btn.innerText = s.nome;
-                btn.addEventListener('touchstart', () => { pressTimer = setTimeout(() => { window.navigator.vibrate?.(50); modificaSpazio(i); }, 800); }, {passive: true});
-                btn.addEventListener('touchend', () => clearTimeout(pressTimer));
-                btn.onclick = () => { if(editSpaceIdx === null) apriSpazio(s.nome); };
+                btn.className = `space-btn ${s.colore} text-white`;
+                btn.innerHTML = `<span>${s.nome}</span>`;
+                btn.onclick = () => apriSpazio(s.nome);
                 nav.appendChild(btn);
                 sel.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
@@ -186,14 +181,6 @@
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        function eliminaOggetto() {
-            if(confirm("Eliminare l'oggetto?")) {
-                db = db.filter(o => o.id !== editId);
-                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
-                chiudiModale(); aggiorna();
-            }
-        }
-
         function salva() {
             const n = document.getElementById('nIn').value; if(!n) return;
             const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], tags: [...tempTags], qty: tempQty };
@@ -201,21 +188,23 @@
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna();
         }
 
-        function aggiungiTag() { const i = document.getElementById('tagIn'); if(i.value) { tempTags.push(i.value.toUpperCase()); i.value = ""; renderTags(); } }
-        function renderTags() { document.getElementById('tagList').innerHTML = tempTags.map(t => `<div class="tag-pill">#${t}</div>`).join(''); }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
-        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
-        function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
-        function modificaSpazio(i) { editSpaceIdx = i; document.getElementById('newSpaceName').value = configSpazi[i].nome; document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
-        function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; editSpaceIdx = null; }
-        function renderPicker() { document.getElementById('colorPicker').innerHTML = palette.map(c => `<div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-10 rounded-xl ${c} border-4 ${selectedColor === c ? 'border-white' : 'border-transparent'}"></div>`).join(''); }
-        function salvaNuovoSpazio() { const n = document.getElementById('newSpaceName').value.toUpperCase(); if(n) { if(editSpaceIdx!==null) configSpazi[editSpaceIdx]={nome:n,colore:selectedColor}; else configSpazi.push({nome:n,colore:selectedColor}); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); } }
-        function importaDati(i) { const r = new FileReader(); r.onload = (e) => { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(i.files[0]); }
+        function renderTags() { document.getElementById('tagList').innerHTML = tempTags.map(t => `<div class="tag-pill">#${t}</div>`).join(''); }
+        function aggiungiTag() { const i = document.getElementById('tagIn'); if(i.value) { tempTags.push(i.value.toUpperCase()); i.value = ""; renderTags(); } }
+        function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
+        function eliminaOggetto() { if(confirm("Eliminare?")) { db = db.filter(o => o.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); } }
         function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `backup.json`; a.click(); }
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
+        function vaiSuVinted() {
+            const n = document.getElementById('nIn').value.trim();
+            if(!n) return;
+            const url = `https://www.vinted.it/catalog?search_text=${encodeURIComponent(n)}&order=relevance`;
+            const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
 
         renderBottoni(); aggiorna();
     </script>
