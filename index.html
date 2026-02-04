@@ -3,14 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Trovapp Pro - Full Edition</title>
+    <title>Trovapp Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { -webkit-tap-highlight-color: transparent; outline: none; }
-        html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overflow-x: hidden; }
-        #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
+        /* PROTEZIONE TOTALE CONTRO SELEZIONE TESTO */
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none !important; /* Blocca menu iOS */
+            -webkit-user-select: none !important;    /* Blocca selezione Safari */
+            -khtml-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;            /* Blocca selezione standard */
+            outline: none;
+        }
+
+        /* Riabilita la selezione solo dove serve davvero (input testo) */
+        input, textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            background-color: #F2F2F7; 
+            font-family: -apple-system, sans-serif; 
+            overflow-x: hidden;
+            /* Impedisce il "pull-to-refresh" che può disturbare il long press */
+            overscroll-behavior-y: contain; 
+        }
         
+        #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
         .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 195px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
@@ -18,20 +43,17 @@
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; }
         
-        .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; transition: transform 0.1s; border: none; }
-        
+        .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; border: none; }
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
         .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 6px; border: 1px solid #dbeafe; }
         #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 20px; box-shadow: 0 -15px 35px rgba(0,0,0,0.15); display: none; z-index: 1000; max-height: 180px; overflow-y: auto; border: 1px solid #e2e8f0; margin-bottom: 8px; }
         .suggestion-item { padding: 14px 20px; font-size: 11px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #2563eb; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-        
-        .btn-add-tag { background: #2563eb; color: white; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; border: none; flex-shrink: 0; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div id="mainContainer">
         <header class="flex justify-between items-center mb-5">
@@ -45,7 +67,7 @@
             </div>
         </header>
 
-        <div onclick="mostraPaywall()" class="bg-white p-4 rounded-[28px] shadow-sm mb-4 border-l-4 border-blue-600 cursor-pointer">
+        <div class="bg-white p-4 rounded-[28px] shadow-sm mb-4 border-l-4 border-blue-600">
             <div class="flex justify-between items-center mb-1">
                 <span class="text-[9px] font-black uppercase text-gray-400 italic">Capacità Piano Free</span>
                 <span class="text-[10px] font-black text-blue-600 italic" id="objCount">0 / 40</span>
@@ -76,7 +98,7 @@
             <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic outline-none border-2 border-transparent focus:border-blue-600">
             <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
             <div class="flex flex-col gap-2">
-                <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[12px]">Salva Spazio</button>
+                <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[12px]">Salva</button>
                 <div class="flex gap-2">
                     <button id="btnEliminaSpazio" onclick="chiediEliminaSpazio()" class="flex-1 bg-red-100 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                     <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
@@ -127,19 +149,11 @@
 
     <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
         <div class="ui-content scale-90">
-            <h3 class="font-black italic uppercase text-lg mb-4">Sei sicuro?</h3>
+            <h3 class="font-black italic uppercase text-lg mb-4">Eliminare lo spazio?</h3>
             <div class="flex gap-3">
-                <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Conferma</button>
+                <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                 <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
             </div>
-        </div>
-    </div>
-
-    <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
-        <div class="ui-content" onclick="event.stopPropagation()">
-            <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
-            <h2 class="font-black italic text-xl uppercase mb-1">Upgrade Richiesto</h2>
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">OK</button>
         </div>
     </div>
 
@@ -151,7 +165,6 @@
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempTags = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
 
-        // GESTIONE SPAZI
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
@@ -160,48 +173,48 @@
                 btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all border-none relative overflow-hidden`;
                 btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
                 
-                // Eventi per Long Press (Modifica) e Click (Apri)
-                btn.onmousedown = btn.ontouchstart = (e) => { 
-                    pressTimer = setTimeout(() => modificaSpazio(i), 800); 
-                };
-                btn.onmouseup = btn.ontouchend = btn.ontouchmove = () => { clearTimeout(pressTimer); };
-                btn.onclick = () => { if(editSpaceIdx === null) apriSpazio(s.nome); };
+                // GESTIONE LONG PRESS ANTI-SELEZIONE
+                btn.addEventListener('touchstart', (e) => {
+                    // Impedisce al sistema di avviare la selezione testo di default
+                    pressTimer = setTimeout(() => {
+                        window.navigator.vibrate?.(50); // Feedback tattile se supportato
+                        modificaSpazio(i);
+                    }, 700);
+                }, {passive: true});
+
+                btn.addEventListener('touchend', (e) => {
+                    clearTimeout(pressTimer);
+                });
+
+                btn.addEventListener('touchmove', () => clearTimeout(pressTimer));
                 
+                btn.onclick = () => { if(editSpaceIdx === null) apriSpazio(s.nome); };
                 nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
         }
 
         function apriMenuNuovoSpazio() {
-            editSpaceIdx = null;
-            document.getElementById('newSpaceName').value = "";
-            selectedColor = palette[0];
+            editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; selectedColor = palette[0];
             document.getElementById('btnEliminaSpazio').classList.add('hidden');
-            document.getElementById('spaceModal').style.display = 'flex';
-            renderPicker();
+            document.getElementById('spaceModal').style.display = 'flex'; renderPicker();
         }
 
         function modificaSpazio(i) {
-            editSpaceIdx = i;
-            const s = configSpazi[i];
+            editSpaceIdx = i; const s = configSpazi[i];
             document.getElementById('newSpaceName').value = s.nome;
             selectedColor = s.colore;
             document.getElementById('btnEliminaSpazio').classList.remove('hidden');
-            document.getElementById('spaceModal').style.display = 'flex';
-            renderPicker();
+            document.getElementById('spaceModal').style.display = 'flex'; renderPicker();
         }
 
         function salvaNuovoSpazio() {
             const n = document.getElementById('newSpaceName').value.toUpperCase().trim();
             if(!n) return;
-            if(editSpaceIdx !== null) {
-                configSpazi[editSpaceIdx] = {nome: n, colore: selectedColor};
-            } else {
-                configSpazi.push({nome: n, colore: selectedColor});
-            }
+            if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome: n, colore: selectedColor};
+            else configSpazi.push({nome: n, colore: selectedColor});
             localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
-            chiudiSpaceModal();
-            renderBottoni();
+            chiudiSpaceModal(); renderBottoni();
         }
 
         function chiediEliminaSpazio() {
@@ -210,9 +223,7 @@
             document.getElementById('btnConfirmAction').onclick = () => {
                 configSpazi.splice(editSpaceIdx, 1);
                 localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
-                chiudiConfirm();
-                chiudiSpaceModal();
-                renderBottoni();
+                chiudiConfirm(); chiudiSpaceModal(); renderBottoni();
             };
         }
 
@@ -225,7 +236,6 @@
         function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; editSpaceIdx = null; }
         function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
 
-        // TAG E SUGGERIMENTI
         function aggiungiTag(v = null) {
             const inp = document.getElementById('tagIn');
             const val = (v || inp.value).trim().toUpperCase();
@@ -248,7 +258,6 @@
             } else { suggDiv.style.display = 'none'; }
         }
 
-        // FUNZIONI CORE
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
             const q = document.getElementById('searchInput').value.toLowerCase();
@@ -263,7 +272,7 @@
                     <img src="${o.foto[0] || ''}">
                     <div class="p-3">
                         <div class="space-tag ${sObj.colore}">${o.cat}</div>
-                        <h4 class="font-black text-[10px] truncate uppercase italic">${o.nome}</h4>
+                        <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
                         <div class="flex flex-wrap mt-1 h-4 overflow-hidden">${(o.tags || []).map(t => `<span class="text-[7px] text-blue-500 font-black italic mr-1">#${t}</span>`).join('')}</div>
                     </div>
                 </div>`;
@@ -282,7 +291,6 @@
                 tempQty = o.qty; tempPhotos = [...o.foto]; tempTags = [...(o.tags || [])];
                 document.getElementById('delBtn').classList.remove('hidden'); 
             } else { 
-                if(db.length >= 40) { mostraPaywall(); return; } 
                 document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; 
                 tempPhotos = []; tempTags = []; tempQty = 1; 
                 document.getElementById('delBtn').classList.add('hidden'); 
@@ -304,7 +312,6 @@
         function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
         function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
-        function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function importaDati(i) { const r = new FileReader(); r.onload = (e) => { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(i.files[0]); }
         function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `backup_pro.json`; a.click(); }
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
