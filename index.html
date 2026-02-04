@@ -10,18 +10,15 @@
         * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none !important; -webkit-user-select: none !important; user-select: none !important; outline: none; }
         input, textarea { -webkit-user-select: text !important; user-select: text !important; }
         html, body { height: 100%; margin: 0; background-color: #F2F2F7; font-family: -apple-system, sans-serif; overflow-x: hidden; overscroll-behavior-y: contain; }
-        
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
         .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 195px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
         .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
-
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 14px; border: none; }
         .btn-vinted { width: 100%; background-color: #09B1BA; color: white; padding: 14px; border-radius: 18px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; }
-        
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
         .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 6px; border: 1px solid #dbeafe; }
     </style>
@@ -57,25 +54,26 @@
                 <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
                 <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-[9px]"> + Aggiungi Spazio </button>
             </div>
-
             <div id="searchResults" class="flex flex-col gap-3 mb-6 order-2">
                 <div id="gridTop" class="scroll-row"></div>
                 <div id="gridBottom" class="scroll-row"></div>
             </div>
         </div>
-        
-        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase">← Torna alla Home</button>
+        <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-xl">← Torna alla Home</button>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[200] bg-[#F2F2F7] overflow-y-auto">
         <div class="p-6 pb-24">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-black italic uppercase tracking-tighter">SCHEDA OGGETTO</h3>
-                <button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button>
+                <div class="flex items-center gap-4">
+                    <button id="delBtn" onclick="eliminaOggetto()" class="text-red-500 hidden"><i class="fa-solid fa-trash-can fa-lg"></i></button>
+                    <button onclick="chiudiModale()" class="text-3xl text-gray-300">&times;</button>
+                </div>
             </div>
             
             <div class="bg-white p-5 rounded-[32px] mb-4 flex gap-4 items-center shadow-sm">
-                <label class="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                <label class="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600 cursor-pointer">
                     <i class="fa-solid fa-camera fa-xl"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
@@ -89,7 +87,7 @@
                 </div>
             </div>
 
-            <button onclick="vaiSuVinted()" class="btn-vinted mb-4"><i class="fa-solid fa-shirt"></i> Valuta su Vinted</button>
+            <button onclick="vaiSuVinted()" class="btn-vinted mb-4"><i class="fa-solid fa-shirt"></i> Analisi Prezzi Vinted</button>
 
             <div class="space-y-3 mb-6">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0 shadow-sm"></select>
@@ -100,7 +98,7 @@
                 </div>
             </div>
             
-            <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA OGGETTO</button>
+            <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA</button>
         </div>
     </div>
 
@@ -125,7 +123,8 @@
         function vaiSuVinted() {
             const n = document.getElementById('nIn').value.trim();
             if(!n) return;
-            const url = `https://www.vinted.it/catalog?search_text=${encodeURIComponent(n)}`;
+            // Query ottimizzata per trovare prezzi reali
+            const url = `https://www.vinted.it/catalog?search_text=${encodeURIComponent(n)}&order=relevance`;
             const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
@@ -133,14 +132,9 @@
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom'), q = document.getElementById('searchInput').value.toLowerCase();
             const hNav = document.getElementById('homeNav'), sRes = document.getElementById('searchResults');
-            
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
-            
-            // LOGICA SPOSTAMENTO RICERCA
-            if(q) { sRes.style.order = "1"; hNav.style.order = "2"; } 
-            else { sRes.style.order = "2"; hNav.style.order = "1"; }
-
+            if(q) { sRes.style.order = "1"; hNav.style.order = "2"; } else { sRes.style.order = "2"; hNav.style.order = "1"; }
             const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
             const r = o => {
@@ -182,12 +176,22 @@
                 document.getElementById('pIn').value = o.pos || "";
                 document.getElementById('cIn').value = o.cat;
                 tempQty = o.qty; tempPhotos = [...o.foto]; tempTags = [...(o.tags || [])];
+                document.getElementById('delBtn').classList.remove('hidden');
             } else {
                 document.getElementById('nIn').value = ""; document.getElementById('pIn').value = "";
                 tempPhotos = []; tempTags = []; tempQty = 1;
+                document.getElementById('delBtn').classList.add('hidden');
             }
             document.getElementById('qtyVal').innerText = tempQty; renderGallery(); renderTags();
             document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function eliminaOggetto() {
+            if(confirm("Eliminare l'oggetto?")) {
+                db = db.filter(o => o.id !== editId);
+                localStorage.setItem('the_vault_vSearch', JSON.stringify(db));
+                chiudiModale(); aggiorna();
+            }
         }
 
         function salva() {
