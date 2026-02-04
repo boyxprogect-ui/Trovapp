@@ -29,6 +29,11 @@
         .plan-card { border: 2px solid #e5e7eb; border-radius: 20px; padding: 15px; text-align: left; transition: all 0.2s; position: relative; overflow: hidden; margin-bottom: 10px; }
         .plan-card.active { border-color: #2563eb; background: #eff6ff; }
         .ai-badge { position: absolute; top: 0; right: 0; color: white; font-size: 7px; font-weight: 900; padding: 4px 8px; border-bottom-left-radius: 10px; text-transform: uppercase; }
+
+        /* Stile Tag e Suggerimenti */
+        .tag-pill { background: #f3f4f6; color: #374151; padding: 2px 8px; border-radius: 8px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 4px; }
+        #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 15px; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); display: none; z-index: 100; max-height: 120px; overflow-y: auto; }
+        .suggestion-item { padding: 10px 15px; font-size: 10px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #f9f9f9; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -79,14 +84,14 @@
             <div class="space-y-3">
                 <div class="plan-card active border-blue-600 bg-blue-50">
                     <div class="ai-badge bg-green-500">-47% RISPARMIO</div>
-                    <div class="flex justify-between items-center">
-                        <div class="text-left"><h4 class="font-black italic uppercase text-xs">Piano Annuale</h4><p class="text-[8px] font-bold text-blue-600 italic">€19.00 / anno</p></div>
+                    <div class="flex justify-between items-center text-left">
+                        <div><h4 class="font-black italic uppercase text-xs">Piano Annuale</h4><p class="text-[10px] font-black text-blue-700 italic">€19.00 / anno</p></div>
                     </div>
                 </div>
                 <div class="plan-card border-gray-200">
                     <div class="ai-badge bg-gray-400">Mensile</div>
-                    <div class="flex justify-between items-center">
-                        <div class="text-left"><h4 class="font-black italic uppercase text-xs">Piano Standard</h4><p class="text-[8px] font-bold text-gray-500 italic">€2.99 / mese</p></div>
+                    <div class="flex justify-between items-center text-left">
+                        <div><h4 class="font-black italic uppercase text-xs">Piano Standard</h4><p class="text-[10px] font-black text-gray-900 italic">€2.99 / mese</p></div>
                     </div>
                 </div>
             </div>
@@ -104,7 +109,7 @@
                 </div>
             </div>
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
-                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600">
+                <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600 cursor-pointer">
                     <i class="fa-solid fa-camera fa-xl"></i>
                     <input type="file" id="fIn" accept="image/*" capture="environment" class="hidden" onchange="comprimeECarica()">
                 </label>
@@ -120,6 +125,12 @@
             <div class="space-y-3 mb-4">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0"></select>
                 <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black uppercase italic border-0">
+                
+                <div class="bg-white p-4 rounded-2xl relative">
+                    <div id="tagList" class="flex flex-wrap gap-2 mb-2"></div>
+                    <div id="tagSuggestions"></div>
+                    <input id="tagIn" type="text" placeholder="AGGIUNGI TAG E PREMI INVIO..." class="w-full text-[10px] font-black uppercase italic outline-none border-b border-gray-100 pb-1" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
+                </div>
             </div>
             <div class="flex gap-3 mb-6">
                 <button onclick="mostraPaywall()" class="btn-utility bg-amber-400 text-amber-950"><i class="fa-solid fa-magnifying-glass-dollar fa-lg"></i> VALUTA VINTED</button>
@@ -161,7 +172,7 @@
         const palette = ['bg-zinc-800', 'bg-rose-600', 'bg-indigo-700', 'bg-emerald-600', 'bg-blue-600', 'bg-orange-500', 'bg-black', 'bg-purple-600'];
         let configSpazi = JSON.parse(localStorage.getItem('configSpazi')) || [{nome:'ARMADI',colore:'bg-zinc-800'},{nome:'BOX',colore:'bg-rose-600'},{nome:'CANTINA',colore:'bg-indigo-700'}];
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
-        let tempPhotos = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
+        let tempPhotos = [], tempTags = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
 
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
@@ -185,13 +196,10 @@
             const homeNav = document.getElementById('homeNav');
             const q = searchInput.value.toLowerCase();
 
-            // LOGICA DI SPOSTAMENTO REALE
             if (q.length > 0) {
-                // Durante la ricerca: Risultati sopra, Spazi sotto
                 searchResults.style.order = "1";
                 homeNav.style.order = "2";
             } else {
-                // Senza ricerca: Spazi sopra, Risultati sotto
                 homeNav.style.order = "1";
                 searchResults.style.order = "2";
             }
@@ -199,11 +207,12 @@
             document.getElementById('objCount').innerText = `${db.length} / 40`;
             document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
             
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q))));
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q)) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
             const m = Math.ceil(f.length / 2);
             
             const r = o => {
                 const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
+                const tagsView = (o.tags || []).map(t => `<span class="text-[6px] text-gray-400 mr-1">#${t}</span>`).join('');
                 return `<div class="item-card" onclick="apriModale(${o.id})">
                     <div class="qty-badge">x${o.qty}</div>
                     <img src="${o.foto[0] || ''}">
@@ -211,6 +220,7 @@
                         <div class="space-tag ${sObj.colore}">${o.cat}</div>
                         <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
                         <p class="text-[7px] font-bold text-blue-600 uppercase italic truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
+                        <div class="flex flex-wrap mt-1">${tagsView}</div>
                     </div>
                 </div>`;
             };
@@ -218,12 +228,77 @@
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
-        // Funzioni di sistema
+        // GESTIONE TAG E SUGGERIMENTI
+        function aggiungiTag(v = null) {
+            const inp = document.getElementById('tagIn');
+            const val = (v || inp.value).trim().toUpperCase();
+            if(val && !tempTags.includes(val)) {
+                tempTags.push(val);
+                renderTags();
+            }
+            inp.value = "";
+            document.getElementById('tagSuggestions').style.display = 'none';
+        }
+        function renderTags() {
+            document.getElementById('tagList').innerHTML = tempTags.map((t, i) => `<div class="tag-pill">#${t} <i class="fa-solid fa-xmark" onclick="tempTags.splice(${i},1);renderTags()"></i></div>`).join('');
+        }
+        function cercaSuggerimenti() {
+            const val = document.getElementById('tagIn').value.trim().toUpperCase();
+            const suggDiv = document.getElementById('tagSuggestions');
+            if(!val) { suggDiv.style.display = 'none'; return; }
+            
+            const allTags = [...new Set(db.flatMap(o => o.tags || []))];
+            const filtered = allTags.filter(t => t.includes(val) && !tempTags.includes(t));
+            
+            if(filtered.length > 0) {
+                suggDiv.innerHTML = filtered.map(t => `<div class="suggestion-item" onclick="aggiungiTag('${t}')">${t}</div>`).join('');
+                suggDiv.style.display = 'block';
+            } else {
+                suggDiv.style.display = 'none';
+            }
+        }
+
         function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
         function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
         function chiediEliminaSpazio() { document.getElementById('spaceModal').style.opacity = "0.3"; document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { configSpazi.splice(editSpaceIdx, 1); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiConfirm(); chiudiSpaceModal(); renderBottoni(); }; }
-        function apriModale(id = null) { editId = id; if (id) { const o = db.find(x => x.id === id); document.getElementById('nIn').value = o.nome; document.getElementById('pIn').value = o.pos; document.getElementById('cIn').value = o.cat; tempQty = o.qty; tempPhotos = [...o.foto]; document.getElementById('delBtn').classList.remove('hidden'); } else { if(db.length >= 40) { mostraPaywall(); return; } document.getElementById('nIn').value = ""; document.getElementById('pIn').value = ""; tempPhotos = []; tempQty = 1; document.getElementById('delBtn').classList.add('hidden'); } document.getElementById('qtyVal').innerText = tempQty; renderGallery(); document.getElementById('modal').classList.remove('hidden'); }
-        function salva() { const n = document.getElementById('nIn').value; if(!n) return; const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], qty: tempQty }; if(editId) { db[db.findIndex(x => x.id === editId)] = d; } else { db.push(d); } localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); }
+        
+        function apriModale(id = null) { 
+            editId = id; 
+            if (id) { 
+                const o = db.find(x => x.id === id); 
+                document.getElementById('nIn').value = o.nome; 
+                document.getElementById('pIn').value = o.pos; 
+                document.getElementById('cIn').value = o.cat; 
+                tempQty = o.qty; 
+                tempPhotos = [...o.foto]; 
+                tempTags = [...(o.tags || [])];
+                document.getElementById('delBtn').classList.remove('hidden'); 
+            } else { 
+                if(db.length >= 40) { mostraPaywall(); return; } 
+                document.getElementById('nIn').value = ""; 
+                document.getElementById('pIn').value = ""; 
+                tempPhotos = []; 
+                tempTags = [];
+                tempQty = 1; 
+                document.getElementById('delBtn').classList.add('hidden'); 
+            } 
+            document.getElementById('qtyVal').innerText = tempQty; 
+            renderGallery(); 
+            renderTags();
+            document.getElementById('modal').classList.remove('hidden'); 
+        }
+
+        function salva() { 
+            const n = document.getElementById('nIn').value; 
+            if(!n) return; 
+            const d = { id: editId || Date.now(), nome: n.toUpperCase(), cat: document.getElementById('cIn').value, pos: document.getElementById('pIn').value.toUpperCase(), foto: [...tempPhotos], tags: [...tempTags], qty: tempQty }; 
+            if(editId) { db[db.findIndex(x => x.id === editId)] = d; } 
+            else { db.push(d); } 
+            localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); 
+            chiudiModale(); 
+            aggiorna(); 
+        }
+
         function modificaSpazio(i) { editSpaceIdx = i; const s = configSpazi[i]; document.getElementById('newSpaceName').value = s.nome; selectedColor = s.colore; document.getElementById('btnEliminaSpazio').classList.remove('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
         function apriMenuNuovoSpazio() { editSpaceIdx = null; document.getElementById('newSpaceName').value = ""; document.getElementById('btnEliminaSpazio').classList.add('hidden'); document.getElementById('spaceModal').style.display = 'flex'; renderPicker(); }
         function salvaNuovoSpazio() { const n = document.getElementById('newSpaceName').value.toUpperCase(); if(!n) return; if(editSpaceIdx !== null) configSpazi[editSpaceIdx] = {nome:n, colore:selectedColor}; else configSpazi.push({nome:n, colore:selectedColor}); localStorage.setItem('configSpazi', JSON.stringify(configSpazi)); chiudiSpaceModal(); renderBottoni(); }
