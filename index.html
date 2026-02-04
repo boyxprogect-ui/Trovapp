@@ -12,7 +12,7 @@
         #mainContainer { min-height: 100vh; padding: 16px; padding-bottom: 120px; display: flex; flex-direction: column; }
         
         .scroll-row { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; -webkit-overflow-scrolling: touch; }
-        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 190px; }
+        .item-card { flex: 0 0 32%; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; height: 195px; }
         .item-card img { width: 100%; height: 95px; object-fit: cover; }
         .qty-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 900; z-index: 10; }
         .space-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: white; padding: 2px 6px; border-radius: 6px; font-style: italic; display: inline-block; margin-bottom: 3px; }
@@ -25,15 +25,15 @@
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
-        /* TAG STYLE */
-        .tag-pill { background: #eff6ff; color: #2563eb; padding: 3px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 5px; border: 1px solid #dbeafe; }
+        /* TAG STYLE BLU */
+        .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 6px; border: 1px solid #dbeafe; }
         
-        #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: none; z-index: 100; max-height: 150px; overflow-y: auto; border: 1px solid #f0f0f0; }
-        .suggestion-item { padding: 12px 18px; font-size: 10px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #2563eb; border-bottom: 1px solid #f8fafc; }
+        #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 20px; box-shadow: 0 -15px 35px rgba(0,0,0,0.15); display: none; z-index: 1000; max-height: 180px; overflow-y: auto; border: 1px solid #e2e8f0; margin-bottom: 8px; }
+        .suggestion-item { padding: 14px 20px; font-size: 11px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #2563eb; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .suggestion-item:active { background: #f0f7ff; }
         
-        /* TASTINO PLUS TAG */
-        .btn-add-tag { background: #2563eb; color: white; width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; border: none; }
-        .btn-add-tag:active { transform: scale(0.9); background: #1e40af; }
+        .btn-add-tag { background: #2563eb; color: white; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; border: none; flex-shrink: 0; }
+        .btn-add-tag:active { transform: scale(0.9); }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -109,9 +109,10 @@
                 <div class="bg-white p-5 rounded-[24px] relative">
                     <label class="text-[8px] font-black uppercase text-gray-400 mb-2 block italic">Tag Personalizzati</label>
                     <div id="tagList" class="flex flex-wrap gap-2 mb-3"></div>
-                    <div id="tagSuggestions"></div>
-                    <div class="flex items-center gap-3">
-                        <input id="tagIn" type="text" placeholder="SCRIVI TAG..." class="flex-1 text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2 focus:border-blue-600 transition-colors" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
+                    
+                    <div class="relative flex items-center gap-3">
+                        <div id="tagSuggestions"></div>
+                        <input id="tagIn" type="text" placeholder="AGGIUNGI TAG..." class="flex-1 text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2 focus:border-blue-600 transition-colors" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
                         <button onclick="aggiungiTag()" class="btn-add-tag">
                             <i class="fa-solid fa-plus text-xs"></i>
                         </button>
@@ -126,14 +127,14 @@
     <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
         <div class="ui-content" onclick="event.stopPropagation()">
             <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
-            <h2 class="font-black italic text-xl uppercase mb-1">Premium Feature</h2>
+            <h2 class="font-black italic text-xl uppercase mb-1">Upgrade Richiesto</h2>
             <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">OK</button>
         </div>
     </div>
 
     <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
         <div class="ui-content scale-90">
-            <h3 class="font-black italic uppercase text-lg mb-4">Sei sicuro?</h3>
+            <h3 class="font-black italic uppercase text-lg mb-4">Eliminare l'oggetto?</h3>
             <div class="flex gap-3">
                 <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                 <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
@@ -176,10 +177,9 @@
 
         function aggiorna() {
             const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
-            const searchInput = document.getElementById('searchInput');
+            const q = document.getElementById('searchInput').value.toLowerCase();
             const searchResults = document.getElementById('searchResults');
             const homeNav = document.getElementById('homeNav');
-            const q = searchInput.value.toLowerCase();
 
             if (q.length > 0) { searchResults.style.order = "1"; homeNav.style.order = "2"; } 
             else { homeNav.style.order = "1"; searchResults.style.order = "2"; }
@@ -208,6 +208,7 @@
             gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
+        // LOGICA TAG E SUGGERIMENTI OTTIMIZZATA
         function aggiungiTag(v = null) {
             const inp = document.getElementById('tagIn');
             const val = (v || inp.value).trim().toUpperCase();
@@ -226,10 +227,17 @@
             const val = document.getElementById('tagIn').value.trim().toUpperCase();
             const suggDiv = document.getElementById('tagSuggestions');
             if(!val) { suggDiv.style.display = 'none'; return; }
-            const allTags = [...new Set(db.flatMap(o => o.tags || []))];
-            const filtered = allTags.filter(t => t.includes(val) && !tempTags.includes(t));
-            if(filtered.length > 0) {
-                suggDiv.innerHTML = filtered.map(t => `<div class="suggestion-item" onclick="aggiungiTag('${t}')">${t}</div>`).join('');
+            
+            // Estrazione universale di tutti i tag presenti nel DB
+            const tuttiITagDelDB = [...new Set(db.reduce((acc, obj) => acc.concat(obj.tags || []), []))];
+            
+            const filtrati = tuttiITagDelDB.filter(t => 
+                t.toUpperCase().includes(val) && 
+                !tempTags.includes(t.toUpperCase())
+            );
+
+            if(filtrati.length > 0) {
+                suggDiv.innerHTML = filtrati.map(t => `<div class="suggestion-item" onclick="aggiungiTag('${t}')">${t}</div>`).join('');
                 suggDiv.style.display = 'block';
             } else { suggDiv.style.display = 'none'; }
         }
