@@ -21,19 +21,14 @@
         .ui-content { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         
         .btn-main { width: 100%; background-color: #2563eb; color: white; padding: 18px; border-radius: 22px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 16px; transition: transform 0.1s; border: none; }
-        .btn-main:active { transform: scale(0.96); }
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
-        /* TAG STYLE BLU */
         .tag-pill { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 6px; border: 1px solid #dbeafe; }
-        
         #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 20px; box-shadow: 0 -15px 35px rgba(0,0,0,0.15); display: none; z-index: 1000; max-height: 180px; overflow-y: auto; border: 1px solid #e2e8f0; margin-bottom: 8px; }
         .suggestion-item { padding: 14px 20px; font-size: 11px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #2563eb; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-        .suggestion-item:active { background: #f0f7ff; }
         
         .btn-add-tag { background: #2563eb; color: white; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; border: none; flex-shrink: 0; }
-        .btn-add-tag:active { transform: scale(0.9); }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -67,14 +62,27 @@
                 <nav id="navGrid" class="grid grid-cols-2 gap-3"></nav>
                 <button onclick="apriMenuNuovoSpazio()" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-[24px] text-gray-400 font-black italic uppercase text-[9px]"> + Aggiungi Spazio </button>
             </div>
-
             <div id="searchResults" class="flex flex-col gap-3 mb-6 order-2">
                 <div id="gridTop" class="scroll-row"></div>
                 <div id="gridBottom" class="scroll-row"></div>
             </div>
         </div>
-
         <button onclick="tornaHome()" id="backBtn" class="hidden w-full bg-black text-white p-4 rounded-2xl font-black italic mb-4 uppercase shadow-xl">← Torna alla Home</button>
+    </div>
+
+    <div id="spaceModal" class="modal-overlay">
+        <div class="ui-content text-left">
+            <h3 class="text-lg font-black italic uppercase mb-4 tracking-tighter">GESTIONE SPAZIO</h3>
+            <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic outline-none border-2 border-transparent focus:border-blue-600">
+            <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
+            <div class="flex flex-col gap-2">
+                <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[12px]">Salva Spazio</button>
+                <div class="flex gap-2">
+                    <button id="btnEliminaSpazio" onclick="chiediEliminaSpazio()" class="flex-1 bg-red-100 text-red-600 p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
+                    <button onclick="chiudiSpaceModal()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="modal" class="hidden fixed inset-0 z-[200] bg-[#F2F2F7] overflow-y-auto">
@@ -86,7 +94,6 @@
                     <button onclick="chiudiModale()" class="text-4xl text-gray-300">&times;</button>
                 </div>
             </div>
-            
             <div class="bg-white p-5 rounded-[32px] shadow-sm mb-4 flex gap-4 items-center">
                 <label class="w-20 h-20 shrink-0 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-blue-600 cursor-pointer">
                     <i class="fa-solid fa-camera fa-xl"></i>
@@ -101,26 +108,30 @@
                     </div>
                 </div>
             </div>
-
             <div class="space-y-3 mb-6">
                 <select id="cIn" class="w-full bg-white p-4 rounded-2xl text-xs font-black italic uppercase border-0"></select>
                 <input id="pIn" type="text" placeholder="POSIZIONE (ES: SCAFFALE A)" class="w-full bg-white p-4 rounded-2xl text-xs font-black uppercase italic border-0">
-                
                 <div class="bg-white p-5 rounded-[24px] relative">
                     <label class="text-[8px] font-black uppercase text-gray-400 mb-2 block italic">Tag Personalizzati</label>
                     <div id="tagList" class="flex flex-wrap gap-2 mb-3"></div>
-                    
                     <div class="relative flex items-center gap-3">
                         <div id="tagSuggestions"></div>
                         <input id="tagIn" type="text" placeholder="AGGIUNGI TAG..." class="flex-1 text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2 focus:border-blue-600 transition-colors" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
-                        <button onclick="aggiungiTag()" class="btn-add-tag">
-                            <i class="fa-solid fa-plus text-xs"></i>
-                        </button>
+                        <button onclick="aggiungiTag()" class="btn-add-tag"><i class="fa-solid fa-plus text-xs"></i></button>
                     </div>
                 </div>
             </div>
-
             <button onclick="salva()" class="btn-main shadow-lg shadow-blue-200">SALVA OGGETTO</button>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
+        <div class="ui-content scale-90">
+            <h3 class="font-black italic uppercase text-lg mb-4">Sei sicuro?</h3>
+            <div class="flex gap-3">
+                <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Conferma</button>
+                <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
+            </div>
         </div>
     </div>
 
@@ -132,26 +143,6 @@
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
-        <div class="ui-content scale-90">
-            <h3 class="font-black italic uppercase text-lg mb-4">Eliminare l'oggetto?</h3>
-            <div class="flex gap-3">
-                <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
-                <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="spaceModal" class="modal-overlay">
-        <div class="ui-content text-left">
-            <h3 class="text-lg font-black italic uppercase mb-4">Gestione Spazio</h3>
-            <input id="newSpaceName" type="text" placeholder="NOME SPAZIO" class="w-full p-4 bg-gray-100 rounded-2xl mb-4 font-black uppercase text-xs italic">
-            <div class="grid grid-cols-4 gap-2 mb-6" id="colorPicker"></div>
-            <button onclick="salvaNuovoSpazio()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Salva</button>
-            <button onclick="chiudiSpaceModal()" class="w-full mt-2 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Chiudi</button>
-        </div>
-    </div>
-
     <button id="addButton" onclick="apriModale()"><i class="fa-solid fa-plus"></i></button>
 
     <script>
@@ -160,86 +151,125 @@
         let db = JSON.parse(localStorage.getItem('the_vault_vSearch')) || [];
         let tempPhotos = [], tempTags = [], tempQty = 1, activeCat = "TUTTI", editId = null, editSpaceIdx = null, selectedColor = palette[0], pressTimer;
 
+        // GESTIONE SPAZI
         function renderBottoni() {
             const nav = document.getElementById('navGrid'), select = document.getElementById('cIn');
             nav.innerHTML = ''; select.innerHTML = '';
             configSpazi.forEach((s, i) => {
                 const btn = document.createElement('button');
-                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all border-none`;
+                btn.className = `p-6 rounded-[30px] ${s.colore} text-white shadow-xl flex flex-col active:scale-95 transition-all border-none relative overflow-hidden`;
                 btn.innerHTML = `<span class="font-black italic text-[14px] uppercase tracking-tighter">${s.nome}</span>`;
-                btn.onmousedown = btn.ontouchstart = () => { pressTimer = setTimeout(() => modificaSpazio(i), 800); };
+                
+                // Eventi per Long Press (Modifica) e Click (Apri)
+                btn.onmousedown = btn.ontouchstart = (e) => { 
+                    pressTimer = setTimeout(() => modificaSpazio(i), 800); 
+                };
                 btn.onmouseup = btn.ontouchend = btn.ontouchmove = () => { clearTimeout(pressTimer); };
                 btn.onclick = () => { if(editSpaceIdx === null) apriSpazio(s.nome); };
+                
                 nav.appendChild(btn);
                 select.innerHTML += `<option value="${s.nome}">${s.nome}</option>`;
             });
         }
 
-        function aggiorna() {
-            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const searchResults = document.getElementById('searchResults');
-            const homeNav = document.getElementById('homeNav');
-
-            if (q.length > 0) { searchResults.style.order = "1"; homeNav.style.order = "2"; } 
-            else { homeNav.style.order = "1"; searchResults.style.order = "2"; }
-
-            document.getElementById('objCount').innerText = `${db.length} / 40`;
-            document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
-            
-            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q)) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
-            const m = Math.ceil(f.length / 2);
-            
-            const r = o => {
-                const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
-                const tagsView = (o.tags || []).map(t => `<span class="text-[7px] text-blue-500 font-black italic mr-1">#${t}</span>`).join('');
-                return `<div class="item-card" onclick="apriModale(${o.id})">
-                    <div class="qty-badge">x${o.qty}</div>
-                    <img src="${o.foto[0] || ''}">
-                    <div class="p-3 overflow-hidden">
-                        <div class="space-tag ${sObj.colore}">${o.cat}</div>
-                        <h4 class="font-black text-[10px] truncate uppercase italic leading-tight">${o.nome}</h4>
-                        <p class="text-[7px] font-bold text-gray-400 uppercase italic truncate">${o.pos || 'POSIZIONE NON SPEC.'}</p>
-                        <div class="flex flex-wrap mt-1 h-4 overflow-hidden">${tagsView}</div>
-                    </div>
-                </div>`;
-            };
-            gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
-            gb.innerHTML = f.slice(m).reverse().map(r).join('');
+        function apriMenuNuovoSpazio() {
+            editSpaceIdx = null;
+            document.getElementById('newSpaceName').value = "";
+            selectedColor = palette[0];
+            document.getElementById('btnEliminaSpazio').classList.add('hidden');
+            document.getElementById('spaceModal').style.display = 'flex';
+            renderPicker();
         }
 
-        // LOGICA TAG E SUGGERIMENTI OTTIMIZZATA
+        function modificaSpazio(i) {
+            editSpaceIdx = i;
+            const s = configSpazi[i];
+            document.getElementById('newSpaceName').value = s.nome;
+            selectedColor = s.colore;
+            document.getElementById('btnEliminaSpazio').classList.remove('hidden');
+            document.getElementById('spaceModal').style.display = 'flex';
+            renderPicker();
+        }
+
+        function salvaNuovoSpazio() {
+            const n = document.getElementById('newSpaceName').value.toUpperCase().trim();
+            if(!n) return;
+            if(editSpaceIdx !== null) {
+                configSpazi[editSpaceIdx] = {nome: n, colore: selectedColor};
+            } else {
+                configSpazi.push({nome: n, colore: selectedColor});
+            }
+            localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
+            chiudiSpaceModal();
+            renderBottoni();
+        }
+
+        function chiediEliminaSpazio() {
+            document.getElementById('spaceModal').style.opacity = "0.3";
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.getElementById('btnConfirmAction').onclick = () => {
+                configSpazi.splice(editSpaceIdx, 1);
+                localStorage.setItem('configSpazi', JSON.stringify(configSpazi));
+                chiudiConfirm();
+                chiudiSpaceModal();
+                renderBottoni();
+            };
+        }
+
+        function renderPicker() {
+            document.getElementById('colorPicker').innerHTML = palette.map(c => `
+                <div onclick="selectedColor='${c}'; renderPicker()" class="w-full h-10 rounded-xl ${c} cursor-pointer border-4 ${selectedColor === c ? 'border-white ring-2 ring-blue-600' : 'border-transparent'}"></div>
+            `).join('');
+        }
+
+        function chiudiSpaceModal() { document.getElementById('spaceModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; editSpaceIdx = null; }
+        function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; document.getElementById('spaceModal').style.opacity = "1"; }
+
+        // TAG E SUGGERIMENTI
         function aggiungiTag(v = null) {
             const inp = document.getElementById('tagIn');
             const val = (v || inp.value).trim().toUpperCase();
             if(val && !tempTags.includes(val)) { tempTags.push(val); renderTags(); }
             inp.value = ""; document.getElementById('tagSuggestions').style.display = 'none';
         }
-
         function renderTags() {
             document.getElementById('tagList').innerHTML = tempTags.map((t, i) => `
-                <div class="tag-pill">
-                    #${t} <i class="fa-solid fa-circle-xmark" onclick="tempTags.splice(${i},1);renderTags()"></i>
-                </div>`).join('');
+                <div class="tag-pill">#${t} <i class="fa-solid fa-circle-xmark" onclick="tempTags.splice(${i},1);renderTags()"></i></div>`).join('');
         }
-
         function cercaSuggerimenti() {
             const val = document.getElementById('tagIn').value.trim().toUpperCase();
             const suggDiv = document.getElementById('tagSuggestions');
             if(!val) { suggDiv.style.display = 'none'; return; }
-            
-            // Estrazione universale di tutti i tag presenti nel DB
-            const tuttiITagDelDB = [...new Set(db.reduce((acc, obj) => acc.concat(obj.tags || []), []))];
-            
-            const filtrati = tuttiITagDelDB.filter(t => 
-                t.toUpperCase().includes(val) && 
-                !tempTags.includes(t.toUpperCase())
-            );
-
+            const tuttiITag = [...new Set(db.reduce((acc, obj) => acc.concat(obj.tags || []), []))];
+            const filtrati = tuttiITag.filter(t => t.toUpperCase().includes(val) && !tempTags.includes(t.toUpperCase()));
             if(filtrati.length > 0) {
                 suggDiv.innerHTML = filtrati.map(t => `<div class="suggestion-item" onclick="aggiungiTag('${t}')">${t}</div>`).join('');
                 suggDiv.style.display = 'block';
             } else { suggDiv.style.display = 'none'; }
+        }
+
+        // FUNZIONI CORE
+        function aggiorna() {
+            const gt = document.getElementById('gridTop'), gb = document.getElementById('gridBottom');
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            document.getElementById('objCount').innerText = `${db.length} / 40`;
+            document.getElementById('progressBar').style.width = (Math.min(db.length, 40) / 40 * 100) + '%';
+            const f = db.filter(o => (activeCat === 'TUTTI' || o.cat === activeCat) && (o.nome.toLowerCase().includes(q) || (o.pos && o.pos.toLowerCase().includes(q)) || (o.tags && o.tags.some(t => t.toLowerCase().includes(q)))));
+            const m = Math.ceil(f.length / 2);
+            const r = o => {
+                const sObj = configSpazi.find(s => s.nome === o.cat) || {colore: 'bg-gray-400'};
+                return `<div class="item-card" onclick="apriModale(${o.id})">
+                    <div class="qty-badge">x${o.qty}</div>
+                    <img src="${o.foto[0] || ''}">
+                    <div class="p-3">
+                        <div class="space-tag ${sObj.colore}">${o.cat}</div>
+                        <h4 class="font-black text-[10px] truncate uppercase italic">${o.nome}</h4>
+                        <div class="flex flex-wrap mt-1 h-4 overflow-hidden">${(o.tags || []).map(t => `<span class="text-[7px] text-blue-500 font-black italic mr-1">#${t}</span>`).join('')}</div>
+                    </div>
+                </div>`;
+            };
+            gt.innerHTML = f.slice(0, m).reverse().map(r).join('');
+            gb.innerHTML = f.slice(m).reverse().map(r).join('');
         }
 
         function apriModale(id = null) { 
@@ -268,17 +298,17 @@
             localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiModale(); aggiorna(); 
         }
 
-        function chiudiConfirm() { document.getElementById('confirmModal').style.display = 'none'; }
-        function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
         function chiudiModale() { document.getElementById('modal').classList.add('hidden'); }
+        function chiediEliminaOggetto() { document.getElementById('confirmModal').style.display = 'flex'; document.getElementById('btnConfirmAction').onclick = () => { db = db.filter(x => x.id !== editId); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); chiudiConfirm(); chiudiModale(); aggiorna(); }; }
         function changeQty(v) { tempQty = Math.max(1, tempQty + v); document.getElementById('qtyVal').innerText = tempQty; }
-        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl shadow-sm border border-gray-100">`).join(''); }
-        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); document.getElementById('searchInput').value = ""; aggiorna(); }
+        function renderGallery() { document.getElementById('gallery').innerHTML = tempPhotos.map(f => `<img src="${f}" class="w-16 h-16 object-cover rounded-xl">`).join(''); }
+        function tornaHome() { activeCat = "TUTTI"; document.getElementById('homeNav').classList.remove('hidden'); document.getElementById('backBtn').classList.add('hidden'); aggiorna(); }
         function apriSpazio(c) { activeCat = c; document.getElementById('homeNav').classList.add('hidden'); document.getElementById('backBtn').classList.remove('hidden'); aggiorna(); }
         function mostraPaywall() { document.getElementById('paywallModal').style.display = 'flex'; }
         function importaDati(i) { const r = new FileReader(); r.onload = (e) => { db = JSON.parse(e.target.result); localStorage.setItem('the_vault_vSearch', JSON.stringify(db)); aggiorna(); }; r.readAsText(i.files[0]); }
         function esportaDati() { const b = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `backup_pro.json`; a.click(); }
         function comprimeECarica() { const f = document.getElementById('fIn').files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; c.getContext('2d').drawImage(i, 0, 0, 400, 300); tempPhotos.push(c.toDataURL('image/jpeg', 0.6)); renderGallery(); }; }; r.readAsDataURL(f); }
+
         renderBottoni(); aggiorna();
     </script>
 </body>
