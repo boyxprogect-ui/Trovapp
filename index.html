@@ -25,13 +25,15 @@
         
         #addButton { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background-color: #2563eb; color: white; width: 65px; height: 65px; border-radius: 9999px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); z-index: 50; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; }
 
-        /* NUOVO STILE TAG BLU PRO */
+        /* TAG STYLE */
         .tag-pill { background: #eff6ff; color: #2563eb; padding: 3px 10px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 5px; border: 1px solid #dbeafe; }
-        .tag-pill i { color: #93c5fd; font-size: 10px; }
         
         #tagSuggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-radius: 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: none; z-index: 100; max-height: 150px; overflow-y: auto; border: 1px solid #f0f0f0; }
         .suggestion-item { padding: 12px 18px; font-size: 10px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #2563eb; border-bottom: 1px solid #f8fafc; }
-        .suggestion-item:active { background: #f0f7ff; }
+        
+        /* TASTINO PLUS TAG */
+        .btn-add-tag { background: #2563eb; color: white; width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; border: none; }
+        .btn-add-tag:active { transform: scale(0.9); background: #1e40af; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -108,8 +110,11 @@
                     <label class="text-[8px] font-black uppercase text-gray-400 mb-2 block italic">Tag Personalizzati</label>
                     <div id="tagList" class="flex flex-wrap gap-2 mb-3"></div>
                     <div id="tagSuggestions"></div>
-                    <div class="relative">
-                        <input id="tagIn" type="text" placeholder="SCRIVI E PREMI INVIO..." class="w-full text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2 focus:border-blue-600 transition-colors" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
+                    <div class="flex items-center gap-3">
+                        <input id="tagIn" type="text" placeholder="SCRIVI TAG..." class="flex-1 text-[11px] font-black uppercase italic outline-none border-b-2 border-blue-50 pb-2 focus:border-blue-600 transition-colors" onkeydown="if(event.key==='Enter') aggiungiTag()" oninput="cercaSuggerimenti()">
+                        <button onclick="aggiungiTag()" class="btn-add-tag">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -121,14 +126,14 @@
     <div id="paywallModal" class="modal-overlay" onclick="this.style.display='none'">
         <div class="ui-content" onclick="event.stopPropagation()">
             <div class="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-crown fa-xl"></i></div>
-            <h2 class="font-black italic text-xl uppercase mb-1">Scegli il Piano</h2>
-            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">ATTIVA ORA</button>
+            <h2 class="font-black italic text-xl uppercase mb-1">Premium Feature</h2>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="btn-main mt-4">OK</button>
         </div>
     </div>
 
     <div id="confirmModal" class="modal-overlay" style="z-index: 1000; background: rgba(0,0,0,0.4);">
         <div class="ui-content scale-90">
-            <h3 class="font-black italic uppercase text-lg mb-4">Eliminare l'oggetto?</h3>
+            <h3 class="font-black italic uppercase text-lg mb-4">Sei sicuro?</h3>
             <div class="flex gap-3">
                 <button id="btnConfirmAction" class="flex-1 bg-red-600 text-white p-4 rounded-2xl font-black italic uppercase text-[10px]">Elimina</button>
                 <button onclick="chiudiConfirm()" class="flex-1 bg-zinc-100 p-4 rounded-2xl font-black italic uppercase text-[10px]">Annulla</button>
@@ -209,12 +214,14 @@
             if(val && !tempTags.includes(val)) { tempTags.push(val); renderTags(); }
             inp.value = ""; document.getElementById('tagSuggestions').style.display = 'none';
         }
+
         function renderTags() {
             document.getElementById('tagList').innerHTML = tempTags.map((t, i) => `
                 <div class="tag-pill">
                     #${t} <i class="fa-solid fa-circle-xmark" onclick="tempTags.splice(${i},1);renderTags()"></i>
                 </div>`).join('');
         }
+
         function cercaSuggerimenti() {
             const val = document.getElementById('tagIn').value.trim().toUpperCase();
             const suggDiv = document.getElementById('tagSuggestions');
